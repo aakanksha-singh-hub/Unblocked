@@ -26,7 +26,7 @@ from datetime import date, datetime, time, timedelta
 
 from ..domain.enums import CONTACT_INSENSITIVE, BuyerArchetype, Intervention, RELATIONSHIP_COST
 from ..domain.enums import HUMAN_MINUTES
-from ..domain.models import AuditEntry, Decision, InboundMessage, OutboundMessage, Payment
+from ..domain.models import AuditEntry, Decision, Dispute, InboundMessage, OutboundMessage, Payment
 from ..domain.money import Paise
 from . import calibration as cal
 from . import rng
@@ -62,18 +62,66 @@ def new_run(world: World, *, seed: int | None = None) -> RunState:
         if inv.issue_date > world.start_date
     }
     buyers = {bid: BuyerRuntime(buyer_id=bid) for bid in world.buyers}
+    _seed_latent_disputes(world, buyers, invoices, seed)
+    by_buyer: dict[str, list[str]] = {}
+    for iid, inv in world.invoices.items():
+        by_buyer.setdefault(inv.buyer_id, []).append(iid)
     return RunState(
         seed=seed,
         day=world.start_date,
         invoices=invoices,
         buyers=buyers,
         pending_issue=pending,
+        invoices_by_buyer=by_buyer,
     )
 
 
 # ---------------------------------------------------------------------------
 # Hazard components
 # ---------------------------------------------------------------------------
+
+
+def _seed_latent_disputes(world: World, buyers, invoices, seed: int) -> None:
+    """Create disputes that already exist at t0, unseen.
+
+    A short delivery is a fact about goods that were delivered wrong. It does
+    not come into being because a supplier sent a reminder - it was true all
+    along, and the reminder is merely when anyone said so out loud.
+
+    Modelling disputes as *created* by contact made never-chase the best policy
+    on disputers, for the entirely spurious reason that a supplier who never
+    asks never hears about the problem. Under that model the optimal way to
+    handle a damaged consignment is to not mention it, which is the opposite of
+    true: the invoice sits unpaid either way, and the silent version simply
+    takes longer to find out why.
+
+    These disputes block payment from day one and are invisible to the agent
+    until the buyer states them in a reply.
+    """
+    for bid, br in buyers.items():
+        if world.truth[bid].archetype is not BuyerArchetype.DISPUTER:
+            continue
+        for iid in (i for i, inv in world.invoices.items() if inv.buyer_id == bid):
+            if not rng.bernoulli(seed, 0.55, iid, "latent_dispute"):
+                continue
+            inv = world.invoices[iid]
+            full = rng.bernoulli(seed, 0.45, iid, "latent_full")
+            br.disputes.append(
+                Dispute(
+                    dispute_id=f"dsp_latent_{iid[-8:]}",
+                    buyer_id=bid,
+                    invoice_ids=[iid],
+                    raised_on=inv.issue_date,
+                    kind=rng.choice(
+                        seed,
+                        ["short_delivery", "damage", "rate_mismatch", "quality", "gst_mismatch"],
+                        iid,
+                        "latent_kind",
+                    ),
+                    disputed_amount=None if full else Paise(int(inv.amount * 0.35)),
+                    source_quote="(not yet stated by the buyer)",
+                )
+            )
 
 
 def _base_hazard(arch: BuyerArchetype, days_past_effective: float) -> float:
@@ -337,6 +385,7 @@ def apply_decision(
     )
     st.outbound.append(msg)
     st.outbound_by_day.setdefault(day, []).append(msg)
+    st.outbound_by_buyer.setdefault(bid, []).append(msg)
 
     # Three interventions are not merely persuasive - they change the state of
     # the world. Modelling them as hazard multipliers alone was wrong: a
@@ -344,9 +393,11 @@ def apply_decision(
     # leaves it at zero and the single highest-value discovery in the book was
     # unreachable by any action.
     if decision.chosen is Intervention.DOCUMENT_RECONCILE:
-        _repair_intake(world, st, bid, day, open_ids)
+        if _repair_intake(world, st, bid, day, open_ids):
+            st.repair_messages.add(msg.message_id)
     elif decision.chosen is Intervention.DISPUTE_RESOLUTION:
-        _resolve_disputes(world, st, bid, day)
+        if _resolve_disputes(world, st, bid, day):
+            st.repair_messages.add(msg.message_id)
     elif decision.chosen is Intervention.INSTALMENT_OFFER and br.plan is None:
         _maybe_accept_plan(world, st, bid, day, open_ids)
 
@@ -355,13 +406,14 @@ def apply_decision(
 
 def _repair_intake(
     world: World, st: RunState, buyer_id: str, day: date, invoice_ids: list[str]
-) -> None:
+) -> bool:
     """Chase the paperwork that stops an invoice entering the buyer's system.
 
     This is the action that converts an invoice nobody at the buyer can see into
     one that is merely unpaid. On an aging report both look identical - "90 days
     overdue" - which is exactly why it goes unfound.
     """
+    any_repaired = False
     for iid in invoice_ids:
         rt = st.invoices[iid]
         repaired = False
@@ -373,6 +425,7 @@ def _repair_intake(
             rt.has_po = True
             repaired = True
         if repaired:
+            any_repaired = True
             st.intake_repairs += 1
             st.audit.append(
                 AuditEntry(
@@ -386,9 +439,10 @@ def _repair_intake(
                     payload={"invoice_id": iid, "outstanding": rt.outstanding},
                 )
             )
+    return any_repaired
 
 
-def _resolve_disputes(world: World, st: RunState, buyer_id: str, day: date) -> None:
+def _resolve_disputes(world: World, st: RunState, buyer_id: str, day: date) -> bool:
     """Settle open disputes, either by credit note or by the buyer dropping it.
 
     A credit note is a real cost, not a recovery. It is booked to
@@ -396,9 +450,11 @@ def _resolve_disputes(world: World, st: RunState, buyer_id: str, day: date) -> N
     could 'recover' any amount by forgiving it.
     """
     br = st.buyers[buyer_id]
+    any_resolved = False
     for d in br.open_disputes():
         if not rng.bernoulli(st.seed, 0.62, d.dispute_id, day, "dispute_resolve"):
             continue
+        any_resolved = True
         if rng.bernoulli(st.seed, 0.60, d.dispute_id, "credit_note"):
             d.status = "credit_note_issued"
             for iid in d.invoice_ids:
@@ -419,6 +475,7 @@ def _resolve_disputes(world: World, st: RunState, buyer_id: str, day: date) -> N
                 payload={"dispute_id": d.dispute_id, "disputed": d.disputed_amount},
             )
         )
+    return any_resolved
 
 
 def _maybe_accept_plan(
@@ -525,6 +582,7 @@ def _make_payment(
         method=rng.choice(st.seed, ["neft", "neft", "rtgs", "imps", "upi"], buyer_id, day, "method"),
     )
     st.payments.append(pay)
+    st.payments_by_buyer.setdefault(buyer_id, []).append(pay)
     st.audit.append(
         AuditEntry(
             at=datetime.combine(day, time(14, 0)),
@@ -587,6 +645,7 @@ def _collect_replies(world: World, st: RunState, day: date, generate_reply) -> l
             inb = generate_reply(world, st, bid, msg, day)
             if inb is not None:
                 st.inbound.append(inb)
+                st.inbound_by_buyer.setdefault(bid, []).append(inb)
                 replied.add(msg.message_id)
                 out.append(inb)
     return out
@@ -608,12 +667,29 @@ def _reply_probability(arch: BuyerArchetype, iv: Intervention) -> float:
     return base
 
 
-def is_wasted_contact(world: World, buyer_id: str) -> bool:
-    """Whether contacting this buyer could have moved the pay date at all.
+def is_wasted_contact(world: World, msg: OutboundMessage, st: RunState | None = None) -> bool:
+    """Whether this specific contact could have changed anything.
 
-    True for archetypes that are contact-insensitive by construction. This is
-    the false-positive definition the evaluation reports against, and it is
-    knowable only inside the simulator - which is exactly why it belongs here
-    and not in the agent.
+    The false-positive definition the evaluation reports against, and it is
+    knowable only inside the simulator - which is exactly why it lives here and
+    not in the agent.
+
+    Defined per *message*, not per buyer. An earlier version counted every
+    contact with a contact-insensitive archetype as wasted, which over-counted
+    badly in one direction: a document chase that unblocks a process-bound
+    buyer's invoice at intake changes the world, and calling it waste would have
+    understated the agent while flattering nothing. It also under-counted in the
+    other direction, since a nudge to a cash-stressed buyer during a fatigue
+    collapse is genuinely wasted and this catches it.
+
+    A contact is wasted when the action could not raise the payment hazard for
+    that archetype, and it did not repair state either.
     """
-    return world.truth[buyer_id].archetype in CONTACT_INSENSITIVE
+    arch = world.truth[msg.buyer_id].archetype
+    if cal.EFFECT[msg.intervention][arch] > 1.0:
+        return False
+    if msg.intervention in (Intervention.DOCUMENT_RECONCILE, Intervention.DISPUTE_RESOLUTION):
+        # State-changing actions are judged by whether they changed state.
+        if st is not None and msg.message_id in st.repair_messages:
+            return False
+    return True

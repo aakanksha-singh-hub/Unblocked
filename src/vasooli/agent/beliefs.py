@@ -12,7 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 
-from ..domain.enums import BuyerArchetype
+from ..domain.enums import BuyerArchetype, ReplyIntent
 from ..domain.models import Dispute, ExtractedReply, Promise
 
 
@@ -42,6 +42,11 @@ class BuyerBeliefs:
     #: that abstains on everything has not automated anything.
     needs_human: list[str] = field(default_factory=list)
 
+    #: Running count of what this buyer has said, by intent. The behavioural
+    #: half of the feature vector: a buyer who has deflected to a payment cycle
+    #: four times is telling you what it is.
+    intent_counts: dict = field(default_factory=dict)
+
     #: Message ids already folded into these beliefs, so observe() is idempotent
     #: and re-reading the ledger cannot duplicate a promise.
     processed: set[str] = field(default_factory=set)
@@ -56,6 +61,9 @@ class BuyerBeliefs:
 
     def open_disputes(self) -> list[Dispute]:
         return [d for d in self.disputes if d.status == "open"]
+
+    def note_intent(self, intent: ReplyIntent) -> None:
+        self.intent_counts[intent] = self.intent_counts.get(intent, 0) + 1
 
     def broken_promises(self) -> int:
         return sum(1 for p in self.promises if p.status == "broken")

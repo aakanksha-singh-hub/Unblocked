@@ -118,12 +118,29 @@ class RunState:
     #: repaired by a document chase. Both are reported in the run summary.
     write_offs: Paise = 0
     intake_repairs: int = 0
+    #: Messages that actually changed state, used to judge whether a contact was
+    #: wasted by what it did rather than by who received it.
+    repair_messages: set[str] = field(default_factory=set)
 
     #: Outbound indexed by send date, and the set of messages already replied
     #: to. Both are pure indices over `outbound`/`inbound`, kept because
     #: rescanning every message every day made run cost quadratic in horizon.
     outbound_by_day: dict[date, list[OutboundMessage]] = field(default_factory=dict)
     replied_to: set[str] = field(default_factory=set)
+
+    #: Per-buyer indices over the flat event lists, appended on write. build_view
+    #: runs once per simulated day, and scanning every payment and every message
+    #: on each of those days made view construction the dominant cost of the
+    #: whole evaluation.
+    #: Invoice ids grouped by buyer, built once at run start. open_invoice_ids
+    #: previously scanned every invoice in the book for every buyer on every
+    #: simulated day - 472 million comparisons on a full run, and by far the
+    #: dominant cost of the entire evaluation.
+    invoices_by_buyer: dict[str, list[str]] = field(default_factory=dict)
+
+    payments_by_buyer: dict[str, list[Payment]] = field(default_factory=dict)
+    outbound_by_buyer: dict[str, list[OutboundMessage]] = field(default_factory=dict)
+    inbound_by_buyer: dict[str, list[InboundMessage]] = field(default_factory=dict)
 
     #: Invoices not yet issued at the current day. Released by dynamics as the
     #: calendar reaches them, so the agent never sees future work.
@@ -135,12 +152,11 @@ class RunState:
     promise_will_keep: dict[str, bool] = field(default_factory=dict)
 
     def open_invoice_ids(self, buyer_id: str, world) -> list[str]:
+        pending = self.pending_issue
         return [
             iid
-            for iid, rt in self.invoices.items()
-            if rt.is_open
-            and world.invoices[iid].buyer_id == buyer_id
-            and iid not in self.pending_issue
+            for iid in self.invoices_by_buyer.get(buyer_id, ())
+            if self.invoices[iid].is_open and iid not in pending
         ]
 
     def total_outstanding(self) -> Paise:

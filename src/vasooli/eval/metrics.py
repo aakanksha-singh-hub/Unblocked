@@ -22,7 +22,8 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from datetime import timedelta
 
-from ..domain.enums import CONTACT_INSENSITIVE, HUMAN_MINUTES, Intervention
+from ..domain.enums import HUMAN_MINUTES, Intervention
+from ..sim import dynamics
 from ..domain.money import Paise, fmt, to_rupees
 from ..sim import calibration as cal
 from ..sim.world import World
@@ -148,7 +149,7 @@ def score(world: World, result: RunResult) -> Metrics:
     recovered = st.total_collected()
     outstanding = st.total_outstanding()
 
-    wasted = sum(1 for m in st.outbound if world.truth[m.buyer_id].archetype in CONTACT_INSENSITIVE)
+    wasted = sum(1 for m in st.outbound if dynamics.is_wasted_contact(world, m, st))
     churn_cost, share_lost = _churn_cost(world, result)
     minutes = sum(b.human_minutes for b in st.buyers.values())
     human_cost = Paise(int(minutes / 60.0 * OWNER_HOURLY_RUPEES * 100))

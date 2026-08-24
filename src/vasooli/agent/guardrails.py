@@ -49,6 +49,11 @@ class GateConfig:
     #: Broken promises before the agent stops accepting new ones as a reason to
     #: stay quiet. Without this, promise-deferral is an infinite stall.
     max_promise_deferrals: int = 3
+    #: Longest deferral a single promise may buy. "Diwali ke baad" in June
+    #: resolves correctly to November - and honouring it would mean five months
+    #: of silence on one sentence. Beyond this the promise is acknowledged but
+    #: the agent keeps a light cadence.
+    max_promise_deferral_days: int = 45
     quiet_hour_start: int = 9
     quiet_hour_end: int = 19
 
@@ -131,8 +136,25 @@ class Guardrails:
 
         # The stopping rule the whole pitch rests on.
         promise = beliefs.active_promise(day, c.promise_grace_days)
-        if promise is not None and day <= promise.promised_date:
-            if beliefs.broken_promises() >= c.max_promise_deferrals:
+        # The freeze must hold through the grace period, not lift on the
+        # promised date itself. A bank transfer promised for the 15th does not
+        # land at midnight; contacting on the 16th is exactly the hovering this
+        # rule exists to prevent, and it was being counted as a violation while
+        # the gate happily allowed it.
+        if promise is not None and day < promise.promised_date + timedelta(
+            days=c.promise_grace_days
+        ):
+            deferral = (promise.promised_date - promise.made_on).days
+            if deferral > c.max_promise_deferral_days:
+                out.append(
+                    _ok(
+                        "promise_freeze",
+                        f"Promise defers {deferral}d (to "
+                        f"{promise.promised_date.isoformat()}), beyond the "
+                        f"{c.max_promise_deferral_days}d limit; noted but not honoured in full.",
+                    )
+                )
+            elif beliefs.broken_promises() >= c.max_promise_deferrals:
                 out.append(
                     _ok(
                         "promise_freeze",

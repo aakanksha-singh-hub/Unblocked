@@ -30,6 +30,18 @@ class InvoiceView:
     outstanding: Paise
     paid: Paise
 
+    #: Current intake state, from run state rather than from the original
+    #: Invoice. The merchant genuinely knows whether it uploaded an invoice to
+    #: the buyer's portal, so this is legitimately visible - but it must reflect
+    #: repairs, or the agent would keep chasing paperwork it already fixed.
+    portal_submitted: bool = True
+    has_po: bool = True
+
+    @property
+    def blocked_at_intake(self) -> bool:
+        """Not overdue by choice: nobody at the buyer can see this invoice."""
+        return not self.portal_submitted or not self.has_po
+
     def days_past_due(self, as_of: date) -> int:
         return self.invoice.days_past_due(as_of)
 
@@ -72,6 +84,12 @@ class BuyerLedger:
             return list(self.received)
         return [m for m in self.received if m.received_at.date() >= since]
 
+    def intake_blocked(self) -> list[InvoiceView]:
+        """Open invoices the buyer's system cannot act on. Indistinguishable
+        from ordinary overdue on an aging report, and the highest-yield thing
+        the agent can find."""
+        return [iv for iv in self.open_invoices if iv.blocked_at_intake]
+
     def payment_history_days(self) -> list[int]:
         """Days from due date to payment, for every settled invoice.
 
@@ -103,30 +121,56 @@ class LedgerView:
         return Paise(sum(lg.outstanding for lg in self.ledgers.values()))
 
 
+def _buyer_index(world) -> dict[str, list[str]]:
+    """Invoice ids grouped by buyer, cached on the World.
+
+    Rebuilding this per call made build_view O(buyers x invoices) - 2.6M
+    comparisons on the full book - and the runner calls it once per simulated
+    day. It was the dominant cost of the whole evaluation.
+    """
+    idx = getattr(world, "_invoice_index", None)
+    if idx is None:
+        idx = {}
+        for iid, inv in world.invoices.items():
+            idx.setdefault(inv.buyer_id, []).append(iid)
+        object.__setattr__(world, "_invoice_index", idx)
+    return idx
+
+
 def build_view(world, st, day: date, *, buyer_ids: list[str] | None = None) -> LedgerView:
     """Assemble the agent-visible view. The only place world and state are read
     together for agent consumption, and it copies rather than aliasing so a
     policy cannot mutate the simulation by accident."""
     ids = buyer_ids if buyer_ids is not None else list(world.buyers)
-    ledgers: dict[str, BuyerLedger] = {}
+    wanted = set(ids)
+    ledgers: dict[str, BuyerLedger] = {bid: BuyerLedger(buyer=world.buyers[bid]) for bid in ids}
 
     paid_by_inv: dict[str, Paise] = {}
-    for p in st.payments:
-        if p.received_on <= day:
-            paid_by_inv[p.invoice_id] = Paise(paid_by_inv.get(p.invoice_id, 0) + p.amount)
-
+    index = _buyer_index(world)
     for bid in ids:
-        lg = BuyerLedger(buyer=world.buyers[bid])
-        for iid, inv in world.invoices.items():
-            if inv.buyer_id != bid or inv.issue_date > day:
+        lg = ledgers[bid]
+        for p in st.payments_by_buyer.get(bid, ()):
+            if p.received_on <= day:
+                paid_by_inv[p.invoice_id] = Paise(paid_by_inv.get(p.invoice_id, 0) + p.amount)
+                lg.payments.append(p)
+        for iid in index.get(bid, ()):
+            inv = world.invoices[iid]
+            if inv.issue_date > day:
                 continue
             rt = st.invoices[iid]
             lg.invoices.append(
-                InvoiceView(invoice=inv, outstanding=rt.outstanding, paid=paid_by_inv.get(iid, Paise(0)))
+                InvoiceView(
+                    invoice=inv,
+                    outstanding=rt.outstanding,
+                    paid=paid_by_inv.get(iid, Paise(0)),
+                    portal_submitted=rt.portal_submitted,
+                    has_po=rt.has_po,
+                )
             )
-        lg.payments = [p for p in st.payments if p.buyer_id == bid and p.received_on <= day]
-        lg.sent = [m for m in st.outbound if m.buyer_id == bid and m.sent_at.date() <= day]
-        lg.received = [m for m in st.inbound if m.buyer_id == bid and m.received_at.date() <= day]
-        ledgers[bid] = lg
+
+    for bid in ids:
+        lg = ledgers[bid]
+        lg.sent = [m for m in st.outbound_by_buyer.get(bid, ()) if m.sent_at.date() <= day]
+        lg.received = [m for m in st.inbound_by_buyer.get(bid, ()) if m.received_at.date() <= day]
 
     return LedgerView(as_of=day, ledgers=ledgers)

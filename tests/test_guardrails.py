@@ -341,3 +341,41 @@ def test_config_is_respected(g):
     assert strict.filter(ALL, lg, BuyerBeliefs(buyer_id="buy_test"), TODAY).allowed == [
         Intervention.HOLD
     ]
+
+
+def test_very_long_deferral_is_not_honoured_in_full(g):
+    """"Diwali ke baad" said in June resolves correctly to November. Honouring
+    it literally would buy five months of silence from one sentence."""
+    b = BuyerBeliefs(buyer_id="buy_test")
+    b.promises.append(
+        Promise(
+            buyer_id="buy_test",
+            invoice_ids=["inv_test"],
+            made_on=TODAY,
+            promised_date=TODAY + timedelta(days=150),
+            source_quote="diwali ke baad dekhte hain",
+            source_message_id="m1",
+            confidence=0.8,
+            date_was_relative=True,
+        )
+    )
+    d = g.filter(ALL, make_ledger(), b, TODAY)
+    assert gate(d.results, "promise_freeze").passed
+    assert "beyond the" in gate(d.results, "promise_freeze").reason
+
+
+def test_ordinary_deferral_is_honoured(g):
+    b = BuyerBeliefs(buyer_id="buy_test")
+    b.promises.append(
+        Promise(
+            buyer_id="buy_test",
+            invoice_ids=["inv_test"],
+            made_on=TODAY,
+            promised_date=TODAY + timedelta(days=20),
+            source_quote="month end tak",
+            source_message_id="m1",
+            confidence=0.9,
+        )
+    )
+    d = g.filter(ALL, make_ledger(), b, TODAY)
+    assert d.allowed == [Intervention.HOLD]

@@ -244,6 +244,24 @@ def _apply_side_effects(
         )
 
     elif intent is ReplyIntent.DISPUTE and open_ids:
+        # If a latent dispute already covers one of these invoices, the reply
+        # states it rather than creating a second one. Contact reveals the
+        # problem; it does not cause it.
+        latent = next(
+            (
+                d
+                for d in br.disputes
+                if d.status == "open"
+                and d.source_quote.startswith("(not yet stated")
+                and set(d.invoice_ids) & set(open_ids)
+            ),
+            None,
+        )
+        if latent is not None:
+            idx = br.disputes.index(latent)
+            br.disputes[idx] = latent.model_copy(update={"source_quote": body, "raised_on": day})
+            return
+
         target = rng.choice(st.seed, open_ids, buyer_id, day, "dispute_inv")
         full = rng.bernoulli(st.seed, 0.45, buyer_id, day, "dispute_full")
         br.disputes.append(

@@ -32,7 +32,12 @@ def run(world: World, policy: Policy, *, seed: int | None = None, horizon: int |
         day = world.start_date + timedelta(days=offset)
         st.day = day
 
-        view = build_view(world, st, day)
+        # Buyers with nothing outstanding need no ledger. On a book where a
+        # growing share settles over the horizon this is a large saving, and it
+        # cannot change any decision: a policy has nothing to decide about a
+        # buyer who owes nothing.
+        active = [bid for bid in world.buyers if st.open_invoice_ids(bid, world)]
+        view = build_view(world, st, day, buyer_ids=active)
 
         if hasattr(policy, "observe"):
             policy.observe(view, day)
