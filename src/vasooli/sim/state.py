@@ -1,0 +1,131 @@
+"""Mutable run state. Separated from dynamics so the state shape can be read
+without wading through the hazard arithmetic."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from datetime import date, timedelta
+
+from ..domain.enums import Intervention
+from ..domain.models import AuditEntry, Dispute, InboundMessage, OutboundMessage, Payment, Promise
+from ..domain.money import Paise
+
+
+@dataclass
+class InstalmentPlan:
+    """An agreed schedule. Created when a buyer accepts an INSTALMENT_OFFER.
+
+    Its existence changes the physics: a DISTRESSED buyer capped at 30% of
+    balance in one go can clear the whole thing across four instalments. This is
+    the mechanism by which the right intervention converts a bad debt into a
+    slow one, and it is why INSTALMENT_OFFER is not merely a softer nudge.
+    """
+
+    plan_id: str
+    buyer_id: str
+    invoice_ids: list[str]
+    instalment_amount: Paise
+    due_dates: list[date]
+    paid_count: int = 0
+
+    def next_due(self, as_of: date) -> date | None:
+        for d in self.due_dates[self.paid_count :]:
+            if d >= as_of - timedelta(days=7):
+                return d
+        return None
+
+
+@dataclass
+class InvoiceRuntime:
+    invoice_id: str
+    outstanding: Paise
+    #: Kept for capacity limits, which are a fraction of the original ask rather
+    #: than of whatever happens to be left.
+    original: Paise
+
+    @property
+    def is_open(self) -> bool:
+        return self.outstanding > 0
+
+
+@dataclass
+class BuyerRuntime:
+    buyer_id: str
+    contacts: list[tuple[date, Intervention]] = field(default_factory=list)
+    promises: list[Promise] = field(default_factory=list)
+    disputes: list[Dispute] = field(default_factory=list)
+    plan: InstalmentPlan | None = None
+
+    relationship_spent: int = 0
+    human_minutes: int = 0
+    churned: bool = False
+    churned_on: date | None = None
+
+    #: Multiplier on promise reliability, decayed by each broken promise. A
+    #: buyer who has broken two promises is materially less likely to keep the
+    #: third, which is what stops promise-deferral being an infinite stall.
+    trust: float = 1.0
+
+    #: Set once the buyer has told us they cannot pay. The agent is expected to
+    #: read this and stop escalating; whether it does is measured.
+    hardship_declared: bool = False
+
+    def contacts_within(self, as_of: date, days: int) -> int:
+        cutoff = as_of - timedelta(days=days)
+        return sum(1 for d, _ in self.contacts if cutoff < d <= as_of)
+
+    def last_contact(self, as_of: date) -> date | None:
+        past = [d for d, _ in self.contacts if d <= as_of]
+        return max(past) if past else None
+
+    def open_promise(self, as_of: date, grace: int) -> Promise | None:
+        active = [p for p in self.promises if p.is_active(as_of, grace)]
+        return max(active, key=lambda p: p.made_on) if active else None
+
+    def open_disputes(self) -> list[Dispute]:
+        return [d for d in self.disputes if d.status == "open"]
+
+
+@dataclass
+class RunState:
+    """Everything that changes as the simulation advances."""
+
+    seed: int
+    day: date
+    invoices: dict[str, InvoiceRuntime]
+    buyers: dict[str, BuyerRuntime]
+
+    payments: list[Payment] = field(default_factory=list)
+    outbound: list[OutboundMessage] = field(default_factory=list)
+    inbound: list[InboundMessage] = field(default_factory=list)
+    audit: list[AuditEntry] = field(default_factory=list)
+
+    #: Outbound indexed by send date, and the set of messages already replied
+    #: to. Both are pure indices over `outbound`/`inbound`, kept because
+    #: rescanning every message every day made run cost quadratic in horizon.
+    outbound_by_day: dict[date, list[OutboundMessage]] = field(default_factory=dict)
+    replied_to: set[str] = field(default_factory=set)
+
+    #: Invoices not yet issued at the current day. Released by dynamics as the
+    #: calendar reaches them, so the agent never sees future work.
+    pending_issue: dict[str, date] = field(default_factory=dict)
+
+    #: Simulator-side promise outcomes, rolled at creation and hidden from the
+    #: agent. Held here rather than on Promise so the agent cannot read it even
+    #: by accident.
+    promise_will_keep: dict[str, bool] = field(default_factory=dict)
+
+    def open_invoice_ids(self, buyer_id: str, world) -> list[str]:
+        return [
+            iid
+            for iid, rt in self.invoices.items()
+            if rt.is_open
+            and world.invoices[iid].buyer_id == buyer_id
+            and iid not in self.pending_issue
+        ]
+
+    def total_outstanding(self) -> Paise:
+        return sum(rt.outstanding for rt in self.invoices.values())
+
+    def total_collected(self) -> Paise:
+        return sum(p.amount for p in self.payments)
