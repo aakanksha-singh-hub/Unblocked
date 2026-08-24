@@ -33,6 +33,7 @@ report says that, because a conclusion that fragile is not a conclusion.
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from enum import StrEnum
 from typing import NamedTuple
 
@@ -378,6 +379,38 @@ BLOCKER_MISSING_PO = Param(
 )
 
 # ---------------------------------------------------------------------------
+# Repair probabilities.
+#
+# These lived as bare literals inside dynamics.py until the breakeven sweep went
+# looking for the parameter that actually carries our headline result and could
+# not reach them. That is worth stating plainly: the two numbers most likely to
+# be load-bearing were not in the parameters file, which meant the sensitivity
+# analysis could not have found them. A limitations section listing every
+# parameter is worthless if the important ones are somewhere else.
+# ---------------------------------------------------------------------------
+
+PORTAL_REPAIR_SUCCESS = Param(
+    0.70, Provenance.PRIOR,
+    "Chance a document chase gets an invoice onto the buyer's AP portal. Drives "
+    "the agent's single largest segment win - process-bound recovery moves ~20pp "
+    "on this number - and is therefore swept explicitly.",
+)
+PO_REPAIR_SUCCESS = Param(
+    0.55, Provenance.PRIOR,
+    "Chance a document chase recovers a missing PO reference.",
+)
+DISPUTE_RESOLUTION_SUCCESS = Param(
+    0.62, Provenance.PRIOR,
+    "Chance one dispute-resolution contact settles an open dispute, either way.",
+)
+DISPUTE_CREDIT_NOTE_SHARE = Param(
+    0.60, Provenance.PRIOR,
+    "Share of settled disputes resolved by issuing a credit note rather than by "
+    "the buyer dropping the claim. Higher values mean more of the 'recovery' is "
+    "actually forgiveness, which is why write-offs are reported separately.",
+)
+
+# ---------------------------------------------------------------------------
 # Mechanical.
 # ---------------------------------------------------------------------------
 
@@ -408,3 +441,50 @@ def provenance_report() -> dict[str, int]:
         for p in d.values():
             counts[p.provenance.value] += 1
     return counts
+
+
+# ---------------------------------------------------------------------------
+# Runtime overrides
+# ---------------------------------------------------------------------------
+
+
+@contextmanager
+def overrides(**changes: float):
+    """Temporarily replace parameter values, for sensitivity and breakeven runs.
+
+    Exists so that "what would have to be true for our conclusion to flip" is a
+    question the code can answer, rather than a paragraph in a limitations
+    section. Values are restored on exit even if the body raises, so a failed
+    sweep cannot leave the module in a perturbed state and silently poison every
+    later run in the same process.
+
+        with overrides(FATIGUE_PER_EXCESS_CONTACT=0.06):
+            ...
+
+    Nested parameters (the archetype mix) are addressed by name with a dotted
+    suffix: `ARCHETYPE_MIX.avoider=0.12`.
+    """
+    saved: dict[str, object] = {}
+    try:
+        for key, value in changes.items():
+            if "." in key:
+                container, member = key.split(".", 1)
+                table = globals()[container]
+                saved[key] = table[BuyerArchetype(member)]
+                old = table[BuyerArchetype(member)]
+                table[BuyerArchetype(member)] = Param(value, old.provenance, old.note)
+            else:
+                old = globals()[key]
+                saved[key] = old
+                if isinstance(old, Param):
+                    globals()[key] = Param(value, old.provenance, old.note)
+                else:
+                    globals()[key] = value
+        yield
+    finally:
+        for key, old in saved.items():
+            if "." in key:
+                container, member = key.split(".", 1)
+                globals()[container][BuyerArchetype(member)] = old
+            else:
+                globals()[key] = old

@@ -163,12 +163,27 @@ class Guardrails:
                         f"deferral no longer granted.",
                     )
                 )
-            else:
+            elif day <= promise.promised_date:
                 out.append(
                     _no(
                         "promise_freeze",
                         f'Buyer committed to {promise.promised_date.isoformat()} '
                         f'("{promise.source_quote[:60]}"). Silent until then.',
+                    )
+                )
+            else:
+                # Past the promised date but inside the grace window. Saying
+                # "silent until then" here was simply false - the date had gone.
+                # The reason it is still silent is that a transfer takes a few
+                # days to appear, and chasing inside that window is hovering.
+                waited = (day - promise.promised_date).days
+                left = c.promise_grace_days - waited
+                out.append(
+                    _no(
+                        "promise_freeze",
+                        f"Promised date {promise.promised_date.isoformat()} has passed "
+                        f"({waited}d ago); allowing {left}d more for the transfer to "
+                        f"clear before following up.",
                     )
                 )
         else:

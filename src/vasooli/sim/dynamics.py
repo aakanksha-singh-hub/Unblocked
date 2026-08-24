@@ -418,10 +418,12 @@ def _repair_intake(
         rt = st.invoices[iid]
         repaired = False
         if world.buyers[buyer_id].uses_ap_portal and not rt.portal_submitted:
-            if rng.bernoulli(st.seed, 0.70, iid, day, "portal_fix"):
+            if rng.bernoulli(st.seed, float(cal.PORTAL_REPAIR_SUCCESS.value), iid, day, "portal_fix"):
                 rt.portal_submitted = True
                 repaired = True
-        if not rt.has_po and rng.bernoulli(st.seed, 0.55, iid, day, "po_fix"):
+        if not rt.has_po and rng.bernoulli(
+            st.seed, float(cal.PO_REPAIR_SUCCESS.value), iid, day, "po_fix"
+        ):
             rt.has_po = True
             repaired = True
         if repaired:
@@ -452,10 +454,14 @@ def _resolve_disputes(world: World, st: RunState, buyer_id: str, day: date) -> b
     br = st.buyers[buyer_id]
     any_resolved = False
     for d in br.open_disputes():
-        if not rng.bernoulli(st.seed, 0.62, d.dispute_id, day, "dispute_resolve"):
+        if not rng.bernoulli(
+            st.seed, float(cal.DISPUTE_RESOLUTION_SUCCESS.value), d.dispute_id, day, "dispute_resolve"
+        ):
             continue
         any_resolved = True
-        if rng.bernoulli(st.seed, 0.60, d.dispute_id, "credit_note"):
+        if rng.bernoulli(
+            st.seed, float(cal.DISPUTE_CREDIT_NOTE_SHARE.value), d.dispute_id, "credit_note"
+        ):
             d.status = "credit_note_issued"
             for iid in d.invoice_ids:
                 rt = st.invoices[iid]

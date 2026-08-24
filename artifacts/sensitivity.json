@@ -1,0 +1,168 @@
+{
+  "world_fingerprint": "69b53018809c6381",
+  "sweeps": [
+    {
+      "parameter": "PORTAL_REPAIR_SUCCESS",
+      "rationale": "If chasing paperwork rarely works, the process-bound win evaporates.",
+      "chosen": 0.7,
+      "crossing": null,
+      "holds_at_chosen": true,
+      "points": [
+        {
+          "retention": 0.0,
+          "agent_value": 12454012822.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1200,
+          "rival_messages": 0,
+          "margin": 123950261.0
+        },
+        {
+          "retention": 0.15,
+          "agent_value": 13117221798.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1167,
+          "rival_messages": 0,
+          "margin": 787159237.0
+        },
+        {
+          "retention": 0.3,
+          "agent_value": 13347505860.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1145,
+          "rival_messages": 0,
+          "margin": 1017443299.0
+        },
+        {
+          "retention": 0.5,
+          "agent_value": 13380605860.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1133,
+          "rival_messages": 0,
+          "margin": 1050543299.0
+        },
+        {
+          "retention": 0.7,
+          "agent_value": 13410155860.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1124,
+          "rival_messages": 0,
+          "margin": 1080093299.0
+        },
+        {
+          "retention": 0.9,
+          "agent_value": 13410155860.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1119,
+          "rival_messages": 0,
+          "margin": 1080093299.0
+        }
+      ]
+    },
+    {
+      "parameter": "DISPUTE_RESOLUTION_SUCCESS",
+      "rationale": "If disputes are hard to settle, resolving them is not a strategy.",
+      "chosen": 0.62,
+      "crossing": null,
+      "holds_at_chosen": true,
+      "points": [
+        {
+          "retention": 0.0,
+          "agent_value": 13225840981.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1159,
+          "rival_messages": 0,
+          "margin": 895778420.0
+        },
+        {
+          "retention": 0.15,
+          "agent_value": 13381475467.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1148,
+          "rival_messages": 0,
+          "margin": 1051412906.0
+        },
+        {
+          "retention": 0.3,
+          "agent_value": 13516839710.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1143,
+          "rival_messages": 0,
+          "margin": 1186777149.0
+        },
+        {
+          "retention": 0.45,
+          "agent_value": 13520446710.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1127,
+          "rival_messages": 0,
+          "margin": 1190384149.0
+        },
+        {
+          "retention": 0.62,
+          "agent_value": 13410155860.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1124,
+          "rival_messages": 0,
+          "margin": 1080093299.0
+        },
+        {
+          "retention": 0.85,
+          "agent_value": 13424776674.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1118,
+          "rival_messages": 0,
+          "margin": 1094714113.0
+        }
+      ]
+    },
+    {
+      "parameter": "ARCHETYPE_MIX.process_bound",
+      "rationale": "If few buyers are cyclic payers, cause-matching has less to find.",
+      "chosen": 0.26,
+      "crossing": null,
+      "holds_at_chosen": true,
+      "points": [
+        {
+          "retention": 0.05,
+          "agent_value": 13921100094.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1129,
+          "rival_messages": 0,
+          "margin": 1591037533.0
+        },
+        {
+          "retention": 0.12,
+          "agent_value": 13958097119.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1119,
+          "rival_messages": 0,
+          "margin": 1628034558.0
+        },
+        {
+          "retention": 0.2,
+          "agent_value": 14006447146.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1112,
+          "rival_messages": 0,
+          "margin": 1676384585.0
+        },
+        {
+          "retention": 0.26,
+          "agent_value": 13410155860.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1124,
+          "rival_messages": 0,
+          "margin": 1080093299.0
+        },
+        {
+          "retention": 0.35,
+          "agent_value": 13408256901.0,
+          "rival_value": 12330062561.0,
+          "agent_messages": 1134,
+          "rival_messages": 0,
+          "margin": 1078194340.0
+        }
+      ]
+    }
+  ]
+}
