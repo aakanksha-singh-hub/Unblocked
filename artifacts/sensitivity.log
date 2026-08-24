@@ -1,0 +1,90 @@
+world 69b53018809c6381  208 buyers
+rival never-chase   metric recovered
+
+--- PORTAL_REPAIR_SUCCESS ---
+    If chasing paperwork rarely works, the process-bound win evaporates.
+    PORTAL_REPAIR_SUCCESS=0.000   margin      1,239,503
+    PORTAL_REPAIR_SUCCESS=0.150   margin      7,871,592
+    PORTAL_REPAIR_SUCCESS=0.300   margin     10,174,433
+    PORTAL_REPAIR_SUCCESS=0.500   margin     10,505,433
+    PORTAL_REPAIR_SUCCESS=0.700   margin     10,800,933
+    PORTAL_REPAIR_SUCCESS=0.900   margin     10,800,933
+
+BREAKEVEN on PORTAL_REPAIR_SUCCESS  (cause-matched vs never-chase, metric: recovered)
+
+Our headline finding rests on a parameter we invented. This is the
+value at which it stops being true.
+
+     value           agent     never-chase          margin        msgs a/r
+--------------------------------------------------------------------------
+      0.90     134,101,559     123,300,626      10,800,933    1119/0      
+      0.70     134,101,559     123,300,626      10,800,933    1124/0        <- chosen
+      0.50     133,806,059     123,300,626      10,505,433    1133/0      
+      0.30     133,475,059     123,300,626      10,174,433    1145/0      
+      0.15     131,172,218     123,300,626       7,871,592    1167/0      
+      0.00     124,540,128     123,300,626       1,239,503    1200/0      
+Worst case in range: margin 1,239,503 (11% of the margin at our chosen value).
+This parameter CARRIES the result: most of the advantage disappears at the unfavourable end of the range.
+
+No crossing found: the cause-matched policy wins at every value swept.
+A conclusion that never flips inside the swept range is not thereby
+robust - it may mean the range was too narrow. The range is stated above.
+
+--- DISPUTE_RESOLUTION_SUCCESS ---
+    If disputes are hard to settle, resolving them is not a strategy.
+    DISPUTE_RESOLUTION_SUCCESS=0.000   margin      8,957,784
+    DISPUTE_RESOLUTION_SUCCESS=0.150   margin     10,514,129
+    DISPUTE_RESOLUTION_SUCCESS=0.300   margin     11,867,771
+    DISPUTE_RESOLUTION_SUCCESS=0.450   margin     11,903,841
+    DISPUTE_RESOLUTION_SUCCESS=0.620   margin     10,800,933
+    DISPUTE_RESOLUTION_SUCCESS=0.850   margin     10,947,141
+
+BREAKEVEN on DISPUTE_RESOLUTION_SUCCESS  (cause-matched vs never-chase, metric: recovered)
+
+Our headline finding rests on a parameter we invented. This is the
+value at which it stops being true.
+
+     value           agent     never-chase          margin        msgs a/r
+--------------------------------------------------------------------------
+      0.85     134,247,767     123,300,626      10,947,141    1118/0      
+      0.62     134,101,559     123,300,626      10,800,933    1124/0        <- chosen
+      0.45     135,204,467     123,300,626      11,903,841    1127/0      
+      0.30     135,168,397     123,300,626      11,867,771    1143/0      
+      0.15     133,814,755     123,300,626      10,514,129    1148/0      
+      0.00     132,258,410     123,300,626       8,957,784    1159/0      
+Worst case in range: margin 8,957,784 (83% of the margin at our chosen value).
+This parameter matters but does not carry the result.
+
+No crossing found: the cause-matched policy wins at every value swept.
+A conclusion that never flips inside the swept range is not thereby
+robust - it may mean the range was too narrow. The range is stated above.
+
+--- ARCHETYPE_MIX.process_bound ---
+    If few buyers are cyclic payers, cause-matching has less to find. Generation-time: the population is rebuilt at each point.
+    ARCHETYPE_MIX.process_bound=0.050   margin      6,533,387
+    ARCHETYPE_MIX.process_bound=0.120   margin     10,976,241
+    ARCHETYPE_MIX.process_bound=0.200   margin      5,893,556
+    ARCHETYPE_MIX.process_bound=0.260   margin     10,800,933
+    ARCHETYPE_MIX.process_bound=0.350   margin     14,593,794
+
+BREAKEVEN on ARCHETYPE_MIX.process_bound  (cause-matched vs never-chase, metric: recovered)
+
+Our headline finding rests on a parameter we invented. This is the
+value at which it stops being true.
+
+     value           agent     never-chase          margin        msgs a/r
+--------------------------------------------------------------------------
+      0.35     132,788,173     118,194,379      14,593,794    1131/0      
+      0.26     134,101,559     123,300,626      10,800,933    1124/0        <- chosen
+      0.20     143,486,183     137,592,627       5,893,556    1230/0      
+      0.12     133,702,516     122,726,276      10,976,241    1046/0      
+      0.05      75,677,332      69,143,945       6,533,387     837/0      
+Worst case in range: margin 5,893,556 (55% of the margin at our chosen value).
+This parameter matters but does not carry the result.
+[generation-time parameter: population regenerated per point, so points are not paired with each other]
+
+No crossing found: the cause-matched policy wins at every value swept.
+A conclusion that never flips inside the swept range is not thereby
+robust - it may mean the range was too narrow. The range is stated above.
+
+artifacts/sensitivity.json written

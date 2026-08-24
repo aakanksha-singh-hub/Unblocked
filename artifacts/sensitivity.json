@@ -117,34 +117,34 @@
     },
     {
       "parameter": "ARCHETYPE_MIX.process_bound",
-      "rationale": "If few buyers are cyclic payers, cause-matching has less to find.",
+      "rationale": "If few buyers are cyclic payers, cause-matching has less to find. Generation-time: the population is rebuilt at each point.",
       "chosen": 0.26,
       "crossing": null,
       "holds_at_chosen": true,
       "points": [
         {
           "retention": 0.05,
-          "agent_value": 13921100094.0,
-          "rival_value": 12330062561.0,
-          "agent_messages": 1129,
+          "agent_value": 7567733190.0,
+          "rival_value": 6914394517.0,
+          "agent_messages": 837,
           "rival_messages": 0,
-          "margin": 1591037533.0
+          "margin": 653338673.0
         },
         {
           "retention": 0.12,
-          "agent_value": 13958097119.0,
-          "rival_value": 12330062561.0,
-          "agent_messages": 1119,
+          "agent_value": 13370251626.0,
+          "rival_value": 12272627552.0,
+          "agent_messages": 1046,
           "rival_messages": 0,
-          "margin": 1628034558.0
+          "margin": 1097624074.0
         },
         {
           "retention": 0.2,
-          "agent_value": 14006447146.0,
-          "rival_value": 12330062561.0,
-          "agent_messages": 1112,
+          "agent_value": 14348618290.0,
+          "rival_value": 13759262718.0,
+          "agent_messages": 1230,
           "rival_messages": 0,
-          "margin": 1676384585.0
+          "margin": 589355572.0
         },
         {
           "retention": 0.26,
@@ -156,11 +156,11 @@
         },
         {
           "retention": 0.35,
-          "agent_value": 13408256901.0,
-          "rival_value": 12330062561.0,
-          "agent_messages": 1134,
+          "agent_value": 13278817335.0,
+          "rival_value": 11819437898.0,
+          "agent_messages": 1131,
           "rival_messages": 0,
-          "margin": 1078194340.0
+          "margin": 1459379437.0
         }
       ]
     }
