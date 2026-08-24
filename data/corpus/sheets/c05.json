@@ -1,0 +1,76 @@
+{
+  "contributor": "c05",
+  "consent": "Thanks for helping with this.\n\nThis is a student project about how businesses reply to payment reminders. Your\nreplies will be published as part of an open dataset used to test whether AI can\ncorrectly understand messages like these.\n\nPlease do NOT include: real company names, real people's names, real amounts from\nactual invoices, real UTR or transaction numbers, or text copied from a real\nconversation. Make it up. Made-up is what we need.\n\nWrite the way you would actually write - WhatsApp style, short forms, Hinglish,\ntypos, no punctuation, whatever is natural for you. Please don't clean it up or\nmake it formal on our account; a corpus of tidy English would be useless.\n\nYou can skip any scenario you don't want to answer.\n",
+  "items": [
+    {
+      "item_id": "c05_i01",
+      "scenario": "You have been putting off this supplier for a while. They have now sent a firmer message mentioning the agreed payment terms. The bill is more than three months overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i02",
+      "scenario": "You genuinely forgot about this bill. It is a small amount and you can pay it quickly. The supplier has just messaged.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i03",
+      "scenario": "Your accounts team cannot find the purchase order number for this bill, so it is stuck. The supplier is asking about payment. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i04",
+      "scenario": "You need the e-way bill and delivery challan copies to process this. You don't have them. The supplier is asking for payment. They have been following up regularly for over a month now.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i05",
+      "scenario": "The GST number printed on the bill is wrong, so your accounts team cannot process it. The supplier is asking why payment is delayed. You have only recently started buying from them.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i06",
+      "scenario": "Your owner signs off on all payments above a certain amount and he is travelling until next week. The supplier wants to know when it will be released. They have been following up regularly for over a month now.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i07",
+      "scenario": "You are waiting for your GST filing to be done before releasing payments this month. The supplier has followed up for the second time. The bill is about three weeks overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i08",
+      "scenario": "Your own customers owe you a lot of money and have not paid, so you cannot pay your suppliers either. The supplier is following up. You have a long-standing relationship with this supplier.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i09",
+      "scenario": "Two of the cartons in the last delivery arrived crushed and you had to reject them. Nobody has sent you a corrected bill. The supplier is asking for full payment. You have only recently started buying from them.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i10",
+      "scenario": "Diwali is coming and your office will be shut for a week. You plan to clear pending bills after reopening. The supplier is asking. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i11",
+      "scenario": "Business has been very slow for several months and you honestly do not have the cash right now. The supplier is asking for payment. The bill is about three weeks overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i12",
+      "scenario": "Someone else in your office handles this supplier and you are just replying because they messaged your number. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i13",
+      "scenario": "You could manage the payment if you were allowed to split it over a few months, but not in one go. The supplier is asking for the whole amount.",
+      "reply": ""
+    },
+    {
+      "item_id": "c05_i14",
+      "scenario": "You received less material than what the bill says. The supplier is following up on the full amount. The bill is more than three months overdue.",
+      "reply": ""
+    }
+  ]
+}

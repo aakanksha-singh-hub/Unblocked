@@ -1,0 +1,76 @@
+{
+  "contributor": "c09",
+  "consent": "Thanks for helping with this.\n\nThis is a student project about how businesses reply to payment reminders. Your\nreplies will be published as part of an open dataset used to test whether AI can\ncorrectly understand messages like these.\n\nPlease do NOT include: real company names, real people's names, real amounts from\nactual invoices, real UTR or transaction numbers, or text copied from a real\nconversation. Make it up. Made-up is what we need.\n\nWrite the way you would actually write - WhatsApp style, short forms, Hinglish,\ntypos, no punctuation, whatever is natural for you. Please don't clean it up or\nmake it formal on our account; a corpus of tidy English would be useless.\n\nYou can skip any scenario you don't want to answer.\n",
+  "items": [
+    {
+      "item_id": "c09_i01",
+      "scenario": "You received less material than what the bill says. The supplier is following up on the full amount. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i02",
+      "scenario": "You are waiting for your GST filing to be done before releasing payments this month. The supplier has followed up for the second time. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i03",
+      "scenario": "The quality of this batch was not up to standard and your production team has complained. You have not paid. The supplier has messaged. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i04",
+      "scenario": "You need the e-way bill and delivery challan copies to process this. You don't have them. The supplier is asking for payment. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i05",
+      "scenario": "You genuinely forgot about this bill. It is a small amount and you can pay it quickly. The supplier has just messaged. You have only recently started buying from them.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i06",
+      "scenario": "You have been told by your manager not to release this payment but you have not been told why. The supplier is asking. The bill is about three weeks overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i07",
+      "scenario": "You are not sure whether this bill has been paid or not and you need to check with your accounts person. The supplier is asking. You have only recently started buying from them.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i08",
+      "scenario": "Two of the cartons in the last delivery arrived crushed and you had to reject them. Nobody has sent you a corrected bill. The supplier is asking for full payment. The bill is more than three months overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i09",
+      "scenario": "You paid roughly half of what is owed last week and plan to pay the rest later. The supplier is asking for the full amount. You have a long-standing relationship with this supplier.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i10",
+      "scenario": "Your company pays all suppliers in one batch on the 10th of each month. This bill missed the last batch. The supplier has messaged asking where the payment is. They have been following up regularly for over a month now.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i11",
+      "scenario": "The goods receipt note has not been entered by your stores team yet, so the bill cannot move forward. The supplier is following up. You have a long-standing relationship with this supplier.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i12",
+      "scenario": "Diwali is coming and your office will be shut for a week. You plan to clear pending bills after reopening. The supplier is asking. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i13",
+      "scenario": "The rate on the bill is higher than what was agreed in the purchase order. The supplier is chasing payment. They have been following up regularly for over a month now.",
+      "reply": ""
+    },
+    {
+      "item_id": "c09_i14",
+      "scenario": "You will have money after a large customer of yours pays you, which you expect sometime near the end of the month. The supplier is asking for an update. The bill is about three weeks overdue.",
+      "reply": ""
+    }
+  ]
+}
