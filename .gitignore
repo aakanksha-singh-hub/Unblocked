@@ -7,3 +7,9 @@ __pycache__/
 *.egg-info/
 artifacts/runs/
 .DS_Store
+
+# Credentials. Never committed. See docs/SECRETS.md
+.env
+.env.*
+!.env.example
+*.key
