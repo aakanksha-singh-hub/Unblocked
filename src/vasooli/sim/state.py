@@ -43,6 +43,20 @@ class InvoiceRuntime:
     #: than of whatever happens to be left.
     original: Paise
 
+    #: Intake state, copied from the Invoice at run start and mutable *per run*.
+    #: These live here rather than on the Invoice because `World` is shared
+    #: across every policy run in a comparison - mutating it would let one
+    #: policy's document chase silently fix the book for the next policy, and
+    #: the paired comparison would quietly stop being a comparison.
+    portal_submitted: bool = True
+    has_po: bool = True
+
+    #: Value forgiven via credit note to settle a dispute. Tracked separately
+    #: because writing off a disputed amount unblocks the remainder but is not
+    #: money recovered, and reporting it inside recovery would let the agent
+    #: "collect" by forgiving debt.
+    written_off: Paise = 0
+
     @property
     def is_open(self) -> bool:
         return self.outstanding > 0
@@ -99,6 +113,11 @@ class RunState:
     outbound: list[OutboundMessage] = field(default_factory=list)
     inbound: list[InboundMessage] = field(default_factory=list)
     audit: list[AuditEntry] = field(default_factory=list)
+
+    #: Disputes settled by writing off the disputed portion, and intake defects
+    #: repaired by a document chase. Both are reported in the run summary.
+    write_offs: Paise = 0
+    intake_repairs: int = 0
 
     #: Outbound indexed by send date, and the set of messages already replied
     #: to. Both are pure indices over `outbound`/`inbound`, kept because

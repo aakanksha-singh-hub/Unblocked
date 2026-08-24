@@ -80,12 +80,79 @@ def test_outstanding_never_negative(small_world):
 
 
 def test_ledger_balances(small_world):
-    """Collected plus outstanding equals the book, exactly. Integer paise means
-    this is an equality and not an approximation - if it ever needs a tolerance,
-    a float has crept in."""
+    """Collected plus outstanding plus written-off equals the book, exactly.
+    Integer paise means this is an equality and not an approximation - if it
+    ever needs a tolerance, a float has crept in."""
     st = runner.run(small_world, baselines.StaticLadder()).state
     book = sum(i.amount for i in small_world.invoices.values())
-    assert st.total_collected() + st.total_outstanding() == book
+    assert st.total_collected() + st.total_outstanding() + st.write_offs == book
+
+
+def test_credit_notes_are_not_counted_as_recovery(small_world):
+    """A written-off dispute unblocks the remainder but is not money collected.
+    Without this, an agent could 'recover' any amount by forgiving it."""
+    from vasooli.domain.enums import Intervention
+    from vasooli.domain.models import Decision
+
+    st = dynamics.new_run(small_world)
+    day = small_world.start_date
+    # Drive disputes onto the book, then settle them.
+    for _ in range(40):
+        for bid in small_world.buyers:
+            dynamics.apply_decision(
+                small_world,
+                st,
+                Decision(buyer_id=bid, as_of=day, chosen=Intervention.DISPUTE_RESOLUTION, rationale="t"),
+            )
+        dynamics.advance(small_world, st, day)
+        day += timedelta(days=1)
+
+    assert st.write_offs > 0, "test is vacuous with no credit notes issued"
+    collected = st.total_collected()
+    assert all(p.amount > 0 for p in st.payments)
+    book = sum(i.amount for i in small_world.invoices.values())
+    assert collected + st.total_outstanding() + st.write_offs == book
+    assert collected < book
+
+
+def test_document_reconcile_can_unblock_portal_invoices(small_world):
+    """The highest-value discovery in the book must be reachable by some action.
+    Modelled as a hazard multiplier alone it was not: zero times 1.6 is zero."""
+    from vasooli.domain.enums import Intervention
+    from vasooli.domain.models import Decision
+
+    st = dynamics.new_run(small_world)
+    blocked = [
+        iid
+        for iid, inv in small_world.invoices.items()
+        if small_world.buyers[inv.buyer_id].uses_ap_portal and not inv.portal_submitted
+    ]
+    assert blocked, "test is vacuous with no portal-blocked invoices"
+    day = small_world.start_date
+    for bid in {small_world.invoices[i].buyer_id for i in blocked}:
+        for k in range(6):
+            dynamics.apply_decision(
+                small_world,
+                st,
+                Decision(
+                    buyer_id=bid,
+                    as_of=day + timedelta(days=k),
+                    chosen=Intervention.DOCUMENT_RECONCILE,
+                    rationale="t",
+                ),
+            )
+    assert st.intake_repairs > 0
+    assert any(st.invoices[i].portal_submitted for i in blocked)
+
+
+def test_world_is_not_mutated_by_a_run(small_world):
+    """Runs share one World. If a policy's document chase repaired the shared
+    book, the next policy would start from a different world and the paired
+    comparison would silently stop being one."""
+    before = small_world.fingerprint()
+    runner.run(small_world, baselines.StaticLadder())
+    runner.run(small_world, baselines.BlastWeekly())
+    assert small_world.fingerprint() == before
 
 
 def test_all_payments_are_integers(small_world):

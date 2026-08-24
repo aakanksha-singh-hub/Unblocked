@@ -47,7 +47,13 @@ def new_run(world: World, *, seed: int | None = None) -> RunState:
     """
     seed = world.seed if seed is None else seed
     invoices = {
-        iid: InvoiceRuntime(invoice_id=iid, outstanding=inv.amount, original=inv.amount)
+        iid: InvoiceRuntime(
+            invoice_id=iid,
+            outstanding=inv.amount,
+            original=inv.amount,
+            portal_submitted=inv.portal_submitted,
+            has_po=inv.po_number is not None,
+        )
         for iid, inv in world.invoices.items()
     }
     pending = {
@@ -120,12 +126,12 @@ def _blockers(world: World, st: RunState, buyer_id: str, invoice_id: str) -> tup
     mult = 1.0
     cap: Paise = rt.outstanding
 
-    if buyer.uses_ap_portal and not inv.portal_submitted:
+    if buyer.uses_ap_portal and not rt.portal_submitted:
         # Invisible on an aging report, fatal in reality: the invoice does not
         # exist as far as AP is concerned.
         mult *= float(cal.BLOCKER_PORTAL_NOT_SUBMITTED.value)
 
-    if inv.po_number is None:
+    if not rt.has_po:
         mult *= float(cal.BLOCKER_MISSING_PO.value)
 
     for d in br.open_disputes():
@@ -332,11 +338,87 @@ def apply_decision(
     st.outbound.append(msg)
     st.outbound_by_day.setdefault(day, []).append(msg)
 
-    # An accepted instalment offer rewrites the buyer's capacity constraint.
-    if decision.chosen is Intervention.INSTALMENT_OFFER and br.plan is None:
+    # Three interventions are not merely persuasive - they change the state of
+    # the world. Modelling them as hazard multipliers alone was wrong: a
+    # portal-blocked invoice has hazard exactly zero, so multiplying it by 1.6
+    # leaves it at zero and the single highest-value discovery in the book was
+    # unreachable by any action.
+    if decision.chosen is Intervention.DOCUMENT_RECONCILE:
+        _repair_intake(world, st, bid, day, open_ids)
+    elif decision.chosen is Intervention.DISPUTE_RESOLUTION:
+        _resolve_disputes(world, st, bid, day)
+    elif decision.chosen is Intervention.INSTALMENT_OFFER and br.plan is None:
         _maybe_accept_plan(world, st, bid, day, open_ids)
 
     return msg
+
+
+def _repair_intake(
+    world: World, st: RunState, buyer_id: str, day: date, invoice_ids: list[str]
+) -> None:
+    """Chase the paperwork that stops an invoice entering the buyer's system.
+
+    This is the action that converts an invoice nobody at the buyer can see into
+    one that is merely unpaid. On an aging report both look identical - "90 days
+    overdue" - which is exactly why it goes unfound.
+    """
+    for iid in invoice_ids:
+        rt = st.invoices[iid]
+        repaired = False
+        if world.buyers[buyer_id].uses_ap_portal and not rt.portal_submitted:
+            if rng.bernoulli(st.seed, 0.70, iid, day, "portal_fix"):
+                rt.portal_submitted = True
+                repaired = True
+        if not rt.has_po and rng.bernoulli(st.seed, 0.55, iid, day, "po_fix"):
+            rt.has_po = True
+            repaired = True
+        if repaired:
+            st.intake_repairs += 1
+            st.audit.append(
+                AuditEntry(
+                    at=datetime.combine(day, time(12, 0)),
+                    buyer_id=buyer_id,
+                    kind="intake_repaired",
+                    summary=(
+                        f"{world.invoices[iid].invoice_number} was blocked at intake, "
+                        f"not unpaid by choice; paperwork resolved"
+                    ),
+                    payload={"invoice_id": iid, "outstanding": rt.outstanding},
+                )
+            )
+
+
+def _resolve_disputes(world: World, st: RunState, buyer_id: str, day: date) -> None:
+    """Settle open disputes, either by credit note or by the buyer dropping it.
+
+    A credit note is a real cost, not a recovery. It is booked to
+    `st.write_offs` and never counted as money collected - otherwise the agent
+    could 'recover' any amount by forgiving it.
+    """
+    br = st.buyers[buyer_id]
+    for d in br.open_disputes():
+        if not rng.bernoulli(st.seed, 0.62, d.dispute_id, day, "dispute_resolve"):
+            continue
+        if rng.bernoulli(st.seed, 0.60, d.dispute_id, "credit_note"):
+            d.status = "credit_note_issued"
+            for iid in d.invoice_ids:
+                rt = st.invoices[iid]
+                amount = Paise(min(rt.outstanding, d.disputed_amount or rt.outstanding))
+                rt.outstanding = Paise(rt.outstanding - amount)
+                rt.written_off = Paise(rt.written_off + amount)
+                st.write_offs = Paise(st.write_offs + amount)
+        else:
+            d.status = "rejected"
+        d.resolved_on = day
+        st.audit.append(
+            AuditEntry(
+                at=datetime.combine(day, time(12, 30)),
+                buyer_id=buyer_id,
+                kind="dispute_resolved",
+                summary=f"{d.kind} dispute settled as {d.status}",
+                payload={"dispute_id": d.dispute_id, "disputed": d.disputed_amount},
+            )
+        )
 
 
 def _maybe_accept_plan(

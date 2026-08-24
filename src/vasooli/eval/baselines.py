@@ -47,6 +47,13 @@ class BlastWeekly:
 
     name = "blast-weekly"
 
+    #: A SOFT_NUDGE, not a FIRM_REMINDER. This is the charitable reading of
+    #: "chase everyone": a naive operator being persistent, not an aggressive
+    #: one. At relationship cost 2 rather than 8 it survives the full horizon
+    #: without churning most of the book, which makes it a genuinely hard
+    #: baseline to beat instead of a strawman that destroys itself.
+    ACTION = Intervention.SOFT_NUDGE
+
     def observe(self, view: LedgerView, day: date) -> None:
         pass
 
@@ -62,9 +69,9 @@ class BlastWeekly:
                 Decision(
                     buyer_id=lg.buyer.buyer_id,
                     as_of=day,
-                    chosen=Intervention.FIRM_REMINDER,
+                    chosen=self.ACTION,
                     rationale=f"{lg.oldest_dpd(day)}d overdue; weekly cadence.",
-                    considered=[Intervention.FIRM_REMINDER],
+                    considered=[self.ACTION],
                     decided_by="policy",
                 )
             )
@@ -80,6 +87,8 @@ class StaticLadder:
 
     name = "static-ladder"
 
+    #: Age-based rungs. The assumption under test: age is a proxy for severity
+    #: only if every buyer is late for the same reason.
     RUNGS: list[tuple[int, Intervention]] = [
         (7, Intervention.SOFT_NUDGE),
         (30, Intervention.STATEMENT_OF_ACCOUNT),
@@ -89,6 +98,14 @@ class StaticLadder:
     ]
 
     name = "static-ladder"
+
+    def __init__(self) -> None:
+        #: Rungs already fired per buyer. Real dunning software escalates to a
+        #: rung once and then holds; an earlier version re-sent OWNER_ESCALATION
+        #: every fortnight for the rest of the horizon, which churned 85% of the
+        #: book and made this a strawman rather than a baseline. Beating a
+        #: strawman would have proved nothing.
+        self._fired: dict[str, set[Intervention]] = {}
 
     def observe(self, view: LedgerView, day: date) -> None:
         pass
@@ -103,19 +120,21 @@ class StaticLadder:
     def decide(self, view: LedgerView, day: date) -> list[Decision]:
         out: list[Decision] = []
         for lg in view.buyers_with_open():
+            bid = lg.buyer.buyer_id
             dpd = lg.oldest_dpd(day)
             iv = self._rung(dpd)
-            if iv is None:
+            if iv is None or iv in self._fired.get(bid, ()):
                 continue
             last = lg.last_contact(day)
             if last is not None and (day - last).days < 14:
                 continue
+            self._fired.setdefault(bid, set()).add(iv)
             out.append(
                 Decision(
-                    buyer_id=lg.buyer.buyer_id,
+                    buyer_id=bid,
                     as_of=day,
                     chosen=iv,
-                    rationale=f"Ladder rung for {dpd}d overdue.",
+                    rationale=f"Ladder rung for {dpd}d overdue (fires once).",
                     considered=[iv],
                     decided_by="policy",
                 )
