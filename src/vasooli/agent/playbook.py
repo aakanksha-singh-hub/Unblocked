@@ -95,7 +95,10 @@ BELIEVED_UPLIFT: dict[Intervention, dict[BuyerArchetype, float]] = {
     Intervention.INSTALMENT_OFFER: {
         BuyerArchetype.PROMPT: 1.0,
         BuyerArchetype.PROCESS_BOUND: 1.0,
-        BuyerArchetype.CASHFLOW_STRESSED: 1.40,
+        # Restructuring a debt someone can already service just slows the money
+        # down. Believed helpful here until the evaluation asked why the agent
+        # lost to doing nothing on this exact segment.
+        BuyerArchetype.CASHFLOW_STRESSED: 0.90,
         BuyerArchetype.DISPUTER: 1.0,
         # Underestimates restructuring - the agent will offer instalments less
         # often than it should.

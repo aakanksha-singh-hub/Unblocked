@@ -266,7 +266,15 @@ EFFECT: dict[Intervention, dict[BuyerArchetype, float]] = {
     Intervention.INSTALMENT_OFFER: {
         BuyerArchetype.PROMPT: 1.0,
         BuyerArchetype.PROCESS_BOUND: 1.0,
-        BuyerArchetype.CASHFLOW_STRESSED: 1.30,
+        # Below 1.0, and it must be: an accepted plan caps payment at the
+        # instalment amount and suppresses the hazard between monthly dates, so
+        # offering one to a buyer who could have paid in full converts a fast
+        # payer into a slow one. This entry said 1.30 while the plan mechanic in
+        # dynamics.py did the opposite - two parts of the same model
+        # contradicting each other, which is worse than either being wrong
+        # alone. Restructuring only pays when capacity is genuinely the binding
+        # constraint.
+        BuyerArchetype.CASHFLOW_STRESSED: 0.85,
         BuyerArchetype.DISPUTER: 1.0,
         BuyerArchetype.AVOIDER: 1.05,
         BuyerArchetype.DISTRESSED: 2.60,  # and lifts lump_sum_capacity; see buyer_model

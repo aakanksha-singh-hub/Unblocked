@@ -43,6 +43,7 @@ class BeliefUpdater:
             bb = beliefs.get(buyer_id)
             self._read_replies(bb, ledger, day)
             self._settle_promises(bb, ledger, day)
+            self._track_hardship_recovery(bb, ledger)
             self._reconcile_claims(bb, ledger, day)
 
     # -- replies ----------------------------------------------------------
@@ -141,6 +142,13 @@ class BeliefUpdater:
                 p.status = "partially_kept"
             else:
                 p.status = "broken"
+
+    def _track_hardship_recovery(self, bb: BuyerBeliefs, ledger: BuyerLedger) -> None:
+        if not bb.hardship_declared or bb.hardship_declared_on is None:
+            return
+        bb.paid_since_hardship = sum(
+            p.amount for p in ledger.payments if p.received_on >= bb.hardship_declared_on
+        )
 
     def _reconcile_claims(self, bb: BuyerBeliefs, ledger: BuyerLedger, day: date) -> None:
         """Match claimed payments against money that actually arrived.

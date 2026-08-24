@@ -17,7 +17,7 @@ send" from an anecdote into evidence.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, timedelta
 
 from ..domain.enums import IRREVERSIBLE, Intervention
@@ -54,6 +54,11 @@ class GateConfig:
     #: of silence on one sentence. Beyond this the promise is acknowledged but
     #: the agent keeps a light cadence.
     max_promise_deferral_days: int = 45
+    #: How long a hardship declaration shields a buyer before it must be
+    #: restated. Not indefinite: the statement was about the moment it was made.
+    hardship_expiry_days: int = 60
+    #: Share of outstanding a buyer can pay before the shield clears early.
+    hardship_clear_ratio: float = 0.25
     quiet_hour_start: int = 9
     quiet_hour_end: int = 19
 
@@ -63,6 +68,20 @@ class GateDecision:
     allowed: list[Intervention]
     results: list[GateResult]
     requires_approval: bool = False
+    """True if ANY allowed action needs sign-off. Kept for callers that only ask
+    whether a human is involved at all; use `needs_approval` to ask about the
+    action actually chosen."""
+
+    approval_required_for: set[Intervention] = field(default_factory=set)
+
+    def needs_approval(self, action: Intervention) -> bool:
+        """Whether this specific action requires sign-off.
+
+        The buyer-level flag leaked: if an irreversible candidate survived
+        gating, every chosen action inherited its approval requirement, so a
+        routine document chase was rendered as needing the owner's signature.
+        """
+        return action in self.approval_required_for
 
     def blocked(self) -> list[GateResult]:
         return [r for r in self.results if not r.passed]
@@ -224,7 +243,12 @@ class Guardrails:
 
         # A buyer who has said they cannot pay must not be escalated at. This is
         # the gate that exists for human reasons rather than commercial ones.
-        if beliefs.hardship_declared and action in (
+        if beliefs.hardship_active(
+            day,
+            expiry_days=c.hardship_expiry_days,
+            clear_ratio=c.hardship_clear_ratio,
+            outstanding=ledger.outstanding,
+        ) and action in (
             Intervention.FIRM_REMINDER,
             Intervention.OWNER_ESCALATION,
             Intervention.MSMED_NOTICE,
@@ -305,6 +329,7 @@ class Guardrails:
 
         allowed: list[Intervention] = []
         requires_approval = False
+        needs_signoff: set[Intervention] = set()
 
         for action in candidates:
             if action is Intervention.HOLD:
@@ -325,11 +350,13 @@ class Guardrails:
             # counterparty and belongs to a person.
             if action is Intervention.SAMADHAAN_FILING:
                 requires_approval = True
+                needs_signoff.add(action)
                 results.append(
                     _ok("human_approval", "Samadhaan filing always requires sign-off.")
                 )
             elif action in IRREVERSIBLE:
                 requires_approval = True
+                needs_signoff.add(action)
                 results.append(
                     _ok("human_approval", f"{action.value} is irreversible; sign-off required.")
                 )
@@ -340,5 +367,8 @@ class Guardrails:
             allowed.append(Intervention.HOLD)
 
         return GateDecision(
-            allowed=allowed, results=results, requires_approval=requires_approval
+            allowed=allowed,
+            results=results,
+            requires_approval=requires_approval,
+            approval_required_for=needs_signoff,
         )

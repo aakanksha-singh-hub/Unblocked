@@ -188,14 +188,60 @@ def test_open_dispute_permits_only_resolution_paths(g):
 )
 def test_hardship_blocks_all_pressure(g, action):
     """The gate that exists for human reasons rather than commercial ones."""
-    b = BuyerBeliefs(buyer_id="buy_test", hardship_declared=True)
+    b = BuyerBeliefs(
+        buyer_id="buy_test", hardship_declared=True, hardship_declared_on=TODAY - timedelta(days=5)
+    )
     d = g.filter([action], make_ledger(), b, TODAY)
     assert action not in d.allowed
     assert not gate(d.results, "hardship_shield").passed
 
 
-def test_hardship_still_permits_instalment_offer(g):
+def test_undated_hardship_fails_closed(g):
+    """A shield with no recorded date cannot be shown to have expired. Failing
+    open would mean applying pressure to someone who said they cannot pay."""
     b = BuyerBeliefs(buyer_id="buy_test", hardship_declared=True)
+    d = g.filter([Intervention.FIRM_REMINDER], make_ledger(), b, TODAY)
+    assert Intervention.FIRM_REMINDER not in d.allowed
+
+
+def test_hardship_expires(g):
+    """A declaration made two months ago is a statement about two months ago.
+    Without expiry, one sentence permanently disarms every firm action."""
+    b = BuyerBeliefs(
+        buyer_id="buy_test", hardship_declared=True, hardship_declared_on=TODAY - timedelta(days=90)
+    )
+    d = g.filter([Intervention.FIRM_REMINDER], make_ledger(), b, TODAY)
+    assert Intervention.FIRM_REMINDER in d.allowed
+
+
+def test_hardship_clears_early_on_evidence_of_capacity(g):
+    """Someone paying substantial amounts is demonstrably able to pay."""
+    b = BuyerBeliefs(
+        buyer_id="buy_test",
+        hardship_declared=True,
+        hardship_declared_on=TODAY - timedelta(days=5),
+        paid_since_hardship=100000_00,
+    )
+    d = g.filter([Intervention.FIRM_REMINDER], make_ledger(amount=250000_00), b, TODAY)
+    assert Intervention.FIRM_REMINDER in d.allowed
+
+
+def test_partial_payment_does_not_clear_the_shield(g):
+    """A token payment is not evidence of capacity."""
+    b = BuyerBeliefs(
+        buyer_id="buy_test",
+        hardship_declared=True,
+        hardship_declared_on=TODAY - timedelta(days=5),
+        paid_since_hardship=5000_00,
+    )
+    d = g.filter([Intervention.FIRM_REMINDER], make_ledger(amount=250000_00), b, TODAY)
+    assert Intervention.FIRM_REMINDER not in d.allowed
+
+
+def test_hardship_still_permits_instalment_offer(g):
+    b = BuyerBeliefs(
+        buyer_id="buy_test", hardship_declared=True, hardship_declared_on=TODAY - timedelta(days=5)
+    )
     d = g.filter([Intervention.INSTALMENT_OFFER], make_ledger(), b, TODAY)
     assert Intervention.INSTALMENT_OFFER in d.allowed
 
@@ -379,3 +425,20 @@ def test_ordinary_deferral_is_honoured(g):
     )
     d = g.filter(ALL, make_ledger(), b, TODAY)
     assert d.allowed == [Intervention.HOLD]
+
+
+def test_approval_requirement_does_not_leak_between_actions(g):
+    """An irreversible candidate surviving gating must not make every other
+    action need sign-off. A routine document chase was being rendered as
+    requiring the owner's signature because an MSMED notice was also allowed."""
+    b = BuyerBeliefs(buyer_id="buy_test")
+    d = g.filter(
+        [Intervention.DOCUMENT_RECONCILE, Intervention.MSMED_NOTICE],
+        make_ledger(dpd=120),
+        b,
+        TODAY,
+    )
+    assert Intervention.MSMED_NOTICE in d.allowed
+    assert d.needs_approval(Intervention.MSMED_NOTICE)
+    assert not d.needs_approval(Intervention.DOCUMENT_RECONCILE)
+    assert not d.needs_approval(Intervention.HOLD)

@@ -204,12 +204,26 @@ def _promise_factor(st: RunState, buyer_id: str, day: date) -> float:
     if p is None:
         return 1.0
     if day < p.promised_date:
-        # Suppressed, not frozen. At 0.15 the waiting period destroyed more
-        # expected value than the spike returned, making every promise a net
-        # loss and inverting the sign of contacting a cash-stressed buyer -
-        # the opposite of what the effect matrix says. A buyer who names a date
-        # is signalling intent; some still pay early.
-        return 0.40
+        # A promise mostly REVEALS a plan, it does not create one.
+        #
+        # This is the same causality error as disputes being created by contact.
+        # A buyer who intends to pay at month end intends that whether or not a
+        # supplier asked; saying it out loud does not push the date back. By
+        # letting contact produce a promise which then suppressed the hazard,
+        # contact was made to *cause* delay - which is why a cash-stressed buyer
+        # did worse when chased than when ignored, in flat contradiction of the
+        # effect matrix that says nudging them helps.
+        #
+        # What remains is the small genuine effect of having named a date:
+        # commitment anchors behaviour slightly, so payment before the stated
+        # date becomes a little less likely, not dramatically so.
+        #
+        # The fully correct treatment is a latent intended pay-date that the
+        # promise merely reports, with the hazard concentrated there for every
+        # buyer whether or not they were asked. That is a larger change to the
+        # generator than the remaining time allows, and it is recorded as a
+        # known limitation in docs/EVALUATION.md rather than quietly ignored.
+        return 0.85
     if st.promise_will_keep.get(p.promise_id, False):
         return float(cal.PROMISE_HAZARD_SPIKE.value)
     return 0.60

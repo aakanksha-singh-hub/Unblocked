@@ -161,6 +161,82 @@ always, on the same table:
   has not helped a fourteen-person unit where the owner is also the collections
   department. This metric can only make our agent look worse, and it stays.
 
+## What the sweeps actually found
+
+We built the breakeven expecting to report the fatigue threshold. The result was
+a negative one, and more useful than the answer we went looking for.
+
+**Contact fatigue does not carry the result.** Swept from disabled entirely
+(retention 1.00) to severe (0.70), the margin moves about 10% and never crosses
+zero. Our conclusion does not depend on the constant we assumed was load-bearing,
+which means the paragraph we were about to write defending our choice of 0.88
+would have been defending something that did not matter.
+
+That failure exposed a defect worth stating plainly. The two probabilities most
+likely to be carrying the result - how often a document chase unblocks an
+invoice, how often a dispute-resolution contact settles one - were **hardcoded
+literals in dynamics.py rather than parameters**. The sensitivity analysis could
+not have reached them. A limitations section listing every parameter is worthless
+if the important ones live somewhere else.
+
+With those exposed and swept:
+
+| parameter | worst case in range | verdict |
+|---|---:|---|
+| `PORTAL_REPAIR_SUCCESS` | **11%** of margin | **carries the result** |
+| `ARCHETYPE_MIX.process_bound` | 55% | matters, does not carry |
+| `DISPUTE_RESOLUTION_SUCCESS` | 83% | matters, does not carry |
+| contact fatigue | ~90% | largely insensitive |
+
+So the honest claim is narrower than "cause-matching works". It is: **most of the
+advantage is the intake-repair mechanism.** If chasing paperwork rarely unblocks
+an invoice in reality, most of this evaporates. That is the assumption to attack.
+
+We also report worst-case collapse rather than only whether a crossing exists,
+because "no crossing" cannot distinguish a parameter that wipes out 88% of the
+margin from one that costs 17%.
+
+## Testing the stopping rule directly
+
+The promise freeze is the project's headline behaviour, so it should not rest on
+an intuition that restraint is worth it. We ran the identical agent with the
+promise freeze switched off and nothing else changed:
+
+| | cash-stressed recovery | promise respect |
+|---|---:|---:|
+| agent, respects promises | 80.2% | 67% |
+| agent, ignores promises | 75.0% | 27% |
+
+Respecting promises **earns** 5.2pp on the segment that makes the least reliable
+promises. Our prior going in was that restraint would cost recovery and buy
+relationship capital. That prior was wrong, and the measurement is what said so.
+
+## A causality error we fixed twice, and one we did not
+
+Twice now the generator has made *contact* the cause of something that should
+have existed independently:
+
+1. **Disputes were created by replying.** Under that model the optimal response
+   to a damaged consignment is to never mention it, and never-chase won the
+   disputer segment for an entirely spurious reason. Fixed: disputes are latent
+   from day one and contact reveals them.
+2. **Promises suppressed the payment hazard.** A buyer who intends to pay at
+   month end intends that whether or not anyone asked; saying it aloud does not
+   push the date back. Letting contact produce a promise which then suppressed
+   payment made chasing a cash-stressed buyer harmful, contradicting our own
+   effect matrix. Weakened to a small commitment-anchoring effect.
+
+**The one we did not fix.** The fully correct treatment is a latent intended
+pay-date per buyer, with the hazard concentrated there whether or not anyone
+asked, and the promise merely reporting it. That is a larger change to the
+generator than the remaining time allows. It is recorded here rather than
+quietly ignored, and it is the first thing we would do with another week.
+
+A third incoherence of the same family: the effect matrix said instalment offers
+help cash-stressed buyers while the plan mechanic capped their payments and
+suppressed the hazard between monthly dates - two parts of one model
+contradicting each other, which is worse than either being wrong alone.
+
 ## Threats to validity
 
 1. **Generator circularity.** The dominant limitation, addressed above.
@@ -171,6 +247,13 @@ always, on the same table:
 5. **Single-book variance.** Reported across 14 merchants, appendix table only.
 6. **Reply-set size.** 150-200 items is enough for a confidence interval that
    will be wide, and we report the interval rather than the point estimate.
+7. **Promises still carry a small causal effect** they should not have. See
+   above; the latent pay-date refactor is unfinished.
+8. **The archetype model is trained on data from our own baseline policies.**
+   Reply features only exist where contact happened, so pooling across
+   never-chase, blast-weekly and static-ladder gives coverage of both regimes.
+   It reduces the distribution shift against the agent's own behaviour; it does
+   not eliminate it.
 
 ## The falsification test
 

@@ -25,6 +25,12 @@ class BuyerBeliefs:
     hardship_declared: bool = False
     hardship_declared_on: date | None = None
 
+    #: Money received since hardship was declared. A buyer who said "cash nahi
+    #: hai" in March and has since cleared two invoices is not in hardship any
+    #: more, and continuing to shield them is not compassion - it is the agent
+    #: refusing to look.
+    paid_since_hardship: int = 0
+
     #: Unverified claims of payment. Held as claims, never as payments, until
     #: reconciled against the ledger. Believing a UTR the buyer typed is how a
     #: collections system stops chasing money that never arrived.
@@ -58,6 +64,31 @@ class BuyerBeliefs:
             if p.status == "open" and as_of <= p.promised_date + timedelta(days=grace)
         ]
         return max(live, key=lambda p: p.made_on) if live else None
+
+    def hardship_active(self, as_of: date, *, expiry_days: int = 60, clear_ratio: float = 0.25,
+                        outstanding: int = 0) -> bool:
+        """Whether the hardship shield still applies.
+
+        Two ways it lifts. It expires, because a declaration made two months ago
+        is a statement about two months ago; and it clears early on evidence of
+        capacity, because someone paying substantial amounts is demonstrably able
+        to pay. Both matter: without them a single sentence permanently disarms
+        every firm action the agent has, which is how a well-meaning shield turns
+        into a way of never collecting.
+        """
+        if not self.hardship_declared:
+            return False
+        if self.hardship_declared_on is None:
+            # Declared but undated. A shield must fail closed: an unknown date
+            # cannot be shown to have expired, and the cost of wrongly shielding
+            # is a delayed reminder while the cost of wrongly un-shielding is
+            # pressure on someone who has said they cannot pay.
+            return True
+        if (as_of - self.hardship_declared_on).days > expiry_days:
+            return False
+        if outstanding > 0 and self.paid_since_hardship >= outstanding * clear_ratio:
+            return False
+        return True
 
     def open_disputes(self) -> list[Dispute]:
         return [d for d in self.disputes if d.status == "open"]

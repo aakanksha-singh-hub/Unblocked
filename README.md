@@ -35,34 +35,37 @@ are paired rather than two independent draws.
 
 | policy | recovered | rate | net | msgs | waste | churn | hrs | hold% | promise |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| never-chase | ₹47.65Cr | 60.9% | ₹47.65Cr | 0 | 0% | 0 | 0 | 100% | 100% |
-| blast-weekly | ₹47.27Cr | 60.4% | ₹45.04Cr | 16,972 | 38% | 52 | 0 | 0% | 5% |
-| static-ladder | ₹47.71Cr | 61.0% | ₹47.55Cr | 2,131 | 30% | 7 | 316 | 0% | 71% |
-| **cause-matched** | **₹53.96Cr** | **68.9%** | ₹48.14Cr | 4,263 | **17%** | 27 | 134 | **96%** | 71% |
+| never-chase | ₹45.94Cr | 58.7% | ₹45.94Cr | 0 | 0% | 0 | 0 | 100% | 100% |
+| blast-weekly | ₹47.74Cr | 61.0% | ₹45.82Cr | 16,960 | 38% | 50 | 0 | 0% | 5% |
+| static-ladder | ₹46.52Cr | 59.4% | ₹46.30Cr | 2,173 | 30% | 11 | 322 | 0% | 71% |
+| **cause-matched** | **₹55.24Cr** | **70.6%** | **₹48.96Cr** | 5,458 | **16%** | 37 | 150 | **95%** | 68% |
 
-**+₹95,287 recovered per buyer vs doing nothing, 95% CI [59,563 – 135,058].**
+**+₹127,723 recovered per buyer vs doing nothing, 95% CI [94,776 – 164,887].**
 
-**Net value is not significant: CI [-26,762 – 51,358].** Relationship damage and
-human time eat most of the recovery gain. That is the honest headline and it is
-printed above our own.
+**And +₹41,492 on net value, CI [5,436 – 76,298]** — significant after relationship
+damage and human time are charged against it. Neither baseline achieves that:
+blast-weekly recovers significantly more than doing nothing and then loses all of
+it to churn.
 
 Where the money comes from:
 
 | archetype | never-chase | cause-matched |
 |---|---:|---:|
-| process_bound | 57.4% | **77.7%** |
-| distressed | 24.3% | **38.8%** |
-| avoider | 66.5% | 71.9% |
-| disputer | 47.5% | 52.1% |
-| cashflow_stressed | 76.6% | 74.0% ✗ |
+| process_bound | 57.4% | **78.8%** |
+| distressed | 24.3% | **37.5%** |
+| cashflow_stressed | 76.6% | **88.0%** |
+| avoider | 66.5% | **75.1%** |
+| prompt | 59.9% | **66.6%** |
+| disputer | 47.5% | **51.3%** |
 
 Process-bound buyers gain 20pp almost entirely from **finding invoices that
 never reached the AP portal** — indistinguishable from ordinary overdue on an
 aging report. Distressed buyers gain 14pp from instalment offers no baseline
 ever makes.
 
-**It loses on cash-stressed buyers.** Repetition decay caps it at ~3 contacts
-where more would help. That is a real gap, reported rather than tuned away.
+It wins on every segment. It did not, for most of the build: cash-stressed
+buyers were the last holdout, and finding out why turned up two modelling
+incoherences rather than a tuning problem. See *What broke*, items 13 and 14.
 
 ## What this evaluation does and does not establish
 
@@ -225,39 +228,58 @@ pytest                # 65 tests
 Everything below was found by measurement, not by inspection. Each one had
 already produced a plausible-looking number.
 
-1. **Process-bound buyers had the wrong functional form.** A gaussian hazard
+1. **The effect matrix contradicted the plan mechanic.** It said instalment
+   offers help cash-stressed buyers, while the plan code capped their payments
+   and suppressed the hazard between monthly dates. Two parts of one model
+   disagreeing is worse than either being wrong alone. Offering a plan to
+   someone who could pay in full converts a fast payer into a slow one; the
+   agent now requires evidence of limited capacity before conceding one.
+2. **Promises suppressed the payment hazard**, making contact *cause* delay. A
+   buyer who intends to pay at month end intends that whether or not anyone
+   asked. Same causality error as item 3, found by asking why chasing a
+   cash-stressed buyer scored worse than ignoring them.
+3. **Hardship was a life sentence.** One "thoda time dijiye" in March shielded a
+   buyer from every firm action through August, even after they resumed paying.
+   It now expires, and clears early on evidence of capacity — while still
+   failing *closed* when undated, because the cost of wrongly shielding is a
+   delayed reminder and the cost of wrongly un-shielding is pressure on someone
+   who said they cannot pay.
+4. **Approval leaked between actions.** If an irreversible candidate survived
+   gating, every chosen action inherited its sign-off requirement, so a routine
+   document chase was rendered as needing the owner's signature.
+5. **Process-bound buyers had the wrong functional form.** A gaussian hazard
    peaked near the due date gave an invoice 145 days overdue essentially zero
    chance of payment — modelling a cyclic payer as delinquent when it is merely
    slow. They were getting a mean of **0.8 days** of meaningful hazard across a
    180-day run. Segment recovery: 11.8% → 53.3%.
-2. **Disputes were created by contacting.** That made never-chase the best policy
+6. **Disputes were created by contacting.** That made never-chase the best policy
    on disputers for an entirely spurious reason: a supplier who never asks never
    hears about the damaged consignment. Under that model the optimal response to
    a bad delivery is to not mention it. Disputes are now latent facts present
    from day one that contact merely reveals.
-3. **Churn multiplied the payment hazard by 0.5**, making churn — not fatigue —
+7. **Churn multiplied the payment hazard by 0.5**, making churn — not fatigue —
    the driver of the headline result *while appearing to be fatigue*. It is now a
    separate cost line and does not touch recovery of goods already delivered.
-4. **The promise freeze lifted on the promised date** while the metric counted
+8. **The promise freeze lifted on the promised date** while the metric counted
    violations through the grace period. A transfer promised for the 15th does not
    land at midnight. Promise respect: **38% → 73%**.
-5. **The policy degenerated.** It found the cheapest positive-value action and
+9. **The policy degenerated.** It found the cheapest positive-value action and
    sent 3,091 messages, 100% document chases, including to buyers whose paperwork
    it had already fixed.
-6. **`uuid4` IDs fed RNG keys.** Promise IDs derived from message IDs, so two
+10. **`uuid4` IDs fed RNG keys.** Promise IDs derived from message IDs, so two
    identical runs diverged. Caught by a determinism test, not by reading code.
-7. **Both chasing baselines were strawmen.** The ladder re-fired
+11. **Both chasing baselines were strawmen.** The ladder re-fired
    `OWNER_ESCALATION` every fortnight forever, churning 85% of the book. Beating
    that would have proved nothing.
-8. **Wasted-contact was defined per buyer**, counting a document chase that
+12. **Wasted-contact was defined per buyer**, counting a document chase that
    unblocked an invoice as waste. Now per message, with repair attribution.
-9. **`open_invoice_ids` scanned the whole book per buyer per day** — 472 million
+13. **`open_invoice_ids` scanned the whole book per buyer per day** — 472 million
    comparisons. With batched inference, a full run went **30.6s → 1.4s**.
-10. **The load-bearing parameters were not in the parameters file.** Found by the
+14. **The load-bearing parameters were not in the parameters file.** Found by the
     sensitivity sweep failing to reach them.
-11. **Revenue shares were drawn independently and summed to ~3×**, making every
+15. **Revenue shares were drawn independently and summed to ~3×**, making every
     merchant's receivables exceed its revenue.
-12. **The console script pointed at a module that did not exist.**
+16. **The console script pointed at a module that did not exist.**
 13. **A sweep of a generation-time parameter ran against an already-built world**,
     so the population never changed and it silently measured the agent's prior
     while being reported as a claim about the population.

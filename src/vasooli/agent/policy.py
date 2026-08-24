@@ -53,6 +53,16 @@ MIN_MARGIN_FOR_TARGETED_ACTION = 0.18
 #: paperwork it had already fixed.
 REPEAT_DECAY = 0.40
 
+#: Decay applied to a buyer who consistently engages - replies, commits, pays
+#: something. Diminishing returns are not a property of repetition in the
+#: abstract; they are a property of repetition that is not landing. A buyer who
+#: answers every message is one for whom contact demonstrably works, and the
+#: agent should read that from the response rather than assume one curve for
+#: everybody. A flat decay left cash-stressed buyers under-served: they are the
+#: segment where sustained contact genuinely creates money, and the agent was
+#: stopping after roughly three touches.
+REPEAT_DECAY_ENGAGED = 0.82
+
 #: Days before a buyer's cause is re-inferred in the absence of new evidence.
 #: A new reply forces re-inference immediately regardless.
 REINFER_AFTER_DAYS = 7
@@ -163,7 +173,7 @@ class CauseMatchedPolicy:
             gates=gates.results,
             inferred_archetype=None if pred.cold_start else pred.archetype,
             archetype_confidence=pred.confidence,
-            requires_human_approval=gates.requires_approval and chosen is not Intervention.HOLD,
+            requires_human_approval=gates.needs_approval(chosen),
             decided_by="guardrail" if (chosen is Intervention.HOLD and gates.blocked()) else "policy",
         )
 
@@ -209,10 +219,20 @@ class CauseMatchedPolicy:
                     # order is pure noise.
                     gain *= 0.15
 
-            # Diminishing returns on repetition.
+            # An instalment plan is a concession, and a concession is only
+            # worth making when capacity is actually the obstacle. Requiring
+            # evidence - a stated inability, or a pattern of part-payments -
+            # stops the agent restructuring debts that were going to be paid in
+            # full anyway. Without this it was offering plans on the strength of
+            # an archetype guess alone.
+            if action is Intervention.INSTALMENT_OFFER and not self._capacity_limited(ledger):
+                gain *= 0.10
+
+            # Diminishing returns on repetition, scaled by whether this buyer
+            # is actually engaging with what we send.
             tried = sum(1 for m in ledger.sent if m.intervention is action)
             if tried:
-                gain *= REPEAT_DECAY**tried
+                gain *= self._decay_for(ledger) ** tried
 
             cost = (
                 RELATIONSHIP_COST[action] * PAISE_PER_RELATIONSHIP_POINT
@@ -227,6 +247,41 @@ class CauseMatchedPolicy:
             scores[action] = gain - cost
 
         return scores
+
+    def _capacity_limited(self, ledger: BuyerLedger) -> bool:
+        """Evidence that the buyer cannot clear the balance in one payment.
+
+        Either they said so, or their payment history shows part-payments
+        against invoices they never finished settling.
+        """
+        bb = self.beliefs.get(ledger.buyer.buyer_id)
+        if bb.hardship_declared:
+            return True
+        by_inv = {iv.invoice.invoice_id: iv for iv in ledger.invoices}
+        partials = sum(
+            1
+            for p in ledger.payments
+            if (iv := by_inv.get(p.invoice_id)) is not None
+            and p.amount < iv.invoice.amount
+            and iv.outstanding > 0
+        )
+        return partials >= 2
+
+    @staticmethod
+    def _decay_for(ledger: BuyerLedger) -> float:
+        """Repetition decay for one buyer, from observed engagement.
+
+        Engagement is read from two signals a merchant genuinely has: whether
+        the buyer replies, and whether any money has moved. Both are evidence
+        that contact reaches a person who acts on it.
+        """
+        sent = len(ledger.sent)
+        if sent == 0:
+            return REPEAT_DECAY
+        reply_rate = min(1.0, len(ledger.received) / sent)
+        paying = 1.0 if ledger.payments else 0.0
+        engagement = 0.7 * reply_rate + 0.3 * paying
+        return REPEAT_DECAY + (REPEAT_DECAY_ENGAGED - REPEAT_DECAY) * engagement
 
     # -- explanation ------------------------------------------------------
 
