@@ -278,9 +278,60 @@ docs/          EVALUATION.md, EXTRACTION_PROTOCOL.md, CODEBOOK.md
 scripts/       train, evaluate, breakeven, sensitivity, elicit, prove_recovery
 ```
 
+## The sensitivity analysis, and what it found
+
+Three parameters swept, chosen because each breaks a different load-bearing
+claim. Reported as worst-case collapse rather than only whether a crossing
+exists — "no crossing" cannot distinguish a parameter that wipes out 88% of the
+margin from one that costs 17%.
+
+| parameter | worst case in range | verdict |
+|---|---:|---|
+| `PORTAL_REPAIR_SUCCESS` | **11%** of margin | **carries the result** |
+| `ARCHETYPE_MIX.process_bound` | 55% | matters, does not carry |
+| `DISPUTE_RESOLUTION_SUCCESS` | 83% | matters, does not carry |
+| contact fatigue (full range) | ~90% | largely insensitive |
+
+So the finding is narrower and more specific than "cause-matching works": **the
+advantage is mostly the intake-repair mechanism.** If chasing paperwork rarely
+unblocks an invoice in reality, most of this evaporates. That is the assumption
+to attack, and it is named rather than buried.
+
+## The reply-understanding study
+
+The one measurement here whose numbers are about the world rather than about our
+own generator. Protocol in [docs/EXTRACTION_PROTOCOL.md](docs/EXTRACTION_PROTOCOL.md),
+codebook in [docs/CODEBOOK.md](docs/CODEBOOK.md).
+
+- Reply texts are **not written by us** — elicited from people given a situation
+  and never shown the intent taxonomy.
+- Labels come from **two annotators who are not the author**, working
+  independently from a written codebook.
+- **Cohen's kappa is reported above model accuracy.** If two people cannot agree
+  what a message means, model accuracy on those items is not measuring
+  comprehension.
+- The dev/test split is drawn at corpus build time and **hashed into
+  `CORPUS_LOCK.txt`**, split by *contributor* rather than by item so one
+  person's idiom cannot leak across the boundary.
+- Test is scored once. Everything below 0.4 kappa, or inside the majority
+  baseline's interval, is reported as unsupported rather than quietly dropped.
+
+```
+vasooli sheets      # generate elicitation sheets
+vasooli corpus      # build the locked corpus from returned sheets
+vasooli annotate    # emit annotator CSVs
+vasooli extraction  # kappa first, then model numbers with Wilson intervals
+```
+
+The pipeline is tested end to end on fixtures in a temp directory, so the day
+real sheets arrive the only new variable is the data.
+
 ## Status
 
-Reply-understanding study is in progress — corpus elicitation sheets are
-generated and the protocol, codebook and leak tests are written. Until replies
-come back from contributors and two independent annotators, the LLM extraction
-number does not exist and is not claimed.
+**Working:** simulator, agent, guardrails, evaluation, breakeven and sensitivity
+sweeps, LLM extraction, and a live Razorpay test-mode integration that creates,
+fetches and cancels real payment links.
+
+**Outstanding:** the reply corpus is not collected yet. Until replies come back
+from contributors and two independent annotators have labelled them, the
+extraction number does not exist and is not claimed anywhere in this repo.

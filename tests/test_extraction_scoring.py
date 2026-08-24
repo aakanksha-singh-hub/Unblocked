@@ -1,0 +1,265 @@
+"""The extraction pipeline, exercised end to end on fixtures.
+
+Deliberately uses tmp_path rather than data/corpus: putting invented replies
+anywhere near the real corpus directory is exactly the contamination
+docs/EXTRACTION_PROTOCOL.md forbids, and a test that did it would be undermining
+the thing it exists to protect.
+
+The point is that the day real sheets come back, the pipeline is known to work
+and the only new variable is the data.
+"""
+
+from __future__ import annotations
+
+import csv
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+from vasooli.eval.extraction import (
+    agreement,
+    cohens_kappa,
+    macro_f1,
+    majority_baseline,
+    score,
+    wilson,
+)
+from vasooli.domain.enums import ReplyIntent
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+# --- statistics -------------------------------------------------------------
+
+
+def test_wilson_interval_contains_the_estimate():
+    lo, hi = wilson(140, 180)
+    assert lo < 140 / 180 < hi
+    assert 0.0 <= lo and hi <= 1.0
+
+
+def test_wilson_handles_degenerate_cases():
+    assert wilson(0, 0) == (0.0, 0.0)
+    lo, hi = wilson(10, 10)
+    assert hi == 1.0 and lo < 1.0  # never claims certainty from ten items
+
+
+def test_wilson_is_wider_at_small_n():
+    small = wilson(9, 10)
+    large = wilson(900, 1000)
+    assert (small[1] - small[0]) > (large[1] - large[0]) * 5
+
+
+def test_kappa_is_one_for_identical_labels():
+    a = ["promise", "dispute", "ack"] * 10
+    assert cohens_kappa(a, a) == pytest.approx(1.0)
+
+
+def test_kappa_is_near_zero_for_independent_labels():
+    import random
+
+    r = random.Random(0)
+    a = [r.choice(["a", "b", "c"]) for _ in range(600)]
+    b = [r.choice(["a", "b", "c"]) for _ in range(600)]
+    assert abs(cohens_kappa(a, b)) < 0.1
+
+
+def test_kappa_punishes_agreement_that_is_only_prevalence():
+    """Two annotators who both label almost everything the same common class
+    agree constantly and have learned nothing. Raw agreement misses this.
+
+    The construction matters: the disagreements have to fall on *different*
+    items. Two annotators who use the same rare label on the same five items do
+    genuinely agree about those items, and kappa is right to credit them - an
+    earlier version of this test asserted otherwise and was simply wrong about
+    the arithmetic.
+    """
+    a = ["promise"] * 95 + ["dispute"] * 5
+    b = ["dispute"] * 5 + ["promise"] * 95
+    raw = sum(1 for x, y in zip(a, b) if x == y) / len(a)
+    assert raw >= 0.90, "raw agreement looks excellent"
+    assert abs(cohens_kappa(a, b)) < 0.1, "and yet there is no agreement beyond chance"
+
+
+def test_majority_baseline_macro_f1_is_low_even_when_accuracy_is_high():
+    """The reason macro-F1 is the headline and accuracy is not."""
+    gold = ["promise"] * 80 + ["dispute"] * 10 + ["ack"] * 10
+    label, acc, mf1 = majority_baseline(gold)
+    assert label == "promise" and acc == pytest.approx(0.8)
+    assert mf1 < 0.35
+
+
+def test_macro_f1_weights_rare_classes_equally():
+    gold = ["a"] * 90 + ["b"] * 10
+    perfect_on_common = ["a"] * 100
+    mf1, detail = macro_f1(gold, perfect_on_common)
+    assert detail["b"]["recall"] == 0.0
+    assert mf1 < 0.55
+
+
+# --- agreement report -------------------------------------------------------
+
+
+def test_agreement_report_lists_disagreements():
+    a = {"i1": "promise", "i2": "dispute", "i3": "ack"}
+    b = {"i1": "promise", "i2": "hardship", "i3": "ack"}
+    ag = agreement(a, b)
+    assert ag.n == 3
+    assert [d[0] for d in ag.disagreements] == ["i2"]
+
+
+def test_agreement_verdict_flags_poor_kappa():
+    import random
+
+    r = random.Random(1)
+    a = {f"i{i}": r.choice(["a", "b", "c", "d"]) for i in range(200)}
+    b = {f"i{i}": r.choice(["a", "b", "c", "d"]) for i in range(200)}
+    assert "POOR" in agreement(a, b).verdict
+
+
+# --- scoring ----------------------------------------------------------------
+
+
+def test_beats_baseline_requires_clearing_the_interval():
+    """A model whose interval overlaps the baseline has demonstrated nothing,
+    however good the point estimate looks."""
+    gold = {f"i{i}": ("promise" if i < 12 else "dispute") for i in range(20)}
+    pred = {k: ReplyIntent.PROMISE_TO_PAY for k in gold}
+    rep = score("dummy", gold, pred, split="dev", ambiguous=set(), abstained=set())
+    assert not rep.beats_baseline()
+
+
+def test_abstention_precision_rewards_declining_on_ambiguous_items():
+    gold = {f"i{i}": "promise" for i in range(10)}
+    pred = {k: ReplyIntent.UNCLEAR for k in gold}
+    ambiguous = {"i0", "i1", "i2", "i3", "i4", "i5", "i6", "i7"}
+    rep = score(
+        "dummy", gold, pred, split="dev", ambiguous=ambiguous, abstained=set(gold)
+    )
+    assert rep.abstentions == 10
+    assert rep.abstention_precision == pytest.approx(0.8)
+
+
+def test_date_accuracy_counts_only_attempted_items():
+    gold = {"i1": "promise", "i2": "ack"}
+    pred = {"i1": ReplyIntent.PROMISE_TO_PAY, "i2": ReplyIntent.ACKNOWLEDGEMENT}
+    rep = score(
+        "dummy",
+        gold,
+        pred,
+        split="dev",
+        ambiguous=set(),
+        abstained=set(),
+        gold_dates={"i1": "2026-06-30"},
+        pred_dates={"i1": "2026-06-30"},
+    )
+    assert rep.date_attempted == 1 and rep.date_exact == 1
+
+
+# --- pipeline ---------------------------------------------------------------
+
+
+@pytest.fixture
+def fake_sheets(tmp_path: Path) -> Path:
+    """Four contributors' worth of returned sheets. Invented for this test only
+    and never written near data/corpus."""
+    sheets = tmp_path / "sheets"
+    sheets.mkdir()
+    replies = [
+        "month end tak ho jayega sir",
+        "2 boxes damaged the credit note bhejo",
+        "payment cycle me hai 10 tarikh ko",
+        "noted will check",
+        "cash nahi hai abhi thoda time do",
+        "kal transfer kiya tha UTR 401512345678",
+        "PO copy bhej dijiye",
+        "abhi payment nahi hoga",
+    ]
+    for c in range(4):
+        items = [
+            {"item_id": f"c{c:02d}_i{k:02d}", "scenario": "s", "reply": replies[k]}
+            for k in range(len(replies))
+        ]
+        (sheets / f"c{c:02d}.json").write_text(
+            json.dumps({"contributor": f"c{c:02d}", "items": items}), encoding="utf-8"
+        )
+    return sheets
+
+
+def test_build_corpus_splits_by_contributor_not_item(fake_sheets: Path, tmp_path: Path):
+    """Two replies from one person share their idiom. Splitting by item would
+    leak that across the boundary and inflate the test number."""
+    out = tmp_path / "replies.jsonl"
+    r = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/build_corpus.py"),
+         "--sheets", str(fake_sheets), "--out", str(out)],
+        capture_output=True, text=True, cwd=ROOT,
+    )
+    assert r.returncode == 0, r.stdout + r.stderr
+    items = [json.loads(ln) for ln in out.read_text(encoding="utf-8").splitlines()]
+    assert items
+
+    by_contributor: dict[str, set[str]] = {}
+    for it in items:
+        by_contributor.setdefault(it["contributor"], set()).add(it["split"])
+    for contributor, splits in by_contributor.items():
+        assert len(splits) == 1, f"{contributor} spans both splits"
+
+
+def test_build_corpus_drops_duplicates_and_writes_a_lock(fake_sheets: Path, tmp_path: Path):
+    out = tmp_path / "replies.jsonl"
+    subprocess.run(
+        [sys.executable, str(ROOT / "scripts/build_corpus.py"),
+         "--sheets", str(fake_sheets), "--out", str(out)],
+        capture_output=True, text=True, cwd=ROOT, check=True,
+    )
+    items = [json.loads(ln) for ln in out.read_text(encoding="utf-8").splitlines()]
+    # Every contributor sent the same eight replies; only one copy survives.
+    assert len(items) == 8
+    lock = (out.parent / "CORPUS_LOCK.txt").read_text(encoding="utf-8")
+    assert "sha256" in lock and "Test is scored once" in lock
+
+
+def test_annotation_sheets_contain_no_labels(fake_sheets: Path, tmp_path: Path):
+    out = tmp_path / "replies.jsonl"
+    subprocess.run(
+        [sys.executable, str(ROOT / "scripts/build_corpus.py"),
+         "--sheets", str(fake_sheets), "--out", str(out)],
+        capture_output=True, text=True, cwd=ROOT, check=True,
+    )
+    r = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/make_annotation_sheets.py"), "--corpus", str(out)],
+        capture_output=True, text=True, cwd=ROOT,
+    )
+    assert r.returncode == 0, r.stdout + r.stderr
+    for name in ("a", "b"):
+        path = out.parent / f"annotate_{name}.csv"
+        lines = [ln for ln in path.read_text(encoding="utf-8").splitlines() if not ln.startswith("#")]
+        rows = list(csv.DictReader(lines))
+        assert rows
+        assert all(not row["intent"] and not row["confidence"] for row in rows)
+
+
+def test_annotators_get_different_orderings(fake_sheets: Path, tmp_path: Path):
+    out = tmp_path / "replies.jsonl"
+    subprocess.run(
+        [sys.executable, str(ROOT / "scripts/build_corpus.py"),
+         "--sheets", str(fake_sheets), "--out", str(out)],
+        capture_output=True, text=True, cwd=ROOT, check=True,
+    )
+    subprocess.run(
+        [sys.executable, str(ROOT / "scripts/make_annotation_sheets.py"), "--corpus", str(out)],
+        capture_output=True, text=True, cwd=ROOT, check=True,
+    )
+
+    def order(name: str) -> list[str]:
+        path = out.parent / f"annotate_{name}.csv"
+        lines = [ln for ln in path.read_text(encoding="utf-8").splitlines() if not ln.startswith("#")]
+        return [r["item_id"] for r in csv.DictReader(lines)]
+
+    a, b = order("a"), order("b")
+    assert sorted(a) == sorted(b)
+    assert a != b

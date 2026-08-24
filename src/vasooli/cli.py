@@ -6,6 +6,11 @@
     vasooli trail <buyer>       one buyer's full decision history
     vasooli restraint           the moments the agent chose not to send
     vasooli prove               end-to-end recovery against Razorpay test mode
+
+    vasooli sheets              generate elicitation sheets for contributors
+    vasooli corpus              build the locked corpus from returned sheets
+    vasooli annotate            emit annotator CSVs
+    vasooli extraction          score reply understanding
 """
 
 from __future__ import annotations
@@ -62,6 +67,34 @@ def breakeven(metric: str = "net_value", merchants: int = 8) -> None:
 def sensitivity(merchants: int = 6) -> None:
     """Sweep the assumptions that might be carrying the result."""
     raise typer.Exit(_script("sensitivity.py", "--merchants", str(merchants)))
+
+
+@app.command()
+def corpus() -> None:
+    """Build the locked reply corpus from returned contributor sheets."""
+    raise typer.Exit(_script("build_corpus.py"))
+
+
+@app.command()
+def sheets(contributors: int = 12, per_contributor: int = 14) -> None:
+    """Generate elicitation sheets to send to contributors."""
+    raise typer.Exit(
+        _script("elicit.py", "--contributors", str(contributors),
+                "--per-contributor", str(per_contributor))
+    )
+
+
+@app.command()
+def annotate() -> None:
+    """Emit one unlabelled CSV per annotator from the built corpus."""
+    raise typer.Exit(_script("make_annotation_sheets.py"))
+
+
+@app.command()
+def extraction(split: str = "dev", no_llm: bool = False) -> None:
+    """Score reply understanding. Agreement is reported before accuracy."""
+    args = ["--split", split] + (["--no-llm"] if no_llm else [])
+    raise typer.Exit(_script("score_extraction.py", *args))
 
 
 @app.command()
