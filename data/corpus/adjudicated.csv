@@ -1,0 +1,4 @@
+item_id,intent,confidence,note
+h01_i02,payment_claim,ambiguous,"Compound: a payment already made AND a commitment for the balance. Codebook priority puts payment_claim above promise_to_pay, so B's reading is the one the written rule produces. Flagged ambiguous because the reply genuinely carries both."
+h02_i02,payment_claim,ambiguous,"Same compound case."
+h04_i02,payment_claim,ambiguous,"Same compound case."

@@ -372,21 +372,68 @@ unblocked extraction  # kappa first, then model numbers with Wilson intervals
 The pipeline is tested end to end on fixtures in a temp directory, so the day
 real sheets arrive the only new variable is the data.
 
+## Reply understanding: the one measurement that isn't ours
+
+40 Hinglish replies from five contributors who were never shown the intent
+taxonomy, labelled independently by two annotators who are not the author, split
+by contributor and hashed before any model output was inspected. Test split
+opened once.
+
+**Inter-annotator kappa 0.911**, reported before any model number because if two
+people cannot agree what a message means, model accuracy on those items is not
+measuring comprehension.
+
+| extractor | accuracy | 95% CI | macro-F1 |
+|---|---:|---:|---:|
+| majority class (always `dispute`) | 0.250 | — | 0.057 |
+| rule baseline | 0.542 | [0.351, 0.721] | 0.416 |
+| **LLM** | **0.833** | **[0.641, 0.933]** | **0.803** |
+
+Both clear the majority baseline. **The gap between them does not:** paired
+McNemar gives p = 0.18 on 24 held-out items (10 items the model gets and the
+rules miss, 4 the other way). On this sample size the model is not shown to beat
+the patterns, and the point estimates are not the finding — the interval is.
+
+What *is* worth pointing at, and was named as a concern in advance rather than
+found afterwards:
+
+| | rules | LLM |
+|---|---:|---:|
+| **hardship read as refusal** | **2/3** | **0/3** |
+
+Reading someone who *cannot* pay as someone who *will not* is the error that does
+human damage, and it is the error the deterministic layer makes. n=3 — far too
+small to call a result, and precisely the reason the hardship shield in
+`guardrails.py` is a hard-coded gate rather than something the classifier is
+trusted to get right.
+
+The annotators also found a defect in the codebook: every one of their three
+disagreements was the same construction — *"half payment kar diya tha, baki thoda
+time lagega"*, a payment claim and a promise in one sentence, which the document
+never addressed. The taxonomy was underspecified, not the annotators.
+
+**Limitations, stated rather than buried:** 40 items is small and the intervals
+are wide accordingly. Both annotators marked every item `clear`, so no ambiguous
+subset exists and abstention precision cannot be measured against human
+uncertainty. Five contributors is not a population.
+
 ## Status
 
 **Working:** simulator, agent, guardrails, evaluation, breakeven and sensitivity
 sweeps, LLM extraction, and a live Razorpay test-mode integration that creates,
 fetches and cancels real payment links.
 
-**Outstanding:** the reply corpus is not collected yet.
+**Done:** simulator, agent, guardrails, evaluation, breakeven and sensitivity
+sweeps, dashboard, live Razorpay test-mode integration, and the reply-understanding
+study above.
 
-A first batch was audited and came back **pilot** rather than **evidence** — the
-same sentence appeared verbatim under three contributors, in uniform English,
-with zero Hindi tokens in a set elicited as Hinglish. `eval/provenance.py` now
-runs that audit automatically and `build_corpus.py` refuses to build an
-evidence-tier corpus that fails it. A pilot corpus proves the pipeline runs and
-is never quoted as a measurement.
+A first batch of replies was audited and came back **pilot** rather than
+**evidence** — the same sentence appeared verbatim under three contributors, in
+uniform English, with zero Hindi tokens in a set elicited as Hinglish.
+`eval/provenance.py` runs that audit automatically and `build_corpus.py` refuses
+to build an evidence-tier corpus that fails it. That batch is kept in
+`data/corpus/_rejected/` with a note; nothing is computed from it.
 
-Until replies come back that pass the audit, and two independent annotators have
-labelled them, the extraction number does not exist and is not claimed anywhere
-in this repo.
+**Outstanding:** no test-mode payment has actually been *paid* yet — the rail is
+verified (link created, fetched, cancelled) but the end-to-end reconcile has not
+run against a real capture.

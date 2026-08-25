@@ -133,6 +133,41 @@ Cohen's kappa is computed on intent. Below 0.6, the finding is that the taxonomy
 is underspecified, and that is what we report - it would be a real result about
 the problem, not a failure to hide.
 
+## First annotation round: what happened
+
+Two annotators, 40 items, working independently from the codebook.
+
+| | |
+|---|---|
+| Raw agreement | 0.925 |
+| **Cohen's kappa** | **0.911** |
+| Disagreements | 3 |
+
+Per-class kappa was 1.000 on five of the seven intents used. The two that were
+not perfect — `payment_claim` (0.538) and `promise_to_pay` (0.727) — were the
+*same three items* pulling both numbers down.
+
+All three were the partial-payment case: *"half payment kar diya tha, baki thoda
+time lagega"*. A payment claim and a promise in one sentence. The codebook's
+priority list resolves it, but the document never said what to do when both are
+plainly present, so one annotator applied the priority and the other read the
+forward-looking half as the message's point. Both readings are defensible.
+
+**The finding is that the taxonomy was underspecified, not that an annotator was
+wrong.** The codebook now addresses the case explicitly, and the three items are
+marked `ambiguous` and kept as their own subset rather than dropped.
+
+A kappa of 0.911 is high enough that the audit's own verdict line reads
+"near-perfect — check the annotators worked independently". Worth taking
+seriously, and the pattern of disagreement is the answer: three errors, all the
+same case, one annotator consistently applying a different rule. A single person
+filling both sheets produces either zero disagreements or scattered ones, not a
+systematic three.
+
+**One limitation.** Both annotators marked all 40 items `clear`. No item was
+flagged ambiguous by either, so the hard subset is empty and abstention
+precision cannot be computed against annotator uncertainty. Reported as a gap.
+
 ## Scoring
 
 Reported in this order:

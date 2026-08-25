@@ -1,73 +1,73 @@
 {
-  "world_fingerprint": "f630aaf76387baa8",
-  "metric": "recovered",
+  "world_fingerprint": "40ba254246bf2d47",
+  "metric": "net_value",
   "chosen_retention": 0.88,
   "crossing": null,
   "holds_at_chosen": true,
   "points": [
     {
       "retention": 1.0,
-      "agent_value": 23218045807.0,
-      "rival_value": 21218166920.0,
-      "agent_messages": 1752,
-      "rival_messages": 7148,
-      "margin": 1999878887.0
+      "agent_value": 8709293154.0,
+      "rival_value": 7912809749.0,
+      "agent_messages": 1052,
+      "rival_messages": 3635,
+      "margin": 796483405.0
     },
     {
       "retention": 0.97,
-      "agent_value": 23218045807.0,
-      "rival_value": 21216359692.0,
-      "agent_messages": 1752,
-      "rival_messages": 7148,
-      "margin": 2001686115.0
+      "agent_value": 8709293154.0,
+      "rival_value": 7912809749.0,
+      "agent_messages": 1052,
+      "rival_messages": 3635,
+      "margin": 796483405.0
     },
     {
       "retention": 0.94,
-      "agent_value": 23218045807.0,
-      "rival_value": 21184862873.0,
-      "agent_messages": 1752,
-      "rival_messages": 7150,
-      "margin": 2033182934.0
+      "agent_value": 8709293154.0,
+      "rival_value": 7888279109.0,
+      "agent_messages": 1052,
+      "rival_messages": 3637,
+      "margin": 821014045.0
     },
     {
       "retention": 0.91,
-      "agent_value": 23218045807.0,
-      "rival_value": 21184862873.0,
-      "agent_messages": 1751,
-      "rival_messages": 7151,
-      "margin": 2033182934.0
+      "agent_value": 8634019026.0,
+      "rival_value": 7887084199.0,
+      "agent_messages": 1051,
+      "rival_messages": 3646,
+      "margin": 746934827.0
     },
     {
       "retention": 0.88,
-      "agent_value": 23203949884.0,
-      "rival_value": 21174970934.0,
-      "agent_messages": 1752,
-      "rival_messages": 7150,
-      "margin": 2028978950.0
+      "agent_value": 8634019026.0,
+      "rival_value": 7887084199.0,
+      "agent_messages": 1051,
+      "rival_messages": 3647,
+      "margin": 746934827.0
     },
     {
       "retention": 0.84,
-      "agent_value": 23203949884.0,
-      "rival_value": 21173577363.0,
-      "agent_messages": 1752,
-      "rival_messages": 7150,
-      "margin": 2030372521.0
+      "agent_value": 8634019026.0,
+      "rival_value": 7887084199.0,
+      "agent_messages": 1051,
+      "rival_messages": 3647,
+      "margin": 746934827.0
     },
     {
       "retention": 0.78,
-      "agent_value": 23286251722.0,
-      "rival_value": 21151867382.0,
-      "agent_messages": 1746,
-      "rival_messages": 7162,
-      "margin": 2134384340.0
+      "agent_value": 8634019026.0,
+      "rival_value": 7887084199.0,
+      "agent_messages": 1051,
+      "rival_messages": 3648,
+      "margin": 746934827.0
     },
     {
       "retention": 0.7,
-      "agent_value": 23290080790.0,
-      "rival_value": 21077475812.0,
-      "agent_messages": 1754,
-      "rival_messages": 7183,
-      "margin": 2212604978.0
+      "agent_value": 8634019026.0,
+      "rival_value": 7881499057.0,
+      "agent_messages": 1051,
+      "rival_messages": 3650,
+      "margin": 752519969.0
     }
   ]
 }

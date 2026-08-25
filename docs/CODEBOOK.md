@@ -90,6 +90,26 @@ A reply that disputes *and* promises ("credit note bhejo, phir 15 tak kar denge"
 is `dispute` — because the dispute is what blocks the money, and acting on the
 promise while ignoring the dispute is the failure mode we are trying to prevent.
 
+### The partial-payment case (added after the first annotation round)
+
+**"half payment kar diya tha, baki thoda time lagega"** — a payment already made
+*and* a commitment for the balance, in one sentence. This is one of the commonest
+things a buyer actually writes, and the first version of this codebook did not
+address it: the priority list resolves it to `payment_claim`, but never says what
+to do when both are plainly present. Two annotators split on it three times out
+of three, which is a defect in this document rather than in either of them.
+
+**Rule: label it `payment_claim`, and record the promised date in the extra
+fields.** The reasoning is operational rather than linguistic. A claimed payment
+must be reconciled against the ledger before anything else happens — if the money
+did arrive, the promise is about a smaller balance than the agent thinks, and if
+it did not, the whole message needs revisiting. Acting on the promise first means
+trusting a payment nobody has verified.
+
+Mark these `ambiguous`. They are genuinely both, and the ambiguity is
+information: the agent should treat a partial payer differently from either a
+pure claimer or a pure promiser.
+
 Record the promised date in the extra fields even when the primary label is
 `dispute`.
 
