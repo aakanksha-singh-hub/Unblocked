@@ -46,6 +46,13 @@ def main() -> int:
     ap.add_argument("--buyer", default="Shree Traders Pvt Ltd")
     ap.add_argument("--timeout", type=int, default=600, help="seconds to wait for payment")
     ap.add_argument("--poll", type=int, default=5)
+    ap.add_argument(
+        "--check",
+        metavar="LINK_ID",
+        help="check a link that already exists instead of creating a new one. "
+             "Use this after walking away from a wait, or after paying later - "
+             "there is no reason to issue a second demand for the same invoice.",
+    )
     args = ap.parse_args()
 
     load_env()
@@ -57,6 +64,18 @@ def main() -> int:
         print("    RAZORPAY_KEY_ID=rzp_test_xxxxxxxx")
         print("    RAZORPAY_KEY_SECRET=xxxxxxxx\n")
         return 2
+
+    # Resume mode: look up an existing link rather than issuing another one.
+    if args.check:
+        existing = rail.fetch_link(args.check)
+        print(f"\nlink      {existing.link_id}")
+        print(f"status    {existing.status}")
+        print(f"amount    {fmt(existing.amount)}   ref {existing.reference_id}")
+        if existing.status != "paid":
+            print(f"\n  Not paid yet. Pay here: {existing.short_url}")
+            print(f"  Then re-run:  unblocked prove --check {existing.link_id}\n")
+            return 1
+        return _write_proof(rail, existing, existing.reference_id, existing.amount)
 
     amount: Paise = rupees(args.amount)
     print(f"\nrail      {rail.name}  ({rail.key_id})")
@@ -78,26 +97,39 @@ def main() -> int:
 
     started = time.time()
     final = link
-    while time.time() - started < args.timeout:
-        time.sleep(args.poll)
-        final = rail.fetch_link(link.link_id)
-        elapsed = int(time.time() - started)
-        print(f"    [{elapsed:>4}s] {final.status}")
-        if final.status in ("paid", "cancelled", "expired"):
-            break
+    try:
+        while time.time() - started < args.timeout:
+            time.sleep(args.poll)
+            final = rail.fetch_link(link.link_id)
+            elapsed = int(time.time() - started)
+            print(f"    [{elapsed:>4}s] {final.status}")
+            if final.status in ("paid", "cancelled", "expired"):
+                break
+    except KeyboardInterrupt:
+        # Walking away from the wait is normal and must not look like a crash.
+        # The link stays live; the resume path is one command.
+        print("\n\n  Stopped waiting. The link is still live:")
+        print(f"    {link.short_url}")
+        print("\n  Pay it whenever, then:")
+        print(f"    unblocked prove --check {link.link_id}\n")
+        return 1
 
+    return _write_proof(rail, final, args.invoice, amount)
+
+
+def _write_proof(rail, final, expected_ref: str, expected_amount) -> int:
     ok = final.status == "paid"
 
     # Reconciliation keys off reference_id - our own invoice number, set when we
     # created the link. Nothing the payer controls is trusted here.
-    reconciled = ok and final.reference_id == args.invoice and final.amount == amount
+    reconciled = ok and final.reference_id == expected_ref and final.amount == expected_amount
 
     out = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "rail": rail.name,
         "key_id": rail.key_id,
-        "invoice_number": args.invoice,
-        "expected_amount_paise": int(amount),
+        "invoice_number": expected_ref,
+        "expected_amount_paise": int(expected_amount),
         "link_id": final.link_id,
         "short_url": final.short_url,
         "final_status": final.status,
@@ -113,11 +145,11 @@ def main() -> int:
 
     print()
     if reconciled:
-        print(f"  RECONCILED  {fmt(final.amount)} against {args.invoice}")
+        print(f"  RECONCILED  {fmt(final.amount)} against {expected_ref}")
         print("  Agent marks the invoice settled and stops chasing this buyer.")
     elif ok:
         print("  PAID but did NOT reconcile - reference or amount mismatch.")
-        print(f"    expected ref {args.invoice!r} amount {int(amount)}")
+        print(f"    expected ref {expected_ref!r} amount {int(expected_amount)}")
         print(f"    returned ref {final.reference_id!r} amount {int(final.amount)}")
         print("  The agent does NOT stop chasing on an unreconciled capture.")
     else:

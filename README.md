@@ -434,6 +434,23 @@ uniform English, with zero Hindi tokens in a set elicited as Hinglish.
 to build an evidence-tier corpus that fails it. That batch is kept in
 `data/corpus/_rejected/` with a note; nothing is computed from it.
 
-**Outstanding:** no test-mode payment has actually been *paid* yet — the rail is
-verified (link created, fetched, cancelled) but the end-to-end reconcile has not
-run against a real capture.
+**A real capture, reconciled.** `artifacts/proof/recovery_plink_TU3PVdyb0xGa67.json`:
+
+```json
+{ "final_status": "paid",
+  "captured_amount_paise": 250000,
+  "reference_id_returned": "PKG/26-27/0412",
+  "reconciled": true,
+  "agent_action_after_capture": "stop_chasing" }
+```
+
+₹2,500 against invoice `PKG/26-27/0412`, attested by Razorpay's API rather than
+by our own bookkeeping, reconciled on the `reference_id` we set when the link was
+issued — never on anything the payer controls. The agent marks the invoice
+settled and stops chasing that buyer.
+
+The first attempt failed: the card was routed as international and declined.
+Nothing was double-issued, the link stayed live, and resuming was one command
+(`unblocked prove --check <link_id>`). A collections tool whose answer to a
+failed payment is to fire a second demand at the same buyer is precisely the
+behaviour this project exists to avoid.

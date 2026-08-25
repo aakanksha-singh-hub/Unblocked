@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-08-25T15:50:47.495692+00:00",
+  "rail": "razorpay-test",
+  "key_id": "rzp_test_TTgwcoaeOqORaZ",
+  "invoice_number": "PKG/26-27/0412",
+  "expected_amount_paise": 250000,
+  "link_id": "plink_TU3PVdyb0xGa67",
+  "short_url": "https://rzp.io/rzp/NdoD72Ou",
+  "final_status": "paid",
+  "captured_amount_paise": 250000,
+  "reference_id_returned": "PKG/26-27/0412",
+  "reconciled": true,
+  "agent_action_after_capture": "stop_chasing"
+}

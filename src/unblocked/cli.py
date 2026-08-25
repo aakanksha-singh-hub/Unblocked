@@ -117,9 +117,18 @@ def extraction(split: str = "dev", no_llm: bool = False) -> None:
 
 
 @app.command()
-def prove(amount: float = 2500.0, invoice: str = "PKG/26-27/0412") -> None:
-    """Recover one real payment through Razorpay test mode."""
-    raise typer.Exit(_script("prove_recovery.py", "--amount", str(amount), "--invoice", invoice))
+def prove(
+    amount: float = 2500.0,
+    invoice: str = "PKG/26-27/0412",
+    check: str = "",
+) -> None:
+    """Recover one real payment through Razorpay test mode.
+
+    --check LINK_ID resumes against a link you already created, so walking away
+    from the wait costs nothing and no second demand is issued for one invoice.
+    """
+    args = ["--check", check] if check else ["--amount", str(amount), "--invoice", invoice]
+    raise typer.Exit(_script("prove_recovery.py", *args))
 
 
 # ---------------------------------------------------------------------------
