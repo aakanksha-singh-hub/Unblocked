@@ -79,7 +79,16 @@ def test_landing_leads_with_the_problem_not_a_number(client):
     opens with a metric it has failed at the only job it has."""
     body = client.get("/").text
     assert "Most overdue invoices" in body
-    assert body.index("Most overdue invoices") < body.index("recovered per buyer")
+    assert body.index("Most overdue invoices") < body.index("more recovered, per buyer")
+
+
+def test_landing_uses_plain_english_not_taxonomy_identifiers(client):
+    """The page a newcomer lands on must not require learning the internal
+    vocabulary. Someone reading it should never meet `process_bound`."""
+    body = client.get("/").text
+    for jargon in ("process_bound", "cashflow_stressed", "document_reconcile",
+                   "soft_nudge", "promise_freeze"):
+        assert jargon not in body, f"landing page exposes internal identifier {jargon!r}"
 
 
 def test_ground_truth_is_labelled_as_such(client):
@@ -87,7 +96,8 @@ def test_ground_truth_is_labelled_as_such(client):
     That is deliberate and must stay visibly labelled, not presented as something
     the agent knew."""
     body = client.get("/buyers").text
-    assert "Truth" in body and "Inferred" in body
+    assert "The real reason" in body
+    assert "Why it thinks they haven't paid" in body
 
 
 def test_landing_states_the_scale_of_its_headline_numbers(client):

@@ -342,3 +342,50 @@ footer.foot {
   border-top: 1px solid var(--grid); margin-top: 56px; padding: 26px 0 0;
   color: var(--muted); font-size: 12.5px;
 }
+
+/* ═══════════════ WORKED EXAMPLE ═══════════════ */
+
+.story {
+  background: var(--surface-1); border: 1px solid var(--grid);
+  border-radius: 14px; padding: 26px 28px;
+}
+.story .who { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+.story .who h3 { margin: 0; font-size: 19px; letter-spacing: -0.015em; }
+.story .who .meta { color: var(--muted); font-size: 13px; }
+.story .owed { color: var(--text-secondary); font-size: 14px; margin: 0 0 24px; }
+.story .owed b { color: var(--text-primary); }
+
+.beats { list-style: none; margin: 0; padding: 0; }
+.beats > li {
+  display: grid; grid-template-columns: 26px 1fr; gap: 16px;
+  padding: 0 0 22px; position: relative;
+}
+.beats > li:not(:last-child)::before {
+  content: ""; position: absolute; left: 12px; top: 26px; bottom: 0;
+  width: 2px; background: var(--grid);
+}
+.beats .dot {
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--plane); border: 2px solid var(--series-1);
+  font-size: 11px; font-weight: 700; color: var(--series-1); z-index: 1;
+}
+.beats .dot.quiet { border-color: var(--warning); color: var(--warning); }
+.beats .dot.done { border-color: var(--good); color: var(--good); }
+.beats h4 { margin: 2px 0 6px; font-size: 15px; }
+.beats p { margin: 0; color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+.beats .said {
+  display: block; margin: 10px 0 0; padding: 11px 14px;
+  background: var(--plane); border-radius: 9px; border-left: 3px solid var(--series-2);
+  font-size: 14px; color: var(--text-primary); font-style: italic;
+}
+.beats .said small { display: block; font-style: normal; color: var(--muted); font-size: 11.5px; margin-top: 5px; }
+.beats .quote {
+  display: block; margin-top: 9px; color: var(--text-primary);
+  font-size: 13.5px; background: var(--plane); border-radius: 9px; padding: 10px 13px;
+}
+.story .outcome {
+  margin-top: 4px; padding-top: 20px; border-top: 1px solid var(--grid);
+  display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+}
+.story .outcome .big { font-size: 26px; font-weight: 680; color: var(--good); letter-spacing: -0.02em; }
+.story .outcome span { color: var(--text-secondary); font-size: 14px; }

@@ -18,6 +18,7 @@ from fastapi.templating import Jinja2Templates
 
 from ..domain.enums import Intervention
 from ..domain.money import Paise, fmt
+from ..domain import labels
 from . import state as app_state
 from .charts import (
     Bar, causes_diagram, diverging_bar, grouped_bar, hbar, ladder_diagram, sweep_line,
@@ -37,6 +38,10 @@ def money(p) -> str:
 
 
 templates.env.globals["money"] = money
+templates.env.globals["cause_label"] = labels.cause
+templates.env.globals["cause_means"] = labels.cause_means
+templates.env.globals["action_label"] = labels.action
+templates.env.globals["gate_label"] = labels.gate
 
 
 def get_state() -> app_state.AppState:
@@ -98,6 +103,7 @@ def landing(request: Request):
     # the landing page went on quoting the smaller figures with no sign anything
     # had changed. Showing the buyer count makes that visible instead of wrong.
     eval_n = ev["n_buyers"] if ev else 0
+    story = _worked_example(s)
 
     return render(
         request, "landing.html", "landing",
@@ -106,10 +112,109 @@ def landing(request: Request):
         n_buyers=len(s.cards),
         ladder_svg=ladder_diagram(),
         causes_svg=causes_diagram(),
+        story=story,
         compare_chart=diverging_bar(
             bars, label_w=200, caption="net value per buyer against doing nothing"
         ),
     )
+
+
+def _worked_example(s: app_state.AppState) -> dict | None:
+    """One buyer, followed end to end.
+
+    The single most effective thing on the site, and the last thing added. Every
+    other page describes the mechanism; a reader who does not already care about
+    the mechanism needs to watch it happen to one person first.
+
+    Picks a real buyer from the run - one whose invoices were stuck at intake and
+    who was later paid - rather than a hand-written illustration, so the story is
+    something the system actually did.
+    """
+    st = s.result.state
+    # Buyers whose paperwork the agent actually repaired. That is the project's
+    # central claim, so the example should be one of them rather than a buyer
+    # picked for having a large balance.
+    repaired = {
+        e.buyer_id for e in st.audit if e.kind == "intake_repaired" and e.buyer_id
+    }
+    # Holds worth showing: a judgement call, not a spacing rule.
+    JUDGEMENT = ("promise_freeze", "dispute_freeze", "hardship_shield")
+
+    best = None
+    for c in s.cards:
+        if c.buyer_id not in repaired or c.recovered <= 0:
+            continue
+        decisions = s.decisions_by_buyer.get(c.buyer_id, [])
+        acted = [d for d in decisions if d.chosen is not Intervention.HOLD]
+        held = [
+            d
+            for d in decisions
+            if d.chosen is Intervention.HOLD
+            and any(not g.passed and g.gate in JUDGEMENT for g in d.gates)
+        ]
+        if len(acted) >= 2 and held:
+            if best is None or c.recovered > best[0]:
+                best = (c.recovered, c, acted, held)
+    if best is None:
+        return None
+
+    _, card, acted, held = best
+    reply = next(
+        (m for m in st.inbound_by_buyer.get(card.buyer_id, []) if len(m.body) > 18), None
+    )
+    # Read the reply with the real extractor rather than describing it. A canned
+    # interpretation in the template contradicted the agent's actual reading -
+    # the page claims every line is something the agent did, so the line has to
+    # come from the agent.
+    reply_read = None
+    if reply is not None:
+        from ..agent.extract import RuleExtractor
+
+        r = RuleExtractor().extract(reply, reply.received_at.date())
+        meaning = {
+            "promise_to_pay": "a commitment to pay, with a date",
+            "payment_claim": "a claim that money was already sent — to be checked, not believed",
+            "dispute": "a complaint about the goods or the bill",
+            "document_request": "a request for paperwork before they can pay",
+            "process_deflection": "a description of their internal process, which is not a promise",
+            "hardship": "a statement that they cannot pay",
+            "acknowledgement": "an acknowledgement with nothing in it",
+            "refusal": "a refusal",
+            "unclear": "not clear enough to act on — sent to a human",
+        }.get(r.intent.value, r.intent.value)
+        reply_read = {
+            "meaning": meaning,
+            "date": r.promised_date.isoformat() if r.promised_date else None,
+            "from_words": r.promised_date_raw,
+        }
+    first_hold = held[0]
+    hold_gate = next(g for g in first_hold.gates if not g.passed and g.gate in JUDGEMENT)
+    repairs = sum(
+        1
+        for e in st.audit
+        if e.kind == "intake_repaired" and e.buyer_id == card.buyer_id
+    )
+
+    return {
+        "name": card.name,
+        "city": card.city,
+        "owed": money(card.original),
+        "recovered_pct": f"{card.recovery_pct:.0f}",
+        "recovered": money(card.recovered),
+        "dpd": card.oldest_dpd,
+        "repairs": repairs,
+        "cause": labels.cause(card.inferred),
+        "cause_means": labels.cause_means(card.inferred),
+        "confidence": f"{card.confidence * 100:.0f}",
+        "first_action": labels.action(acted[0].chosen),
+        "reply": reply.body if reply else None,
+        "reply_read": reply_read,
+        "hold_when": first_hold.as_of.isoformat(),
+        "hold_gate": labels.gate(hold_gate.gate),
+        "hold_reason": hold_gate.reason,
+        "buyer_id": card.buyer_id,
+        "messages": card.messages,
+    }
 
 
 @app.get("/book", response_class=HTMLResponse)

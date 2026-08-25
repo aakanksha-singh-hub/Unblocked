@@ -4,130 +4,160 @@
 <div class="hero">
   <div class="eyebrow">Razorpay AI Buildathon · Track 03</div>
   <h1>Most overdue invoices<br>aren't unpaid.<br>They're stuck.</h1>
-  <p>A small manufacturer is owed money for goods she already delivered. She knows
-     exactly who owes her. What she doesn't know is <em>why</em> each one hasn't paid —
-     and that is the only thing that decides what to do about it.</p>
+  <p>Every ERP tells a small business <em>who</em> owes them. None of them work out
+     <em>why</em> — and that is the only thing that decides what to do about it.</p>
   <div class="cta">
     <a class="primary" href="/restraint">See it decide not to send →</a>
-    <a class="ghost" href="/book">Browse the book</a>
-    <a class="ghost" href="/method">What this proves, and doesn't</a>
+    <a class="ghost" href="/buyers">Browse the buyers</a>
   </div>
 </div>
 
 <div class="headline">
   <div><div class="n accent">+{{ hero.recovered }}</div>
-    <div class="l">recovered per buyer</div>
-    <div class="s">vs never contacting anyone, across {{ hero.eval_n }} buyers, held out.</div></div>
+    <div class="l">more recovered, per buyer</div>
+    <div class="s">Against doing nothing. {{ hero.eval_n }} buyers, held out.</div></div>
   <div><div class="n">+{{ hero.net }}</div>
-    <div class="l">after costs</div>
-    <div class="s">Charging churn and the owner's time. No baseline manages this.</div></div>
+    <div class="l">still ahead after costs</div>
+    <div class="s">Once lost accounts and the owner's time are charged.</div></div>
   <div><div class="n">{{ hero.hold }}%</div>
-    <div class="l">of decisions are to do nothing</div>
-    <div class="s">Restraint is the product, not a side effect.</div></div>
+    <div class="l">of the time it does nothing</div>
+    <div class="s">Knowing when not to send is the product.</div></div>
   <div><div class="n">₹2,500</div>
-    <div class="l">actually captured</div>
-    <div class="s">Real Razorpay payment, reconciled. Not a simulated rupee.</div></div>
+    <div class="l">really collected</div>
+    <div class="s">A live Razorpay payment, not a simulated rupee.</div></div>
 </div>
 
+{% if story %}
 <section class="band">
-  <h2>The bind</h2>
-  <p class="lede">Every reminder costs something. That is the whole problem, and it is
-    why software that stops at the aging report has not helped.</p>
-  <div class="three">
-    <div class="box"><h4>She knows who owes her</h4>
-      <p>Tally, Zoho, any ERP will tell her. The aging report is not the missing piece.</p></div>
-    <div class="box"><h4>Chasing has a price</h4>
-      <p>Too soft and it's ignored. Too firm and she loses an account worth a fifth of
-         her revenue. There is no free reminder.</p></div>
-    <div class="box"><h4>So she waits</h4>
-      <p>Waiting is the safest move on any single invoice, and it is what quietly
-         kills the business.</p></div>
+  <h2>One buyer, start to finish</h2>
+  <p class="lede">This is not an illustration. It is a buyer from the run you can browse
+     on this site, and every line below is something the agent actually did.</p>
+
+  <div class="story">
+    <div class="who">
+      <h3>{{ story.name }}</h3>
+      <span class="meta">{{ story.city }}</span>
+    </div>
+    <p class="owed">Owes <b>{{ story.owed }}</b> · oldest invoice <b>{{ story.dpd }} days</b> late</p>
+
+    <ul class="beats">
+      <li><span class="dot">1</span><div>
+        <h4>A normal system would send a reminder</h4>
+        <p>{{ story.dpd }} days overdue, so a ladder says escalate. But nobody has asked the
+           question that decides everything: <em>why</em> hasn't this buyer paid?</p>
+      </div></li>
+
+      <li><span class="dot">2</span><div>
+        <h4>It works out the reason first</h4>
+        <p>From how they've paid before and what they've written back:
+           <b>{{ story.cause }}</b> — {{ story.confidence }}% sure.</p>
+        <p style="margin-top:6px">{{ story.cause_means }}</p>
+      </div></li>
+
+      <li><span class="dot">3</span><div>
+        <h4>So it does the useful thing instead</h4>
+        <p><b>{{ story.first_action }}.</b> {{ story.repairs }} of their invoices had never
+           made it into the buyer's system — never uploaded, no PO reference. On an aging
+           report those look exactly like ordinary overdue. Nobody at the buyer could see
+           them, so no amount of asking for payment would ever have worked.</p>
+      </div></li>
+
+      {% if story.reply %}
+      <li><span class="dot">4</span><div>
+        <h4>The buyer writes back, in Hinglish</h4>
+        <span class="said">“{{ story.reply }}”
+          <small>Read as {{ story.reply_read.meaning }}{% if story.reply_read.date %},
+            with “{{ story.reply_read.from_words }}” resolved to
+            {{ story.reply_read.date }}{% endif %}.</small>
+        </span>
+      </div></li>
+      {% endif %}
+
+      <li><span class="dot quiet">5</span><div>
+        <h4>So it goes quiet, on their word</h4>
+        <p>On {{ story.hold_when }} it had something it could have sent, and didn't:</p>
+        <span class="quote">{{ story.hold_reason }}</span>
+      </div></li>
+
+      <li><span class="dot done">✓</span><div>
+        <h4>The money arrives</h4>
+        <p>Across the whole run this buyer took <b>{{ story.messages }}</b> messages —
+           spread out, spaced, and never during a promise.</p>
+      </div></li>
+    </ul>
+
+    <div class="outcome">
+      <span class="big">{{ story.recovered }} collected</span>
+      <span>{{ story.recovered_pct }}% of what was owed ·
+        <a href="/buyers/{{ story.buyer_id }}">see every decision →</a></span>
+    </div>
   </div>
 </section>
+{% endif %}
 
 <section class="band">
-  <h2>The idea</h2>
-  <p class="lede">Non-payment has a <strong>cause</strong>. Collections software escalates on
-    <em>age</em> — which only works if every buyer is late for the same reason. They aren't.</p>
+  <h2>Why that works</h2>
+  <p class="lede">Collections software escalates on <em>age</em>. That only makes sense if
+     every buyer is late for the same reason — and they aren't.</p>
   <div class="compare">
     <div>
-      <h4>What collections software does</h4>
-      <p class="cap">Escalate on age. One ladder for everyone.</p>
+      <h4>Escalate on age</h4>
+      <p class="cap">One ladder. Everyone gets it.</p>
       {{ ladder_svg|safe }}
     </div>
     <div>
-      <h4>What this does</h4>
-      <p class="cap">Work out the cause, then do the one thing that fixes it.</p>
+      <h4>Escalate on cause</h4>
+      <p class="cap">Six reasons. Six different right answers.</p>
       {{ causes_svg|safe }}
     </div>
   </div>
 </section>
 
 <section class="band">
-  <h2>What it recovers</h2>
-  <p class="lede">Net value <strong>per buyer, measured against doing nothing</strong> —
-    after charging relationship damage and the owner's time. Same {{ hero.eval_n }} buyers,
-    same random draws, so the differences are paired rather than two lucky runs.</p>
+  <h2>Does it actually work?</h2>
+  <p class="lede">Net value per buyer against doing nothing — after charging lost accounts
+     and the owner's time. {{ hero.eval_n }} buyers, same random draws for every policy.</p>
   {{ compare_chart|safe }}
-  <p class="note">Blast-weekly recovers significantly more than doing nothing and then loses
-    all of it to churn. That is why cost columns sit on the same table as recovery, never
-    in an appendix. <a href="/evaluation">Full comparison →</a></p>
+  <p class="note">Chasing everyone weekly recovers more than doing nothing, then loses all of
+     it to churn. That is why costs sit on the same chart as the money.
+     <a href="/evaluation">Full comparison →</a></p>
 </section>
 
 <section class="band">
-  <h2>How one decision gets made</h2>
-  <p class="lede">Once per buyer, per day.</p>
-  <div class="steps">
-    <div class="stepbox"><div class="num">1</div><div>
-      <h4>Read what actually happened</h4>
-      <p>Invoices, payments, and the buyer's own replies — in Hinglish, with implicit
-         dates, disputed amounts and transaction references that have to be checked
-         against the ledger rather than believed.</p>
-      <span class="tag">LLM</span></div></div>
-    <div class="stepbox"><div class="num">2</div><div>
-      <h4>Work out why they haven't paid</h4>
-      <p>Six causes, as a probability rather than a label. A buyer on a fixed 60-day
-         payment cycle is not the same problem as one who can't afford it, and neither
-         is the one whose invoice never reached the portal.</p>
-      <span class="tag">fitted classifier</span></div></div>
-    <div class="stepbox"><div class="num">3</div><div>
-      <h4>Score every action against that belief</h4>
-      <p>Twelve actions, from doing nothing to a statutory notice. Relationship damage
-         and the owner's time are charged in the same units as the money at stake, so
-         an action has to be worth more than it costs.</p>
-      <span class="tag">deterministic</span></div></div>
-    <div class="stepbox"><div class="num">4</div><div>
-      <h4>Guardrails can veto — and usually do</h4>
-      <p>A promise made, a dispute open, someone who said they can't pay, a public
-         holiday, a buyer worth too much to risk. No model runs here.
-         <strong>An LLM that can be talked out of a stopping rule is not a stopping
-         rule.</strong></p>
-      <span class="tag hard">hard-coded</span></div></div>
+  <h2>Where it will not guess</h2>
+  <p class="lede">Four rules are plain code, not a model. A language model can be argued
+     with; an <code style="font-family:var(--mono);font-size:13px">if</code> statement cannot.</p>
+  <div class="three">
+    <div class="box"><h4>They promised a date</h4>
+      <p>Silent until then, plus a few days for the transfer to land.</p></div>
+    <div class="box"><h4>They raised a complaint</h4>
+      <p>Settle it first. Asking again reads as not listening.</p></div>
+    <div class="box"><h4>They said they can't pay</h4>
+      <p>No pressure. Offer a payment plan instead.</p></div>
+    <div class="box"><h4>The account is too big to risk</h4>
+      <p>Anything irreversible needs a person to sign it off.</p></div>
   </div>
 </section>
 
 <section class="band">
-  <h2>Two things that aren't ours</h2>
-  <p class="lede">Everything else on this site is produced by a simulator we wrote.
-     These two are not.</p>
+  <h2>Two things we didn't make up</h2>
+  <p class="lede">The book on this site is simulated. These two are not.</p>
   <div class="proofrow">
     <div class="proof">
-      <h4>A real payment, reconciled</h4>
-      <p>₹2,500 against invoice PKG/26-27/0412 on Razorpay test mode — attested by their
-         API, matched on the reference we set when the link was issued, never on anything
-         the payer controls. The agent marks it settled and stops chasing.</p>
+      <h4>A real payment</h4>
+      <p>₹2,500 collected through Razorpay and matched back to the invoice automatically.
+         The agent marked it settled and stopped chasing.</p>
       <code>"final_status": "paid"
 "reconciled": true
 "agent_action_after_capture": "stop_chasing"</code>
     </div>
     <div class="proof amber">
       <h4>Forty replies we didn't write</h4>
-      <p>Elicited from people never shown the intent taxonomy, labelled independently by
-         two annotators who are not the author. <strong>Agreement κ = 0.911</strong>,
-         reported before any model number.</p>
-      <p>The model reads them at 83% against a 25% baseline — but on 24 held-out items
-         that gap is <strong>not statistically significant</strong>, and the page says so.</p>
-      <a href="/understanding" style="font-size:13px">The study →</a>
+      <p>Real people, asked what they'd actually type. Two others labelled them
+         independently and <b>agreed 91% of the time</b>.</p>
+      <p>The model reads them at 83%, against 25% for guessing — but on 24 items that gap
+         is <b>not statistically significant</b>, and we say so.</p>
+      <a href="/understanding" style="font-size:13px">Try it yourself →</a>
     </div>
   </div>
 </section>
@@ -135,25 +165,15 @@
 <section class="band">
   <h2>Look around</h2>
   <div class="explore">
-    <a href="/restraint"><strong>Restraint</strong><span>Every time it stayed quiet, and the
-      rule that stopped it. Start here.</span></a>
-    <a href="/book"><strong>The book</strong><span>{{ n_buyers }} buyers, what's owed, what came
-      back.</span></a>
-    <a href="/buyers"><strong>Buyers</strong><span>The agent's guess beside the real answer,
-      so mistakes are visible.</span></a>
-    <a href="/evaluation"><strong>Evaluation</strong><span>Money recovered, and what it cost to
-      get it.</span></a>
-    <a href="/sensitivity"><strong>Sensitivity</strong><span>Which of our assumptions the result
-      actually depends on.</span></a>
-    <a href="/understanding"><strong>Understanding</strong><span>Type a Hinglish reply and watch
-      it get read.</span></a>
-    <a href="/method"><strong>Method</strong><span>What this evaluation establishes, and what it
-      does not.</span></a>
+    <a href="/restraint"><strong>Restraint</strong><span>Every time it stayed quiet, and why.</span></a>
+    <a href="/buyers"><strong>Buyers</strong><span>Its guess beside the real answer.</span></a>
+    <a href="/book"><strong>The book</strong><span>What's owed, what came back.</span></a>
+    <a href="/evaluation"><strong>Evaluation</strong><span>The money, and what it cost.</span></a>
+    <a href="/understanding"><strong>Understanding</strong><span>Type a Hinglish reply, watch it get read.</span></a>
+    <a href="/sensitivity"><strong>Sensitivity</strong><span>Which assumptions this rests on.</span></a>
+    <a href="/method"><strong>Method</strong><span>What we can and can't claim.</span></a>
   </div>
 </section>
 
-<footer class="foot">
-  Built for the Razorpay AI Buildathon, Track 03 — AI Revenue Recovery.
-  Simulated book, real payment rail, honest intervals.
-</footer>
+<footer class="foot">Razorpay AI Buildathon · Track 03 — AI Revenue Recovery</footer>
 {% endblock %}

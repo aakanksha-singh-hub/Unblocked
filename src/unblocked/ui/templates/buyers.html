@@ -1,26 +1,25 @@
 {% extends "base.html" %}{% block title %}Buyers · Unblocked{% endblock %}
 {% block body %}
 <h1>Buyers</h1>
-<p class="sub">{{ cards|length }} shown. The agent's inferred cause sits beside the
-simulator's ground truth so mistakes are visible rather than buried — that column
-does not exist in the data the agent is given.</p>
+<p class="sub">{{ cards|length }} buyers. <b>Why it thinks they haven't paid</b> sits next to
+<b>the real reason</b>, so its mistakes are visible. The agent never sees that second column.</p>
 
 <div class="filters">
   <a href="/buyers" class="{{ 'on' if not active }}">All</a>
   {% for k, n in causes %}
-    <a href="/buyers?cause={{ k }}" class="{{ 'on' if active==k }}">{{ k }} <span class="note">{{ n }}</span></a>
+    <a href="/buyers?cause={{ k }}" class="{{ 'on' if active==k }}">{{ cause_label(k) }} <span class="note">{{ n }}</span></a>
   {% endfor %}
-  <a href="/buyers?filter=wrong" class="{{ 'on' if active=='wrong' }}">misread</a>
-  <a href="/buyers?filter=blocked" class="{{ 'on' if active=='blocked' }}">blocked at intake</a>
-  <a href="/buyers?filter=churned" class="{{ 'on' if active=='churned' }}">lost</a>
+  <a href="/buyers?filter=wrong" class="{{ 'on' if active=='wrong' }}">it got wrong</a>
+  <a href="/buyers?filter=blocked" class="{{ 'on' if active=='blocked' }}">stuck at the buyer's end</a>
+  <a href="/buyers?filter=churned" class="{{ 'on' if active=='churned' }}">relationship lost</a>
 </div>
 
 <div class="card">
 <table>
   <thead><tr>
-    <th>Buyer</th><th>Inferred</th><th>Truth</th><th class="num">Outstanding</th>
-    <th style="width:120px">Recovered</th><th class="num">Late</th>
-    <th class="num">Msgs</th><th class="num">Replies</th><th>Last action</th>
+    <th>Buyer</th><th>Why it thinks they haven't paid</th><th>The real reason</th><th class="num">Owed</th>
+    <th style="width:120px">Collected</th><th class="num">Days late</th>
+    <th class="num">Sent</th><th class="num">Replies</th><th>Last thing it did</th>
   </tr></thead>
   <tbody>
   {% for c in cards %}
@@ -29,18 +28,18 @@ does not exist in the data the agent is given.</p>
         {% if c.churned %}<span class="pill bad">lost</span>{% endif %}
         {% if c.blocked_invoices %}<span class="pill" title="blocked at buyer intake">{{ c.blocked_invoices }} blocked</span>{% endif %}
         <div class="note" style="margin:0">{{ c.city }} · {{ '%.1f'|format(c.revenue_share*100) }}% of revenue</div></td>
-      <td>{% if c.inferred %}<span class="pill mono">{{ c.inferred }}</span>
-          <div class="note" style="margin:0">{{ '%.0f'|format(c.confidence*100) }}%</div>
-          {% else %}<span class="note">cold start</span>{% endif %}</td>
-      <td><span class="pill mono {{ 'ok' if c.inferred==c.truth else ('bad' if c.inferred else '') }}">{{ c.truth }}</span></td>
+      <td>{% if c.inferred %}{{ cause_label(c.inferred) }}
+          <div class="note" style="margin:0">{{ '%.0f'|format(c.confidence*100) }}% sure</div>
+          {% else %}<span class="note">not enough history yet</span>{% endif %}</td>
+      <td><span class="pill {{ 'ok' if c.inferred==c.truth else ('bad' if c.inferred else '') }}">{{ cause_label(c.truth) }}</span></td>
       <td class="num">{{ money(c.outstanding) }}</td>
       <td><div class="bar-inline"><i style="width:{{ c.recovery_pct }}%"></i></div>
           <span class="note">{{ '%.0f'|format(c.recovery_pct) }}%</span></td>
       <td class="num">{{ c.oldest_dpd }}</td>
       <td class="num">{{ c.messages }}</td>
       <td class="num">{{ c.replies }}</td>
-      <td><span class="pill {{ 'act' if c.last_action!='none' else 'hold' }}">{{ c.last_action }}</span>
-        {% if c.last_action=='none' and c.held_for %}<div class="note" style="margin:0">{{ c.held_for }}</div>{% endif %}</td>
+      <td>{% if c.last_action!='none' %}{{ action_label(c.last_action) }}
+        {% else %}<span class="note">nothing yet{% if c.held_for %} — {{ gate_label(c.held_for)|lower }}{% endif %}</span>{% endif %}</td>
     </tr>
   {% endfor %}
   </tbody>

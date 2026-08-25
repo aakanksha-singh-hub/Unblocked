@@ -9,37 +9,35 @@
     <div class="d">{{ c.open_invoices }} open invoice{{ '' if c.open_invoices==1 else 's' }}</div></div>
   <div class="tile"><div class="k">Recovered</div><div class="v">{{ '%.0f'|format(c.recovery_pct) }}%</div>
     <div class="d">{{ money(c.recovered) }} of {{ money(c.original) }}</div></div>
-  <div class="tile"><div class="k">Inferred cause</div>
-    <div class="v" style="font-size:17px">{{ c.inferred or 'cold start' }}</div>
-    <div class="d">{{ '%.0f'|format(c.confidence*100) }}% confidence · truth: {{ c.truth }}</div></div>
+  <div class="tile"><div class="k">Why they haven't paid</div>
+    <div class="v" style="font-size:16px">{{ cause_label(c.inferred) }}</div>
+    <div class="d">{{ '%.0f'|format(c.confidence*100) }}% sure · really: {{ cause_label(c.truth) }}</div></div>
   <div class="tile"><div class="k">Contact</div><div class="v">{{ c.messages }}</div>
     <div class="d">{{ c.replies }} replies · {{ holds }} holds</div></div>
 </div>
 
 {% if c.blocked_invoices %}
-<div class="banner"><strong>{{ c.blocked_invoices }} invoice(s) blocked at this buyer's intake.</strong>
-Never uploaded to their portal, or missing a PO reference. On an aging report these look
-identical to ordinary overdue — nobody at the buyer can see them, so no amount of asking
-for payment moves them.</div>
+<div class="banner"><strong>{{ c.blocked_invoices }} invoice(s) never made it into this buyer's
+system.</strong> Not uploaded to their portal, or missing a PO number. Nobody on their side can
+see them — so asking for payment cannot work until the paperwork is fixed.</div>
 {% endif %}
 
-<h2>Decision trail</h2>
-<p class="note" style="margin-bottom:12px">Every decision, including the ones to do nothing.
-Consecutive holds for the same reason are collapsed. This is the audit trail: what was
-considered, what blocked it, and why the survivor won.</p>
+<h2>Everything it decided</h2>
+<p class="note" style="margin-bottom:12px">Including every day it chose to do nothing.
+Runs of the same decision are collapsed into one row.</p>
 <div class="card">
 <ul class="trail">
 {% for row in trail %}
   <li class="{{ 'is-hold' if row.hold }}">
     <span class="when">{{ row.when }}{% if row.repeat > 1 %} <span style="opacity:.6">→ {{ row.until[5:] }}</span>{% endif %}</span>
-    <span class="what">{{ row.what }}
+    <span class="what">{{ action_label(row.what) }}
       {% if row.approval %}<span class="pill esc">needs sign-off</span>{% endif %}
       {% if row.repeat > 1 %}<div class="repeat">{{ row.repeat }} days</div>{% endif %}
     </span>
     <span class="why">
       {{ row.why }}
       {% if row.gates %}<div class="gatelist">
-        {% for g in row.gates %}<span class="g {{ 'fail' if not g.passed }}">{{ g.gate }}</span>{% endfor %}
+        {% for g in row.gates %}<span class="g {{ 'fail' if not g.passed }}">{{ gate_label(g.gate) }}</span>{% endfor %}
       </div>{% endif %}
     </span>
   </li>
