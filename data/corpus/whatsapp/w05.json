@@ -1,0 +1,45 @@
+{
+  "contributor": "w05",
+  "items": [
+    {
+      "item_id": "w05_i01",
+      "scenario": "You received less material than what the bill says. The supplier is following up on the full amount. You have only recently started buying from them.",
+      "reply": ""
+    },
+    {
+      "item_id": "w05_i02",
+      "scenario": "Your accounts team cannot find the purchase order number for this bill, so it is stuck. The supplier is asking about payment. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "w05_i03",
+      "scenario": "The GST number printed on the bill is wrong, so your accounts team cannot process it. The supplier is asking why payment is delayed. The bill is about three weeks overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "w05_i04",
+      "scenario": "Your own customers owe you a lot of money and have not paid, so you cannot pay your suppliers either. The supplier is following up.",
+      "reply": ""
+    },
+    {
+      "item_id": "w05_i05",
+      "scenario": "Two of the cartons in the last delivery arrived crushed and you had to reject them. Nobody has sent you a corrected bill. The supplier is asking for full payment. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "w05_i06",
+      "scenario": "You have no particular reason for not paying and no clear plan for when you will. The supplier has messaged asking for an update. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "w05_i07",
+      "scenario": "Your company requires all supplier bills to be uploaded to a vendor portal. This one is not showing up there. The supplier says they sent it by email. The bill is about three weeks overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "w05_i08",
+      "scenario": "You paid this bill a few days ago by bank transfer. The supplier seems not to have noticed and is asking again. The supplier has messaged you once before about this.",
+      "reply": ""
+    }
+  ]
+}

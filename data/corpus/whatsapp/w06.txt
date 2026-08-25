@@ -1,0 +1,21 @@
+Hi! Doing a student project on how businesses reply to payment reminders. Can you help - 5 mins?
+
+Below are 8 situations. For each, just type what you'd ACTUALLY reply if you were the one who owes the money. Short is fine. Hinglish, typos, WhatsApp style - please don't make it formal, that's the whole point.
+
+Please make everything up - no real company names, amounts or transaction numbers. Your replies go into an open dataset used to test whether AI can read messages like these. Skip any you don't want to answer.
+
+1. You could manage the payment if you were allowed to split it over a few months, but not in one go. The supplier is asking for the whole amount. You have only recently started buying from them.
+
+2. You are waiting for your GST filing to be done before releasing payments this month. The supplier has followed up for the second time. They have been following up regularly for over a month now.
+
+3. Your own customers owe you a lot of money and have not paid, so you cannot pay your suppliers either. The supplier is following up. The bill is about three weeks overdue.
+
+4. Business has been very slow for several months and you honestly do not have the cash right now. The supplier is asking for payment. You have a long-standing relationship with this supplier.
+
+5. This is a small supplier and you have bigger payments to worry about this month. You are not planning to pay them yet. They have messaged you again. You have only recently started buying from them.
+
+6. The GST number printed on the bill is wrong, so your accounts team cannot process it. The supplier is asking why payment is delayed. This is the first time they have contacted you about it.
+
+7. Diwali is coming and your office will be shut for a week. You plan to clear pending bills after reopening. The supplier is asking. The bill is about three weeks overdue.
+
+8. Your accounts team cannot find the purchase order number for this bill, so it is stuck. The supplier is asking about payment. This is the first time they have contacted you about it.

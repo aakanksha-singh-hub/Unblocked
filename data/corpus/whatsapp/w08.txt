@@ -1,0 +1,21 @@
+Hi! Doing a student project on how businesses reply to payment reminders. Can you help - 5 mins?
+
+Below are 8 situations. For each, just type what you'd ACTUALLY reply if you were the one who owes the money. Short is fine. Hinglish, typos, WhatsApp style - please don't make it formal, that's the whole point.
+
+Please make everything up - no real company names, amounts or transaction numbers. Your replies go into an open dataset used to test whether AI can read messages like these. Skip any you don't want to answer.
+
+1. The quality of this batch was not up to standard and your production team has complained. You have not paid. The supplier has messaged.
+
+2. You need the e-way bill and delivery challan copies to process this. You don't have them. The supplier is asking for payment. They have been following up regularly for over a month now.
+
+3. You will have money after a large customer of yours pays you, which you expect sometime near the end of the month. The supplier is asking for an update. You have a long-standing relationship with this supplier.
+
+4. You paid roughly half of what is owed last week and plan to pay the rest later. The supplier is asking for the full amount. You have only recently started buying from them.
+
+5. Your company requires all supplier bills to be uploaded to a vendor portal. This one is not showing up there. The supplier says they sent it by email. You have only recently started buying from them.
+
+6. This is a small supplier and you have bigger payments to worry about this month. You are not planning to pay them yet. They have messaged you again. The bill is more than three months overdue.
+
+7. You are waiting for your GST filing to be done before releasing payments this month. The supplier has followed up for the second time. The supplier has messaged you once before about this.
+
+8. Two of the cartons in the last delivery arrived crushed and you had to reject them. Nobody has sent you a corrected bill. The supplier is asking for full payment. The supplier has messaged you once before about this.

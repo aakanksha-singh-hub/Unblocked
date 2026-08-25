@@ -1,0 +1,45 @@
+{
+  "contributor": "w01",
+  "items": [
+    {
+      "item_id": "w01_i01",
+      "scenario": "Two of the cartons in the last delivery arrived crushed and you had to reject them. Nobody has sent you a corrected bill. The supplier is asking for full payment. The bill is more than three months overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "w01_i02",
+      "scenario": "You paid roughly half of what is owed last week and plan to pay the rest later. The supplier is asking for the full amount. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "w01_i03",
+      "scenario": "Your company requires all supplier bills to be uploaded to a vendor portal. This one is not showing up there. The supplier says they sent it by email.",
+      "reply": ""
+    },
+    {
+      "item_id": "w01_i04",
+      "scenario": "You are not sure whether this bill has been paid or not and you need to check with your accounts person. The supplier is asking. You have a long-standing relationship with this supplier.",
+      "reply": ""
+    },
+    {
+      "item_id": "w01_i05",
+      "scenario": "You could manage the payment if you were allowed to split it over a few months, but not in one go. The supplier is asking for the whole amount. You have a long-standing relationship with this supplier.",
+      "reply": ""
+    },
+    {
+      "item_id": "w01_i06",
+      "scenario": "You received less material than what the bill says. The supplier is following up on the full amount. The bill is about three weeks overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "w01_i07",
+      "scenario": "You genuinely forgot about this bill. It is a small amount and you can pay it quickly. The supplier has just messaged. The bill is about three weeks overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "w01_i08",
+      "scenario": "You are waiting for your GST filing to be done before releasing payments this month. The supplier has followed up for the second time.",
+      "reply": ""
+    }
+  ]
+}
