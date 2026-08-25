@@ -1,0 +1,45 @@
+{
+  "contributor": "h05",
+  "items": [
+    {
+      "item_id": "h05_i01",
+      "scenario": "Two of the cartons in the last delivery arrived crushed and you had to reject them. Nobody has sent you a corrected bill. The supplier is asking for full payment. The bill is more than three months overdue.",
+      "reply": "haan isme 2 carton damaged the so we rejected them. corrected bill nahi mila abtak"
+    },
+    {
+      "item_id": "h05_i02",
+      "scenario": "You paid roughly half of what is owed last week and plan to pay the rest later. The supplier is asking for the full amount. This is the first time they have contacted you about it.",
+      "reply": "last week aadha pay kar diya tha, remaining thode din me kar denge"
+    },
+    {
+      "item_id": "h05_i03",
+      "scenario": "Your company requires all supplier bills to be uploaded to a vendor portal. This one is not showing up there. The supplier says they sent it by email.",
+      "reply": "invoice mail pe mila tha but vendor portal me nahi aa raha"
+    },
+    {
+      "item_id": "h05_i04",
+      "scenario": "You are not sure whether this bill has been paid or not and you need to check with your accounts person. The supplier is asking. You have a long-standing relationship with this supplier.",
+      "reply": "ek baar accounts se dekhna padega, paid hai ya pending not sure"
+    },
+    {
+      "item_id": "h05_i05",
+      "scenario": "You could manage the payment if you were allowed to split it over a few months, but not in one go. The supplier is asking for the whole amount. You have a long-standing relationship with this supplier.",
+      "reply": "pura amount ek baar me dena possible nahi hoga. few months me divide kar sakte hai?"
+    },
+    {
+      "item_id": "h05_i06",
+      "scenario": "You received less material than what the bill says. The supplier is following up on the full amount. The bill is about three weeks overdue.",
+      "reply": "bill ki quantity aur received quantity different hai. kam material mila tha"
+    },
+    {
+      "item_id": "h05_i07",
+      "scenario": "You genuinely forgot about this bill. It is a small amount and you can pay it quickly. The supplier has just messaged. The bill is about three weeks overdue.",
+      "reply": "sorry yaar bhul gaya tha iska 😬 small amount hai, jaldi kar deta hu"
+    },
+    {
+      "item_id": "h05_i08",
+      "scenario": "You are waiting for your GST filing to be done before releasing payments this month. The supplier has followed up for the second time.",
+      "reply": "GST filing pending hai abhi, isliye iss month payments release nahi kiye hain"
+    }
+  ]
+}

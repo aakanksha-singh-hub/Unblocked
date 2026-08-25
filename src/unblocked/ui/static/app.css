@@ -1,4 +1,4 @@
-/* Vasooli dashboard.
+/* Unblocked dashboard.
    Palette tokens are declared once here and referenced by role everywhere else,
    so light/dark swap in a single place. Dark values are declared under both the
    OS media query and the explicit theme scope, and the toggle wins both ways. */

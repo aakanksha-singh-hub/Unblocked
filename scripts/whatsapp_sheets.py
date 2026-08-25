@@ -74,7 +74,7 @@ def main() -> int:
     print(f"{args.contributors} sheets x {args.per_contributor} items -> {args.out}")
     print(f"potential corpus: {args.contributors * args.per_contributor} replies\n")
     print("Send the .txt to each person. As replies come back, paste each one into")
-    print("the matching .json, then:  vasooli corpus")
+    print("the matching .json, then:  unblocked corpus")
     return 0
 
 

@@ -9,9 +9,9 @@ import json
 
 import pytest
 
-from vasooli.adapters.mock_rail import MockRail
-from vasooli.adapters.rail import PaymentRail
-from vasooli.adapters.razorpay_live import (
+from unblocked.adapters.mock_rail import MockRail
+from unblocked.adapters.rail import PaymentRail
+from unblocked.adapters.razorpay_live import (
     RazorpayConfigError,
     RazorpayRail,
     parse_capture,

@@ -1,6 +1,6 @@
-# Vasooli
+# Unblocked
 
-**A B2B receivables recovery agent whose main skill is not sending things.**
+**Most overdue invoices aren't unpaid. They're stuck.**
 
 Razorpay AI Buildathon — Track 03, AI Revenue Recovery.
 
@@ -123,8 +123,8 @@ That is a claim someone with real AP experience can evaluate against their own
 knowledge, which is the point of stating it.
 
 ```
-vasooli breakeven        # the fatigue sweep
-vasooli sensitivity      # the parameters that might actually carry it
+unblocked breakeven        # the fatigue sweep
+unblocked sensitivity      # the parameters that might actually carry it
 ```
 
 ## Where AI is used, and where it deliberately is not
@@ -162,7 +162,7 @@ chasing".** Nothing downstream asks the model what to do.
 ## Restraint, made legible
 
 ```
-$ vasooli restraint
+$ unblocked restraint
 ```
 
 | gate | times | example |
@@ -201,7 +201,7 @@ disposition to be automating contact with anyone.
 Money recovered inside a simulator we wrote is a number our code printed.
 
 ```
-vasooli prove --amount 2500 --invoice PKG/26-27/0412
+unblocked prove --amount 2500 --invoice PKG/26-27/0412
 ```
 
 Issues a real Razorpay test-mode payment link, waits for payment, reconciles
@@ -213,7 +213,7 @@ over raw bytes with a constant-time compare and fail closed on a missing secret.
 ## The dashboard
 
 ```
-vasooli ui        # http://127.0.0.1:8000
+unblocked ui        # http://127.0.0.1:8000
 ```
 
 Seven pages, server-rendered, **no external assets** — it runs with the network
@@ -238,12 +238,12 @@ live, and the markup is inspectable.
 ```bash
 uv venv --python 3.11 && uv pip install -e ".[dev]"
 
-vasooli ui            # the dashboard
-vasooli train         # fit the archetype model
-vasooli evaluate      # the comparison table above
-vasooli restraint     # why the agent stayed quiet
-vasooli trail         # one buyer's full decision history
-vasooli breakeven     # where our finding stops holding
+unblocked ui            # the dashboard
+unblocked train         # fit the archetype model
+unblocked evaluate      # the comparison table above
+unblocked restraint     # why the agent stayed quiet
+unblocked trail         # one buyer's full decision history
+unblocked breakeven     # where our finding stops holding
 pytest                # 126 tests
 ```
 
@@ -314,7 +314,7 @@ already produced a plausible-looking number.
 ## Layout
 
 ```
-src/vasooli/
+src/unblocked/
   domain/      money as integer paise, taxonomies, entities
   sim/         the environment: calibration, hazard engine, replies, calendar
   agent/       view, beliefs, extraction, inference, playbook, policy, guardrails
@@ -363,10 +363,10 @@ codebook in [docs/CODEBOOK.md](docs/CODEBOOK.md).
   baseline's interval, is reported as unsupported rather than quietly dropped.
 
 ```
-vasooli sheets      # generate elicitation sheets
-vasooli corpus      # build the locked corpus from returned sheets
-vasooli annotate    # emit annotator CSVs
-vasooli extraction  # kappa first, then model numbers with Wilson intervals
+unblocked sheets      # generate elicitation sheets
+unblocked corpus      # build the locked corpus from returned sheets
+unblocked annotate    # emit annotator CSVs
+unblocked extraction  # kappa first, then model numbers with Wilson intervals
 ```
 
 The pipeline is tested end to end on fixtures in a temp directory, so the day

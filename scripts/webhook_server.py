@@ -22,9 +22,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from vasooli.adapters.env import load_env  # noqa: E402
-from vasooli.adapters.razorpay_live import parse_capture, verify_webhook  # noqa: E402
-from vasooli.domain.money import fmt  # noqa: E402
+from unblocked.adapters.env import load_env  # noqa: E402
+from unblocked.adapters.razorpay_live import parse_capture, verify_webhook  # noqa: E402
+from unblocked.domain.money import fmt  # noqa: E402
 
 SECRET = ""
 LOG = Path("artifacts/proof/webhook_events.jsonl")

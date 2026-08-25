@@ -15,12 +15,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from vasooli.agent.inference import ArchetypeModel  # noqa: E402
-from vasooli.agent.policy import CauseMatchedPolicy  # noqa: E402
-from vasooli.domain.money import fmt  # noqa: E402
-from vasooli.eval import baselines, metrics, runner  # noqa: E402
-from vasooli.sim import calibration as cal  # noqa: E402
-from vasooli.sim.world import generate  # noqa: E402
+from unblocked.agent.inference import ArchetypeModel  # noqa: E402
+from unblocked.agent.policy import CauseMatchedPolicy  # noqa: E402
+from unblocked.domain.money import fmt  # noqa: E402
+from unblocked.eval import baselines, metrics, runner  # noqa: E402
+from unblocked.sim import calibration as cal  # noqa: E402
+from unblocked.sim.world import generate  # noqa: E402
 
 
 def main() -> int:

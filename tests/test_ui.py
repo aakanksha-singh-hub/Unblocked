@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from vasooli.ui import app as ui_app
+from unblocked.ui import app as ui_app
 
 
 @pytest.fixture(scope="module")

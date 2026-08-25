@@ -23,7 +23,7 @@ from .charts import Bar, grouped_bar, hbar, sweep_line
 
 HERE = Path(__file__).parent
 
-app = FastAPI(title="Vasooli", docs_url=None, redoc_url=None)
+app = FastAPI(title="Unblocked", docs_url=None, redoc_url=None)
 app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 templates = Jinja2Templates(directory=str(HERE / "templates"))
 

@@ -1,17 +1,17 @@
 """Command line entry point.
 
-    vasooli evaluate            compare policies on the held-out book
-    vasooli train               fit the archetype model
-    vasooli breakeven           find where the headline finding stops holding
-    vasooli ui                  the dashboard
-    vasooli trail <buyer>       one buyer's full decision history
-    vasooli restraint           the moments the agent chose not to send
-    vasooli prove               end-to-end recovery against Razorpay test mode
+    unblocked evaluate            compare policies on the held-out book
+    unblocked train               fit the archetype model
+    unblocked breakeven           find where the headline finding stops holding
+    unblocked ui                  the dashboard
+    unblocked trail <buyer>       one buyer's full decision history
+    unblocked restraint           the moments the agent chose not to send
+    unblocked prove               end-to-end recovery against Razorpay test mode
 
-    vasooli sheets              generate elicitation sheets for contributors
-    vasooli corpus              build the locked corpus from returned sheets
-    vasooli annotate            emit annotator CSVs
-    vasooli extraction          score reply understanding
+    unblocked sheets              generate elicitation sheets for contributors
+    unblocked corpus              build the locked corpus from returned sheets
+    unblocked annotate            emit annotator CSVs
+    unblocked extraction          score reply understanding
 """
 
 from __future__ import annotations
@@ -79,9 +79,9 @@ def ui(port: int = 8000, host: str = "127.0.0.1", reload: bool = False) -> None:
     """
     import uvicorn
 
-    console.print(f"\n  Vasooli dashboard -> [bold]http://{host}:{port}[/bold]")
+    console.print(f"\n  Unblocked dashboard -> [bold]http://{host}:{port}[/bold]")
     console.print("  [dim]first request builds the run; give it a few seconds[/dim]\n")
-    uvicorn.run("vasooli.ui.app:app", host=host, port=port, reload=reload, log_level="warning")
+    uvicorn.run("unblocked.ui.app:app", host=host, port=port, reload=reload, log_level="warning")
 
 
 @app.command()
@@ -237,7 +237,7 @@ def trail(
     total = sum(p.amount for p in paid)
     owed = sum(world.invoices[i].amount for i in world.invoices if world.invoices[i].buyer_id == buyer)
     console.print(f"\nrecovered {fmt(total)} of {fmt(owed)}  ({len(paid)} payments)")
-    console.print("[dim]* requires human sign-off · run `vasooli ui` for the full trail[/dim]")
+    console.print("[dim]* requires human sign-off · run `unblocked ui` for the full trail[/dim]")
 
 
 @app.command()

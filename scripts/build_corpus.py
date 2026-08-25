@@ -27,12 +27,16 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from vasooli.eval.provenance import audit  # noqa: E402
+from unblocked.eval.provenance import audit  # noqa: E402
 
 #: Both elicitation formats land under data/corpus. Scanning only the long-form
-#: directory meant `vasooli corpus` reported "no replies found" while a full set
+#: directory meant `unblocked corpus` reported "no replies found" while a full set
 #: of WhatsApp replies sat in the sibling folder.
-SHEET_DIRS = (Path("data/corpus/sheets"), Path("data/corpus/whatsapp"))
+SHEET_DIRS = (
+    Path("data/corpus/hinglish"),
+    Path("data/corpus/sheets"),
+    Path("data/corpus/whatsapp"),
+)
 OUT = Path("data/corpus/replies.jsonl")
 
 

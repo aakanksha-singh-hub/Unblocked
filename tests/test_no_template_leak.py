@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from vasooli.sim.replies import FUZZY_DATES, TEMPLATES
+from unblocked.sim.replies import FUZZY_DATES, TEMPLATES
 
 CORPUS = Path("data/corpus")
 

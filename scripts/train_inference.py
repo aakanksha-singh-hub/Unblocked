@@ -28,14 +28,14 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from vasooli.agent.beliefs import Beliefs  # noqa: E402
-from vasooli.agent.extract import RuleExtractor  # noqa: E402
-from vasooli.agent.features import FEATURE_NAMES, extract  # noqa: E402
-from vasooli.agent.inference import ArchetypeModel  # noqa: E402
-from vasooli.agent.observer import BeliefUpdater  # noqa: E402
-from vasooli.agent.view import build_view  # noqa: E402
-from vasooli.eval import baselines, runner  # noqa: E402
-from vasooli.sim.world import generate  # noqa: E402
+from unblocked.agent.beliefs import Beliefs  # noqa: E402
+from unblocked.agent.extract import RuleExtractor  # noqa: E402
+from unblocked.agent.features import FEATURE_NAMES, extract  # noqa: E402
+from unblocked.agent.inference import ArchetypeModel  # noqa: E402
+from unblocked.agent.observer import BeliefUpdater  # noqa: E402
+from unblocked.agent.view import build_view  # noqa: E402
+from unblocked.eval import baselines, runner  # noqa: E402
+from unblocked.sim.world import generate  # noqa: E402
 
 SNAPSHOT_DAYS = (25, 50, 80, 110, 140, 170)
 

@@ -27,11 +27,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from vasooli.adapters.env import load_env  # noqa: E402
-from vasooli.agent.extract import RuleExtractor  # noqa: E402
-from vasooli.domain.enums import Channel, ReplyIntent  # noqa: E402
-from vasooli.domain.models import InboundMessage  # noqa: E402
-from vasooli.eval.extraction import agreement, score  # noqa: E402
+from unblocked.adapters.env import load_env  # noqa: E402
+from unblocked.agent.extract import RuleExtractor  # noqa: E402
+from unblocked.domain.enums import Channel, ReplyIntent  # noqa: E402
+from unblocked.domain.models import InboundMessage  # noqa: E402
+from unblocked.eval.extraction import agreement, score  # noqa: E402
 
 CORPUS = Path("data/corpus/replies.jsonl")
 
@@ -66,12 +66,12 @@ def _pilot(items: dict, args) -> int:
     miss? Disagreements are exactly the items worth putting in front of an
     annotator first.
     """
-    from vasooli.eval.extraction import cohens_kappa
+    from unblocked.eval.extraction import cohens_kappa
 
     load_env()
     extractors = [("rules", RuleExtractor())]
     try:
-        from vasooli.agent.llm_extract import LLMExtractor
+        from unblocked.agent.llm_extract import LLMExtractor
 
         extractors.append(("llm", LLMExtractor()))
     except Exception as e:  # noqa: BLE001
@@ -221,7 +221,7 @@ def main() -> int:
     if not args.no_llm:
         load_env()
         try:
-            from vasooli.agent.llm_extract import LLMExtractor
+            from unblocked.agent.llm_extract import LLMExtractor
 
             llm = LLMExtractor()
             extractors.append((llm.name, llm))

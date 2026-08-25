@@ -34,9 +34,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from vasooli.adapters.env import load_env  # noqa: E402
-from vasooli.adapters.razorpay_live import RazorpayConfigError, RazorpayRail  # noqa: E402
-from vasooli.domain.money import Paise, fmt, rupees  # noqa: E402
+from unblocked.adapters.env import load_env  # noqa: E402
+from unblocked.adapters.razorpay_live import RazorpayConfigError, RazorpayRail  # noqa: E402
+from unblocked.domain.money import Paise, fmt, rupees  # noqa: E402
 
 
 def main() -> int:
@@ -68,7 +68,7 @@ def main() -> int:
         reference_id=args.invoice,
         description=f"Payment against invoice {args.invoice}",
         customer_name=args.buyer,
-        notes={"source": "vasooli", "intervention": "payment_link"},
+        notes={"source": "unblocked", "intervention": "payment_link"},
     )
     print(f"\n  link      {link.link_id}")
     print(f"  PAY HERE  {link.short_url}")

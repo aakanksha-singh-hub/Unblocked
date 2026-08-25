@@ -6,12 +6,12 @@ from datetime import timedelta
 
 import pytest
 
-from vasooli.agent.view import build_view
-from vasooli.domain.enums import BuyerArchetype, Intervention
-from vasooli.domain.models import Buyer, BuyerTruth, Decision
-from vasooli.eval import baselines, runner
-from vasooli.sim import dynamics
-from vasooli.sim.world import generate
+from unblocked.agent.view import build_view
+from unblocked.domain.enums import BuyerArchetype, Intervention
+from unblocked.domain.models import Buyer, BuyerTruth, Decision
+from unblocked.eval import baselines, runner
+from unblocked.sim import dynamics
+from unblocked.sim.world import generate
 
 
 @pytest.fixture(scope="module")
@@ -91,8 +91,8 @@ def test_ledger_balances(small_world):
 def test_credit_notes_are_not_counted_as_recovery(small_world):
     """A written-off dispute unblocks the remainder but is not money collected.
     Without this, an agent could 'recover' any amount by forgiving it."""
-    from vasooli.domain.enums import Intervention
-    from vasooli.domain.models import Decision
+    from unblocked.domain.enums import Intervention
+    from unblocked.domain.models import Decision
 
     st = dynamics.new_run(small_world)
     day = small_world.start_date
@@ -118,8 +118,8 @@ def test_credit_notes_are_not_counted_as_recovery(small_world):
 def test_document_reconcile_can_unblock_portal_invoices(small_world):
     """The highest-value discovery in the book must be reachable by some action.
     Modelled as a hazard multiplier alone it was not: zero times 1.6 is zero."""
-    from vasooli.domain.enums import Intervention
-    from vasooli.domain.models import Decision
+    from unblocked.domain.enums import Intervention
+    from unblocked.domain.models import Decision
 
     st = dynamics.new_run(small_world)
     blocked = [

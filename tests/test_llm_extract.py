@@ -14,9 +14,9 @@ from datetime import date, datetime
 
 import pytest
 
-from vasooli.agent.llm_extract import LLMExtractor
-from vasooli.domain.enums import Channel, ReplyIntent
-from vasooli.domain.models import InboundMessage
+from unblocked.agent.llm_extract import LLMExtractor
+from unblocked.domain.enums import Channel, ReplyIntent
+from unblocked.domain.models import InboundMessage
 
 TODAY = date(2026, 6, 10)
 BODY = "sir month end tak payment ho jayega, thoda adjust kar lijiye"
@@ -192,7 +192,7 @@ def test_injection_cannot_produce_an_action():
 
 
 def test_unreachable_model_falls_back_rather_than_raising():
-    from vasooli.agent.extract import RuleExtractor
+    from unblocked.agent.extract import RuleExtractor
 
     r = extractor(raises=True, fallback=RuleExtractor()).extract(msg(), TODAY)
     assert r.intent is ReplyIntent.PROMISE_TO_PAY  # rules handled it
@@ -225,8 +225,8 @@ def test_genuine_abstention_is_not_marked_as_failure():
 
 
 def test_build_extractor_degrades_to_rules_without_credentials(monkeypatch):
-    from vasooli.agent.extract import RuleExtractor
-    from vasooli.agent.llm_extract import build_extractor
+    from unblocked.agent.extract import RuleExtractor
+    from unblocked.agent.llm_extract import build_extractor
 
     for key in ("GROQ_API_KEY", "FIREWORKS_API_KEY", "GOOGLE_API_KEY"):
         monkeypatch.delenv(key, raising=False)

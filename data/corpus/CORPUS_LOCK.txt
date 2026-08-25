@@ -1,12 +1,8 @@
-TIER               = PILOT
-  This corpus did NOT pass the provenance audit. It proves the
-  pipeline runs end to end. It is not evidence, is not quoted as a
-  measurement anywhere, and does not appear in the README results.
-
-corpus sha256[:16] = 22ad35db606b38b1
-items              = 64
-contributors       = 8
-test contributors  = ['w02', 'w04', 'w05', 'w07']
+TIER               = EVIDENCE
+corpus sha256[:16] = 6214ef7648a0ba38
+items              = 40
+contributors       = 5
+test contributors  = ['h01', 'h02', 'h05']
 split seed         = 20260824
 
 Split drawn at build time, before any model output was inspected.

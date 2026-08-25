@@ -11,11 +11,11 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-from vasooli.agent.beliefs import BuyerBeliefs
-from vasooli.agent.guardrails import GateConfig, Guardrails
-from vasooli.agent.view import BuyerLedger, InvoiceView
-from vasooli.domain.enums import Channel, Intervention
-from vasooli.domain.models import Buyer, Dispute, Invoice, OutboundMessage, Promise
+from unblocked.agent.beliefs import BuyerBeliefs
+from unblocked.agent.guardrails import GateConfig, Guardrails
+from unblocked.agent.view import BuyerLedger, InvoiceView
+from unblocked.domain.enums import Channel, Intervention
+from unblocked.domain.models import Buyer, Dispute, Invoice, OutboundMessage, Promise
 
 TODAY = date(2026, 6, 10)  # a Wednesday
 ALL = list(Intervention)

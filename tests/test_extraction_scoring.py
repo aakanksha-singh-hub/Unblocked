@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pytest
 
-from vasooli.eval.extraction import (
+from unblocked.eval.extraction import (
     agreement,
     cohens_kappa,
     macro_f1,
@@ -27,7 +27,7 @@ from vasooli.eval.extraction import (
     score,
     wilson,
 )
-from vasooli.domain.enums import ReplyIntent
+from unblocked.domain.enums import ReplyIntent
 
 ROOT = Path(__file__).resolve().parents[1]
 

@@ -31,7 +31,7 @@
   const btn = document.getElementById("theme");
   if (btn) {
     const stored = (() => {
-      try { return localStorage.getItem("vasooli-theme"); } catch { return null; }
+      try { return localStorage.getItem("unblocked-theme"); } catch { return null; }
     })();
     if (stored) document.documentElement.setAttribute("data-theme", stored);
     btn.addEventListener("click", () => {
@@ -41,7 +41,7 @@
         : window.matchMedia("(prefers-color-scheme: dark)").matches;
       const next = dark ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
-      try { localStorage.setItem("vasooli-theme", next); } catch { /* private mode */ }
+      try { localStorage.setItem("unblocked-theme", next); } catch { /* private mode */ }
     });
   }
 })();
