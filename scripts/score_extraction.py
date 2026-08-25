@@ -78,7 +78,10 @@ def _pilot(items: dict, args) -> int:
         print(f"LLM extractor unavailable ({e}); nothing to compare against.")
         return 1
 
+    import time
+
     preds: dict[str, dict[str, object]] = {name: {} for name, _ in extractors}
+    failures: dict[str, int] = {name: 0 for name, _ in extractors}
     spans: dict[str, dict[str, str]] = {name: {} for name, _ in extractors}
     dates: dict[str, dict[str, str]] = {name: {} for name, _ in extractors}
 
@@ -89,10 +92,15 @@ def _pilot(items: dict, args) -> int:
         )
         for name, ex in extractors:
             r = ex.extract(msg, date(2026, 6, 10))
+            if r.extraction_failed:
+                failures[name] += 1
             preds[name][item_id] = r.intent.value
             spans[name][item_id] = r.evidence_span or ""
             if r.promised_date:
                 dates[name][item_id] = r.promised_date.isoformat()
+        # Pace the batch. A wall of rate-limit failures says nothing about the
+        # model and everything about how fast we asked.
+        time.sleep(0.4)
 
     ids = sorted(items)
     a = [preds["rules"][i] for i in ids]
@@ -105,7 +113,8 @@ def _pilot(items: dict, args) -> int:
     print(f"  agree on intent   {same}/{len(ids)} ({same / len(ids):.0%})")
     print(f"  Cohen's kappa     {cohens_kappa(a, b):.3f}")
     print(f"  rules abstained   {sum(1 for x in a if x == 'unclear')}")
-    print(f"  model abstained   {sum(1 for x in b if x == 'unclear')}")
+    print(f"  model abstained   {sum(1 for x in b if x == 'unclear') - failures['llm']}"
+          f"   (+{failures['llm']} calls FAILED - not counted as abstentions)")
     print(f"  dates: rules {len(dates['rules'])}, model {len(dates['llm'])}")
 
     print("\n  where they diverge (the items to annotate first):")

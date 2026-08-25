@@ -117,16 +117,20 @@ class LLMExtractor:
         #: does not.
         self.fallback = fallback
         self.name = f"llm:{self.client.provider}/{self.client.model}"
+        #: Calls that could not complete. Reported separately from abstentions,
+        #: never folded into them.
+        self.failures = 0
 
     def extract(self, message: InboundMessage, as_of: date) -> ExtractedReply:
         try:
             raw = self.client.complete_json(
                 SYSTEM, USER.format(as_of=as_of.isoformat(), body=message.body)
             )
-        except Exception:  # noqa: BLE001 - any failure degrades, never propagates
+        except Exception as e:  # noqa: BLE001 - any failure degrades, never propagates
+            self.failures += 1
             if self.fallback is not None:
                 return self.fallback.extract(message, as_of)
-            return self._abstain(message, "model unreachable")
+            return self._failed(message, str(e)[:120])
         return self._parse(raw, message, as_of)
 
     # -- validation -------------------------------------------------------
@@ -195,12 +199,26 @@ class LLMExtractor:
 
     @staticmethod
     def _abstain(message: InboundMessage, why: str) -> ExtractedReply:
+        """The model ran and declined to commit. A valid, useful outcome."""
         return ExtractedReply(
             message_id=message.message_id,
             intent=ReplyIntent.UNCLEAR,
             confidence=0.0,
             evidence_span=None,
             abstained=True,
+        )
+
+    @staticmethod
+    def _failed(message: InboundMessage, why: str) -> ExtractedReply:
+        """The model could not run. Never counted as an abstention."""
+        return ExtractedReply(
+            message_id=message.message_id,
+            intent=ReplyIntent.UNCLEAR,
+            confidence=0.0,
+            evidence_span=None,
+            abstained=False,
+            extraction_failed=True,
+            failure_reason=why,
         )
 
 

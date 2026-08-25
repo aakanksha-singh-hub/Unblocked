@@ -307,6 +307,15 @@ class ExtractedReply(Frozen):
     #: separately measured, outcome.
     abstained: bool = False
 
+    #: True when the extractor could not run at all - a timeout, a rate limit, a
+    #: malformed response. Distinct from abstention on purpose: recording a
+    #: failed API call as "the model was unsure" silently turns the abstention
+    #: metric into a measurement of network reliability, and abstention
+    #: precision is one of the numbers this project reports as evidence of good
+    #: behaviour. A pilot run showed 14 abstentions that were mostly this.
+    extraction_failed: bool = False
+    failure_reason: str | None = None
+
 
 # ---------------------------------------------------------------------------
 # Decisions and audit

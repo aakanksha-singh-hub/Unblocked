@@ -198,10 +198,30 @@ def test_unreachable_model_falls_back_rather_than_raising():
     assert r.intent is ReplyIntent.PROMISE_TO_PAY  # rules handled it
 
 
-def test_unreachable_model_without_fallback_abstains_not_raises():
+def test_unreachable_model_without_fallback_does_not_raise():
     """A rate limit mid-run must not kill a 180-day simulation."""
     r = extractor(raises=True).extract(msg(), TODAY)
-    assert r.abstained and r.confidence == 0.0
+    assert r.intent is ReplyIntent.UNCLEAR and r.confidence == 0.0
+
+
+def test_failure_is_not_recorded_as_abstention():
+    """The distinction that matters for honesty: abstention means the model ran
+    and declined; failure means it never ran. Folding the second into the first
+    turns abstention precision - a number this project reports as evidence of
+    good behaviour - into a measurement of network reliability. A pilot run
+    showed 14 'abstentions' that were mostly failed calls."""
+    ex = extractor(raises=True)
+    r = ex.extract(msg(), TODAY)
+    assert r.extraction_failed is True
+    assert r.abstained is False
+    assert r.failure_reason
+    assert ex.failures == 1
+
+
+def test_genuine_abstention_is_not_marked_as_failure():
+    r = extractor(payload={"intent": "unclear", "confidence": 0.1}).extract(msg(), TODAY)
+    assert r.abstained is True
+    assert r.extraction_failed is False
 
 
 def test_build_extractor_degrades_to_rules_without_credentials(monkeypatch):

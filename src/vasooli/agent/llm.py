@@ -57,7 +57,7 @@ class LLMClient:
     model: str
     api_key: str
     timeout: float = 45.0
-    max_retries: int = 3
+    max_retries: int = 4
 
     @classmethod
     def from_env(cls, provider: str | None = None, model: str | None = None) -> LLMClient:
@@ -100,9 +100,12 @@ class LLMClient:
                 with httpx.Client(timeout=self.timeout) as client:
                     r = client.post(ENDPOINTS[self.provider], json=payload, headers=headers)
                 if r.status_code == 429 or r.status_code >= 500:
+                    # Back off hard on rate limits. A batch run that trips these
+                    # produces a wall of "failures" that say nothing about the
+                    # model and everything about how fast we asked.
                     # Rate limits and server errors are worth waiting out; a 400
                     # is our bug and retrying it just wastes the quota.
-                    time.sleep(1.5 * (2**attempt))
+                    time.sleep(2.5 * (2**attempt))
                     last = RuntimeError(f"{r.status_code}: {r.text[:200]}")
                     continue
                 r.raise_for_status()
