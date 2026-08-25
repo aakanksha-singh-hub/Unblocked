@@ -378,6 +378,15 @@ real sheets arrive the only new variable is the data.
 sweeps, LLM extraction, and a live Razorpay test-mode integration that creates,
 fetches and cancels real payment links.
 
-**Outstanding:** the reply corpus is not collected yet. Until replies come back
-from contributors and two independent annotators have labelled them, the
-extraction number does not exist and is not claimed anywhere in this repo.
+**Outstanding:** the reply corpus is not collected yet.
+
+A first batch was audited and came back **pilot** rather than **evidence** — the
+same sentence appeared verbatim under three contributors, in uniform English,
+with zero Hindi tokens in a set elicited as Hinglish. `eval/provenance.py` now
+runs that audit automatically and `build_corpus.py` refuses to build an
+evidence-tier corpus that fails it. A pilot corpus proves the pipeline runs and
+is never quoted as a measurement.
+
+Until replies come back that pass the audit, and two independent annotators have
+labelled them, the extraction number does not exist and is not claimed anywhere
+in this repo.

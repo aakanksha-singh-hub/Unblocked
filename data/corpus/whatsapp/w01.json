@@ -4,42 +4,42 @@
     {
       "item_id": "w01_i01",
       "scenario": "Two of the cartons in the last delivery arrived crushed and you had to reject them. Nobody has sent you a corrected bill. The supplier is asking for full payment. The bill is more than three months overdue.",
-      "reply": ""
+      "reply": "We had rejected two damaged cartons from that delivery, so the invoice still needs to be corrected. Please send the revised bill and we'll take care of the payment."
     },
     {
       "item_id": "w01_i02",
       "scenario": "You paid roughly half of what is owed last week and plan to pay the rest later. The supplier is asking for the full amount. This is the first time they have contacted you about it.",
-      "reply": ""
+      "reply": "We paid around half of the outstanding amount last week. The remaining balance will be cleared later, so please give us a little more time."
     },
     {
       "item_id": "w01_i03",
       "scenario": "Your company requires all supplier bills to be uploaded to a vendor portal. This one is not showing up there. The supplier says they sent it by email.",
-      "reply": ""
+      "reply": "I can see the email, but the invoice isn't appearing on our vendor portal. We need it uploaded there before accounts can take it forward. Could you please upload it?"
     },
     {
       "item_id": "w01_i04",
       "scenario": "You are not sure whether this bill has been paid or not and you need to check with your accounts person. The supplier is asking. You have a long-standing relationship with this supplier.",
-      "reply": ""
+      "reply": "Let me confirm this with our accounts team first. I'm not able to see the payment status right now, but I'll check and get back to you."
     },
     {
       "item_id": "w01_i05",
       "scenario": "You could manage the payment if you were allowed to split it over a few months, but not in one go. The supplier is asking for the whole amount. You have a long-standing relationship with this supplier.",
-      "reply": ""
+      "reply": "We won't be able to manage the whole amount at once. If you're okay with it, we'd like to clear it in instalments over the next few months."
     },
     {
       "item_id": "w01_i06",
       "scenario": "You received less material than what the bill says. The supplier is following up on the full amount. The bill is about three weeks overdue.",
-      "reply": ""
+      "reply": "The quantity received was less than what's mentioned on the bill. Please check the delivery details and send us a revised invoice for the actual quantity."
     },
     {
       "item_id": "w01_i07",
       "scenario": "You genuinely forgot about this bill. It is a small amount and you can pay it quickly. The supplier has just messaged. The bill is about three weeks overdue.",
-      "reply": ""
+      "reply": "Sorry, this one was missed from our side. It's a small amount and we'll get the payment done shortly."
     },
     {
       "item_id": "w01_i08",
       "scenario": "You are waiting for your GST filing to be done before releasing payments this month. The supplier has followed up for the second time.",
-      "reply": ""
+      "reply": "We're waiting for this month's GST filing to be completed before releasing the payments. It should be sorted soon, and we'll process your bill after that."
     }
   ]
 }

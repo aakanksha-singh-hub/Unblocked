@@ -4,42 +4,42 @@
     {
       "item_id": "w05_i01",
       "scenario": "You received less material than what the bill says. The supplier is following up on the full amount. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "The invoice shows more material than we actually received. Can you check the delivery quantity once and revise the bill accordingly?"
     },
     {
       "item_id": "w05_i02",
       "scenario": "Your accounts team cannot find the purchase order number for this bill, so it is stuck. The supplier is asking about payment. The supplier has messaged you once before about this.",
-      "reply": ""
+      "reply": "Accounts is unable to trace the PO against this invoice, so the payment hasn't been processed. If you can send me the PO number, I'll get it checked."
     },
     {
       "item_id": "w05_i03",
       "scenario": "The GST number printed on the bill is wrong, so your accounts team cannot process it. The supplier is asking why payment is delayed. The bill is about three weeks overdue.",
-      "reply": ""
+      "reply": "The payment is pending because the GST number on the bill is incorrect. Please issue a fresh invoice with the correct number and we'll submit it again."
     },
     {
       "item_id": "w05_i04",
       "scenario": "Your own customers owe you a lot of money and have not paid, so you cannot pay your suppliers either. The supplier is following up.",
-      "reply": ""
+      "reply": "We're still waiting for some major customer payments, and that's put us behind on supplier payments as well. We're chasing those collections and will settle this once the funds come in."
     },
     {
       "item_id": "w05_i05",
       "scenario": "Two of the cartons in the last delivery arrived crushed and you had to reject them. Nobody has sent you a corrected bill. The supplier is asking for full payment. This is the first time they have contacted you about it.",
-      "reply": ""
+      "reply": "Two cartons were damaged when they arrived and were rejected, so the full invoice amount isn't correct. We haven't received the revised bill yet. Please send the updated invoice and we'll process it."
     },
     {
       "item_id": "w05_i06",
       "scenario": "You have no particular reason for not paying and no clear plan for when you will. The supplier has messaged asking for an update. The supplier has messaged you once before about this.",
-      "reply": ""
+      "reply": "Sorry, I don't have a confirmed payment date for this yet. Let me check internally and I'll update you once I have something definite."
     },
     {
       "item_id": "w05_i07",
       "scenario": "Your company requires all supplier bills to be uploaded to a vendor portal. This one is not showing up there. The supplier says they sent it by email. The bill is about three weeks overdue.",
-      "reply": ""
+      "reply": "We've received the invoice by email, but it isn't available on the vendor portal. Our accounts team needs it there before they can process the payment. Please upload it when you can."
     },
     {
       "item_id": "w05_i08",
       "scenario": "You paid this bill a few days ago by bank transfer. The supplier seems not to have noticed and is asking again. The supplier has messaged you once before about this.",
-      "reply": ""
+      "reply": "This was already paid a few days back through bank transfer. Please check once on your side. I can send the transfer reference if you need it."
     }
   ]
 }

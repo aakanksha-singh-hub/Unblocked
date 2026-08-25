@@ -27,6 +27,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from vasooli.eval.provenance import audit  # noqa: E402
+
 SHEETS = Path("data/corpus/sheets")
 OUT = Path("data/corpus/replies.jsonl")
 
@@ -40,6 +42,12 @@ def main() -> int:
     ap.add_argument("--test-frac", type=float, default=0.55)
     ap.add_argument("--seed", type=int, default=20260824)
     ap.add_argument("--sheets", type=Path, default=SHEETS)
+    ap.add_argument(
+        "--allow-pilot",
+        action="store_true",
+        help="build even when the provenance audit says the corpus cannot carry "
+             "evidential weight. The tier is written into the corpus either way.",
+    )
     ap.add_argument("--out", type=Path, default=OUT)
     args = ap.parse_args()
 
@@ -73,6 +81,20 @@ def main() -> int:
         print("Contributors fill the 'reply' field of each item. Nothing to build yet.")
         return 1
 
+    # Provenance audit BEFORE anything else. A corpus that does not look like
+    # several people writing naturally cannot carry the weight the protocol
+    # assigns to it, and the tier travels with the data rather than living in
+    # someone's memory of a conversation.
+    report = audit([(i["contributor"], i["item_id"], i["reply"]) for i in items])
+    print(report.summary())
+    print()
+    tier = "pilot" if report.verdict.startswith("PILOT") else "evidence"
+    if tier == "pilot" and not args.allow_pilot:
+        print("Refusing to build. This corpus is PILOT quality: it can prove the")
+        print("pipeline runs, and it cannot be quoted as a measurement.")
+        print("Re-run with --allow-pilot to build it as a labelled pilot set.")
+        return 2
+
     # Split by CONTRIBUTOR, not by item. Two replies from the same person share
     # their idiom and their habits; splitting by item would leak that across the
     # boundary and quietly inflate the test number.
@@ -88,11 +110,16 @@ def main() -> int:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with args.out.open("w", encoding="utf-8") as f:
         for it in sorted(items, key=lambda x: x["item_id"]):
-            f.write(json.dumps(it, ensure_ascii=False) + "\n")
+            f.write(json.dumps({**it, "tier": tier}, ensure_ascii=False) + "\n")
 
     digest = hashlib.sha256(args.out.read_bytes()).hexdigest()[:16]
     (args.out.parent / "CORPUS_LOCK.txt").write_text(
-        f"corpus sha256[:16] = {digest}\n"
+        f"TIER               = {tier.upper()}\n"
+        + ("" if tier == "evidence" else
+           "  This corpus did NOT pass the provenance audit. It proves the\n"
+           "  pipeline runs end to end. It is not evidence, is not quoted as a\n"
+           "  measurement anywhere, and does not appear in the README results.\n\n")
+        + f"corpus sha256[:16] = {digest}\n"
         f"items              = {len(items)}\n"
         f"contributors       = {len(contributors)}\n"
         f"test contributors  = {sorted(test_group)}\n"
@@ -103,7 +130,7 @@ def main() -> int:
     )
 
     n_dev = sum(1 for i in items if i["split"] == "dev")
-    print(f"{len(items)} replies from {len(contributors)} contributors")
+    print(f"[{tier.upper()}] {len(items)} replies from {len(contributors)} contributors")
     print(f"  skipped: {empty} empty, {dupes} duplicate")
     print(f"  dev  {n_dev}   test {len(items) - n_dev}")
     print(f"  -> {args.out}   hash {digest}")

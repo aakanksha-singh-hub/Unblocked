@@ -4,42 +4,42 @@
     {
       "item_id": "w08_i01",
       "scenario": "The quality of this batch was not up to standard and your production team has complained. You have not paid. The supplier has messaged.",
-      "reply": ""
+      "reply": "We've received some complaints from production about the quality of this batch, so we've held the payment for now. Can we discuss the issue and figure out what needs to be done?"
     },
     {
       "item_id": "w08_i02",
       "scenario": "You need the e-way bill and delivery challan copies to process this. You don't have them. The supplier is asking for payment. They have been following up regularly for over a month now.",
-      "reply": ""
+      "reply": "We've been unable to process the bill because the e-way bill and delivery challan are still missing. We've been checking for them internally, but please resend the copies so we can close this."
     },
     {
       "item_id": "w08_i03",
       "scenario": "You will have money after a large customer of yours pays you, which you expect sometime near the end of the month. The supplier is asking for an update. You have a long-standing relationship with this supplier.",
-      "reply": ""
+      "reply": "We're expecting a payment from one of our bigger customers towards the end of the month. Once that comes in, we'll be able to take care of your outstanding amount. Thanks for your patience."
     },
     {
       "item_id": "w08_i04",
       "scenario": "You paid roughly half of what is owed last week and plan to pay the rest later. The supplier is asking for the full amount. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "We paid roughly half of the amount last week. The rest is still pending and we'll clear that separately. It just won't be possible to pay the entire balance together right now."
     },
     {
       "item_id": "w08_i05",
       "scenario": "Your company requires all supplier bills to be uploaded to a vendor portal. This one is not showing up there. The supplier says they sent it by email. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "I got the invoice over email, but it hasn't come through on our vendor portal. Our accounts team can only process it once it's uploaded there. Please add it to the portal."
     },
     {
       "item_id": "w08_i06",
       "scenario": "This is a small supplier and you have bigger payments to worry about this month. You are not planning to pay them yet. They have messaged you again. The bill is more than three months overdue.",
-      "reply": ""
+      "reply": "I understand you've been waiting on this. We've got some larger payments taking priority this month, so I won't be able to release this one immediately. I'll update you once we can schedule it."
     },
     {
       "item_id": "w08_i07",
       "scenario": "You are waiting for your GST filing to be done before releasing payments this month. The supplier has followed up for the second time. The supplier has messaged you once before about this.",
-      "reply": ""
+      "reply": "We're holding this month's supplier payments until the GST filing is completed. Sorry you've had to follow up again. I'll let you know as soon as we're able to release it."
     },
     {
       "item_id": "w08_i08",
       "scenario": "Two of the cartons in the last delivery arrived crushed and you had to reject them. Nobody has sent you a corrected bill. The supplier is asking for full payment. The supplier has messaged you once before about this.",
-      "reply": ""
+      "reply": "Two cartons from the delivery were damaged and rejected, so we can't process the invoice for the full quantity. We still haven't received the corrected bill. Please send the revised one and we'll take it forward."
     }
   ]
 }

@@ -4,42 +4,42 @@
     {
       "item_id": "w04_i01",
       "scenario": "You are not sure whether this bill has been paid or not and you need to check with your accounts person. The supplier is asking. This is the first time they have contacted you about it.",
-      "reply": ""
+      "reply": "I'm not sure if this has already been paid. I'll check with accounts and confirm the status with you."
     },
     {
       "item_id": "w04_i02",
       "scenario": "You have received a formal-sounding notice from this supplier mentioning legal provisions about delayed payment to small enterprises. The supplier has messaged you once before about this.",
-      "reply": ""
+      "reply": "We've received your notice and are looking into the matter internally. I'll speak with the concerned team and come back to you regarding the outstanding payment."
     },
     {
       "item_id": "w04_i03",
       "scenario": "The GST number printed on the bill is wrong, so your accounts team cannot process it. The supplier is asking why payment is delayed. They have been following up regularly for over a month now.",
-      "reply": ""
+      "reply": "The delay is because the GST number on the invoice doesn't match our records, so accounts has kept it on hold. Please send a corrected invoice and we'll move it ahead."
     },
     {
       "item_id": "w04_i04",
       "scenario": "Your own customers owe you a lot of money and have not paid, so you cannot pay your suppliers either. The supplier is following up. This is the first time they have contacted you about it.",
-      "reply": ""
+      "reply": "A few of our customers have delayed their payments, and it's affected our cash flow this month. We're working through it and will make the supplier payment as soon as we're able to."
     },
     {
       "item_id": "w04_i05",
       "scenario": "You received less material than what the bill says. The supplier is following up on the full amount. They have been following up regularly for over a month now.",
-      "reply": ""
+      "reply": "We've been following up internally because the delivered quantity doesn't match the invoice. We can't clear the full bill until this is corrected. Please have your team check the dispatch quantity."
     },
     {
       "item_id": "w04_i06",
       "scenario": "Business has been very slow for several months and you honestly do not have the cash right now. The supplier is asking for payment.",
-      "reply": ""
+      "reply": "To be honest, business has been very slow for us for the last few months and we don't have the cash available right now. We're trying to manage the situation and will pay once we're in a position to do so."
     },
     {
       "item_id": "w04_i07",
       "scenario": "Your company requires all supplier bills to be uploaded to a vendor portal. This one is not showing up there. The supplier says they sent it by email. The supplier has messaged you once before about this.",
-      "reply": ""
+      "reply": "I checked the portal again and the invoice still isn't there. Email copies can't be processed directly by accounts. Please upload the bill on the portal and we'll get it moving."
     },
     {
       "item_id": "w04_i08",
       "scenario": "The rate on the bill is higher than what was agreed in the purchase order. The supplier is chasing payment. You have a long-standing relationship with this supplier.",
-      "reply": ""
+      "reply": "I think there's been a billing mistake here. The rate on the invoice is higher than the one we agreed in the PO. Please correct it and send it back; we'll sort the payment after that."
     }
   ]
 }

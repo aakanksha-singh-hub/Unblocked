@@ -4,42 +4,42 @@
     {
       "item_id": "w07_i01",
       "scenario": "This is a small supplier and you have bigger payments to worry about this month. You are not planning to pay them yet. They have messaged you again. You have a long-standing relationship with this supplier.",
-      "reply": ""
+      "reply": "I know this has been pending, but we've got some larger commitments to handle this month. We'll come back to this payment once those are sorted. Thanks for bearing with us."
     },
     {
       "item_id": "w07_i02",
       "scenario": "You have been told by your manager not to release this payment but you have not been told why. The supplier is asking.",
-      "reply": ""
+      "reply": "The payment has been put on hold internally for now. I haven't been given the full reason yet, so let me check with my manager before I give you an update."
     },
     {
       "item_id": "w07_i03",
       "scenario": "You are not sure whether this bill has been paid or not and you need to check with your accounts person. The supplier is asking. You have a long-standing relationship with this supplier.",
-      "reply": ""
+      "reply": "I'll check this with our accounts person and confirm. I don't want to give you the wrong status without verifying it first."
     },
     {
       "item_id": "w07_i04",
       "scenario": "Your bank shows the transfer went out but the supplier says it has not arrived. They are chasing you. You have a long-standing relationship with this supplier.",
-      "reply": ""
+      "reply": "The payment has gone out from our bank according to the transaction record. Please check with your bank once, and if it's still missing I'll send you the transfer reference."
     },
     {
       "item_id": "w07_i05",
       "scenario": "Your company pays all suppliers in one batch on the 10th of each month. This bill missed the last batch. The supplier has messaged asking where the payment is. They have been following up regularly for over a month now.",
-      "reply": ""
+      "reply": "Sorry for the repeated delay. Our supplier payments are processed together on the 10th, and this invoice missed the previous run. It should be included in the upcoming cycle."
     },
     {
       "item_id": "w07_i06",
       "scenario": "You paid this bill a few days ago by bank transfer. The supplier seems not to have noticed and is asking again. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "Just to confirm, this invoice was paid by bank transfer a few days ago. Please check your statement once. I can forward the payment confirmation if required."
     },
     {
       "item_id": "w07_i07",
       "scenario": "The goods receipt note has not been entered by your stores team yet, so the bill cannot move forward. The supplier is following up. The bill is more than three months overdue.",
-      "reply": ""
+      "reply": "The invoice is still waiting on the goods receipt entry from our stores team. That's why accounts hasn't been able to move it forward. I'm checking with stores and will push this along."
     },
     {
       "item_id": "w07_i08",
       "scenario": "Business has been very slow for several months and you honestly do not have the cash right now. The supplier is asking for payment. You have a long-standing relationship with this supplier.",
-      "reply": ""
+      "reply": "It's been a tough few months for the business and we're genuinely short of cash right now. I know we've kept you waiting, and I really appreciate your patience. We'll make the payment as soon as we're able to."
     }
   ]
 }

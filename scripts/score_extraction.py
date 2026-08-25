@@ -57,6 +57,76 @@ def read_labels(path: Path) -> tuple[dict[str, str], dict[str, str], set[str]]:
     return intents, dates, ambiguous
 
 
+def _pilot(items: dict, args) -> int:
+    """Extractor-vs-extractor comparison when no gold labels exist.
+
+    This is not an evaluation and is never reported as one. It answers a narrower
+    question that does not need labels: on this text, how often does the model
+    reach a different reading from the patterns, and what does it see that they
+    miss? Disagreements are exactly the items worth putting in front of an
+    annotator first.
+    """
+    from vasooli.eval.extraction import cohens_kappa
+
+    load_env()
+    extractors = [("rules", RuleExtractor())]
+    try:
+        from vasooli.agent.llm_extract import LLMExtractor
+
+        extractors.append(("llm", LLMExtractor()))
+    except Exception as e:  # noqa: BLE001
+        print(f"LLM extractor unavailable ({e}); nothing to compare against.")
+        return 1
+
+    preds: dict[str, dict[str, object]] = {name: {} for name, _ in extractors}
+    spans: dict[str, dict[str, str]] = {name: {} for name, _ in extractors}
+    dates: dict[str, dict[str, str]] = {name: {} for name, _ in extractors}
+
+    for item_id in sorted(items):
+        msg = InboundMessage(
+            message_id=item_id, buyer_id="corpus", channel=Channel.WHATSAPP,
+            received_at=datetime(2026, 6, 10, 12, 0), body=items[item_id]["reply"],
+        )
+        for name, ex in extractors:
+            r = ex.extract(msg, date(2026, 6, 10))
+            preds[name][item_id] = r.intent.value
+            spans[name][item_id] = r.evidence_span or ""
+            if r.promised_date:
+                dates[name][item_id] = r.promised_date.isoformat()
+
+    ids = sorted(items)
+    a = [preds["rules"][i] for i in ids]
+    b = [preds["llm"][i] for i in ids]
+    same = sum(1 for x, y in zip(a, b) if x == y)
+
+    print("=" * 70)
+    print(f"PILOT: rules vs model   (n={len(ids)}, no gold labels)")
+    print("=" * 70)
+    print(f"  agree on intent   {same}/{len(ids)} ({same / len(ids):.0%})")
+    print(f"  Cohen's kappa     {cohens_kappa(a, b):.3f}")
+    print(f"  rules abstained   {sum(1 for x in a if x == 'unclear')}")
+    print(f"  model abstained   {sum(1 for x in b if x == 'unclear')}")
+    print(f"  dates: rules {len(dates['rules'])}, model {len(dates['llm'])}")
+
+    print("\n  where they diverge (the items to annotate first):")
+    shown = 0
+    for i in ids:
+        if preds["rules"][i] == preds["llm"][i]:
+            continue
+        shown += 1
+        if shown > 12:
+            continue
+        print(f"    [{i}] {items[i]['reply'][:78]}")
+        print(f"          rules={preds['rules'][i]:<20} model={preds['llm'][i]}")
+    if shown > 12:
+        print(f"    ... and {shown - 12} more")
+
+    print("\n  This is a pilot on a corpus that did not pass the provenance audit.")
+    print("  It shows the pipeline runs. It is not a measurement and is not")
+    print("  reported as one.")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--corpus", type=Path, default=CORPUS)
@@ -90,9 +160,11 @@ def main() -> int:
     print(f"labels: annotator A {len(la)}   annotator B {len(lb)}\n")
 
     if not la or not lb:
-        print("Both annotator files are needed before anything can be scored.")
-        print("Agreement is reported before model accuracy, always.")
-        return 1
+        print("No annotator labels yet - running the PILOT comparison instead.")
+        print("Accuracy cannot be computed without gold labels. What can be")
+        print("computed is where the rule baseline and the model disagree, which")
+        print("is a real signal about what the model buys, on text neither wrote.\n")
+        return _pilot(items, args)
 
     # 1. Agreement, first and unconditionally.
     ag = agreement(la, lb)

@@ -46,6 +46,41 @@ Stratification target, chosen so rare-but-costly intents are not swamped:
 | `acknowledgement` | 20 | The contentless class. A model that reads "noted" as a promise is dangerous. |
 | `refusal` | 10 | Rare. |
 
+## Two tiers, enforced by the build
+
+A first batch of replies came back with the same thirty-word sentence appearing
+verbatim under three different contributors, in uniform corporate English, with
+no Hindi in a corpus elicited as Hinglish. Scoring an extractor on that would
+have measured nothing, and would have been indistinguishable from honest work
+until someone ran `sort | uniq -c`.
+
+So the corpus is audited before it is used, by `eval/provenance.py`, and the
+result travels with the data:
+
+| tier | meaning | may be used for |
+|---|---|---|
+| **evidence** | passes the audit | the measurement this document describes |
+| **pilot** | fails it | proving the pipeline runs, and nothing else |
+
+`scripts/build_corpus.py` refuses to build a pilot corpus unless
+`--allow-pilot` is passed, writes the tier into every record and into
+`CORPUS_LOCK.txt`, and a pilot corpus is never quoted as a measurement anywhere
+in this project.
+
+The checks, none of which proves anything about authorship on its own:
+
+- **cross-contributor duplicates** — the same text verbatim under two people.
+  This is the one that settles it, and it is a hard failure.
+- **code-switching** — a Hinglish corpus with no Hindi tokens is not the thing
+  this protocol describes.
+- **casing and punctuation variation** — real informal writing is ragged.
+  Uniformly capitalised, uniformly punctuated replies are not how a group writes.
+- **short replies** — genuine answers range from "ok" to a paragraph. A corpus
+  with no reply under seven words is missing half the distribution.
+- **distinct voices** — different people write at different lengths.
+  Near-identical per-contributor mean length across a panel is the strongest
+  single signal that one hand wrote all of it.
+
 ## Elicitation
 
 Contributors get one scenario at a time, in this form, with no taxonomy:

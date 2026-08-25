@@ -4,42 +4,42 @@
     {
       "item_id": "w03_i01",
       "scenario": "You are waiting for your GST filing to be done before releasing payments this month. The supplier has followed up for the second time. The supplier has messaged you once before about this.",
-      "reply": ""
+      "reply": "Sorry for the delay. We're still waiting for the GST filing to be completed before we release this month's payments. I know you've followed up already, and we'll update you once it's cleared."
     },
     {
       "item_id": "w03_i02",
       "scenario": "Diwali is coming and your office will be shut for a week. You plan to clear pending bills after reopening. The supplier is asking.",
-      "reply": ""
+      "reply": "Our office will be closed for the Diwali break next week. We'll pick up the pending payments as soon as we're back and get this one cleared."
     },
     {
       "item_id": "w03_i03",
       "scenario": "Your bank shows the transfer went out but the supplier says it has not arrived. They are chasing you. This is the first time they have contacted you about it.",
-      "reply": ""
+      "reply": "The transfer is showing as successful from our bank side. Could you check once with your bank? If it's still not reflecting, I'll share the transaction details with you."
     },
     {
       "item_id": "w03_i04",
       "scenario": "Your company pays all suppliers in one batch on the 10th of each month. This bill missed the last batch. The supplier has messaged asking where the payment is. The supplier has messaged you once before about this.",
-      "reply": ""
+      "reply": "We run supplier payments together on the 10th, and unfortunately this invoice missed the last run. It will be picked up in the next batch."
     },
     {
       "item_id": "w03_i05",
       "scenario": "Someone else in your office handles this supplier and you are just replying because they messaged your number. This is the first time they have contacted you about it.",
-      "reply": ""
+      "reply": "Hi, I don't handle this supplier directly. I received your message on this number though, so I'll pass it to the person who looks after your account."
     },
     {
       "item_id": "w03_i06",
       "scenario": "You received less material than what the bill says. The supplier is following up on the full amount. This is the first time they have contacted you about it.",
-      "reply": ""
+      "reply": "We received less material than the quantity billed. Could you please recheck the dispatch and invoice and send the corrected amount?"
     },
     {
       "item_id": "w03_i07",
       "scenario": "Your own customers owe you a lot of money and have not paid, so you cannot pay your suppliers either. The supplier is following up. You have a long-standing relationship with this supplier.",
-      "reply": ""
+      "reply": "We're waiting on quite a few customer payments at the moment, which has put us in a difficult cash-flow position. We're trying to get those collections in and will clear your dues once we can."
     },
     {
       "item_id": "w03_i08",
       "scenario": "You could manage the payment if you were allowed to split it over a few months, but not in one go. The supplier is asking for the whole amount. The bill is more than three months overdue.",
-      "reply": ""
+      "reply": "I know this has been pending for a while. We can't manage the full amount together, but we can pay it in parts over the next few months. Let me know if that arrangement can work."
     }
   ]
 }

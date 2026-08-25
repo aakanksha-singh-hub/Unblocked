@@ -4,42 +4,42 @@
     {
       "item_id": "w02_i01",
       "scenario": "You need the e-way bill and delivery challan copies to process this. You don't have them. The supplier is asking for payment. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "We don't have the e-way bill and delivery challan copies with us. Accounts needs those documents before they can process this, so please send them over."
     },
     {
       "item_id": "w02_i02",
       "scenario": "The quality of this batch was not up to standard and your production team has complained. You have not paid. The supplier has messaged. This is the first time they have contacted you about it.",
-      "reply": ""
+      "reply": "We've had some quality issues with this batch and our production team has flagged them. That's why the payment hasn't been released. Can you please look into this with us?"
     },
     {
       "item_id": "w02_i03",
       "scenario": "The rate on the bill is higher than what was agreed in the purchase order. The supplier is chasing payment. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "There seems to be a mismatch in the rate. The invoice amount is higher than the rate mentioned in our PO. Please check and send a corrected bill."
     },
     {
       "item_id": "w02_i04",
       "scenario": "You paid roughly half of what is owed last week and plan to pay the rest later. The supplier is asking for the full amount. This is the first time they have contacted you about it.",
-      "reply": ""
+      "reply": "We already paid about 50% last week. We'll arrange the balance separately, so the full amount won't be cleared in one payment."
     },
     {
       "item_id": "w02_i05",
       "scenario": "Your owner signs off on all payments above a certain amount and he is travelling until next week. The supplier wants to know when it will be released. They have been following up regularly for over a month now.",
-      "reply": ""
+      "reply": "This payment is pending the owner's approval, and he's travelling until next week. I know you've been following up for some time, but we'll release it once he signs off."
     },
     {
       "item_id": "w02_i06",
       "scenario": "Your company requires all supplier bills to be uploaded to a vendor portal. This one is not showing up there. The supplier says they sent it by email. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "The invoice came through email, but we need it on the vendor portal for our process. It's not showing there at the moment. Please upload it and we'll take it from there."
     },
     {
       "item_id": "w02_i07",
       "scenario": "Business has been very slow for several months and you honestly do not have the cash right now. The supplier is asking for payment. You have a long-standing relationship with this supplier.",
-      "reply": ""
+      "reply": "Things have been quite slow for us these past few months and we're short on cash at the moment. I don't want to give you a false date, but we'll work towards clearing this as soon as funds improve."
     },
     {
       "item_id": "w02_i08",
       "scenario": "Someone else in your office handles this supplier and you are just replying because they messaged your number.",
-      "reply": ""
+      "reply": "This account is handled by my colleague. You've reached me directly, so I'll forward your message to them and ask them to get back to you."
     }
   ]
 }
