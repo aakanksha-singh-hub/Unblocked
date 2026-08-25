@@ -12,7 +12,7 @@
   <div class="tile"><div class="k">Why they haven't paid</div>
     <div class="v" style="font-size:16px">{{ cause_label(c.inferred) }}</div>
     <div class="d">{{ '%.0f'|format(c.confidence*100) }}% sure · really: {{ cause_label(c.truth) }}</div></div>
-  <div class="tile"><div class="k">Contact</div><div class="v">{{ c.messages }}</div>
+  <div class="tile"><div class="k">Contact</div><div class="v">{{ c.messages|comma }}</div>
     <div class="d">{{ c.replies }} replies · {{ holds }} holds</div></div>
 </div>
 

@@ -151,6 +151,11 @@ h2 { font-size: var(--fs-h2); margin: 30px 0 12px; letter-spacing: -0.01em; }
 
 /* ---- tables ---- */
 
+/* One step below body, deliberately. 16px is a floor for prose; a dense data
+   table is not prose, and at body size the buyers table ran past the viewport -
+   names wrapped to three lines and trailing columns fell off the page. An
+   overflowing table is less readable than one set a step smaller. Do not raise
+   this to --fs-body without re-checking that /buyers still fits at 1280px. */
 table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
 th {
   text-align: left; font-weight: 600; color: var(--muted);

@@ -14,7 +14,7 @@ differences are paired rather than two lucky runs.</p>
 
 {% if ev %}
 <div class="tiles">
-  <div class="tile"><div class="k">Buyers</div><div class="v">{{ ev.n_buyers }}</div><div class="d">held-out book</div></div>
+  <div class="tile"><div class="k">Buyers</div><div class="v">{{ ev.n_buyers|comma }}</div><div class="d">held-out book</div></div>
   <div class="tile"><div class="k">Recovered vs nothing</div><div class="v">+{{ headline.rec }}</div>
     <div class="d">per buyer · CI [{{ headline.rec_lo }}, {{ headline.rec_hi }}]</div></div>
   <div class="tile"><div class="k">Net value vs nothing</div><div class="v">+{{ headline.net }}</div>
@@ -38,7 +38,7 @@ differences are paired rather than two lucky runs.</p>
         <td class="num">{{ money(p.recovered) }}</td>
         <td class="num">{{ '%.1f'|format(p.recovery_rate*100) }}%</td>
         <td class="num">{{ money(p.net_value) }}</td>
-        <td class="num">{{ p.messages }}</td>
+        <td class="num">{{ p.messages|comma }}</td>
         <td class="num">{{ '%.0f'|format(p.wasted_message_rate*100) }}%</td>
         <td class="num">{{ p.churned_accounts }}</td>
         <td class="num">{{ '%.0f'|format(p.human_minutes/60) }}</td>

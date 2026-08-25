@@ -5,13 +5,13 @@
 talk it out of one.</p>
 
 <div class="tiles">
-  <div class="tile"><div class="k">Times it could have sent</div><div class="v">{{ total }}</div>
+  <div class="tile"><div class="k">Times it could have sent</div><div class="v">{{ total|comma }}</div>
     <div class="d">a buyer with something overdue</div></div>
   <div class="tile"><div class="k">Times it didn't</div><div class="v">{{ '%.0f'|format(hold_rate) }}%</div>
-    <div class="d">{{ holds }} decisions to stay quiet</div></div>
-  <div class="tile"><div class="k">Held on a promise</div><div class="v">{{ promise_holds }}</div>
+    <div class="d">{{ holds|comma }} decisions to stay quiet</div></div>
+  <div class="tile"><div class="k">Held on a promise</div><div class="v">{{ promise_holds|comma }}</div>
     <div class="d">silent because the buyer named a date</div></div>
-  <div class="tile"><div class="k">Needed a human</div><div class="v">{{ escalations }}</div>
+  <div class="tile"><div class="k">Needed a human</div><div class="v">{{ escalations|comma }}</div>
     <div class="d">nothing irreversible without sign-off</div></div>
 </div>
 
@@ -28,7 +28,7 @@ talk it out of one.</p>
     <tbody>
     {% for g in gates %}
       <tr><td><b>{{ gate_label(g.name) }}</b></td>
-        <td class="num">{{ g.count }}</td><td class="why">{{ g.example }}</td></tr>
+        <td class="num">{{ g.count|comma }}</td><td class="why">{{ g.example }}</td></tr>
     {% endfor %}
     </tbody>
   </table>

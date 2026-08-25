@@ -7,12 +7,12 @@ claims live on <a href="/evaluation">Evaluation</a>, computed on a larger held-o
 
 <div class="tiles">
   <div class="tile"><div class="k">Invoiced</div><div class="v">{{ f.book }}</div>
-    <div class="d">{{ n_invoices }} invoices</div></div>
+    <div class="d">{{ n_invoices|comma }} invoices</div></div>
   <div class="tile"><div class="k">Recovered</div><div class="v">{{ f.recovered }}</div>
     <div class="d">{{ '%.1f'|format(rate) }}% of the book</div></div>
   <div class="tile"><div class="k">Still outstanding</div><div class="v">{{ f.outstanding }}</div>
     <div class="d">{{ open_buyers }} buyers with a balance</div></div>
-  <div class="tile"><div class="k">Messages sent</div><div class="v">{{ summary.messages }}</div>
+  <div class="tile"><div class="k">Messages sent</div><div class="v">{{ summary.messages|comma }}</div>
     <div class="d">{{ '%.0f'|format(summary.restraint_rate*100) }}% of decisions were to hold</div></div>
   <div class="tile"><div class="k">Owner's time</div><div class="v">{{ '%.0f'|format(summary.human_minutes/60) }}h</div>
     <div class="d">across {{ horizon }} days</div></div>

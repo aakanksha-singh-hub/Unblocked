@@ -38,6 +38,7 @@ def money(p) -> str:
 
 
 templates.env.globals["money"] = money
+templates.env.filters["comma"] = lambda n: f"{int(n):,}"
 templates.env.globals["cause_label"] = labels.cause
 templates.env.globals["cause_means"] = labels.cause_means
 templates.env.globals["action_label"] = labels.action
@@ -424,7 +425,8 @@ def restraint(request: Request):
             )
 
     bars = [
-        Bar(label=g, value=n, display=str(n), series=0, note=examples.get(g, ""))
+        Bar(label=labels.gate(g), value=n, display=f"{n:,}", series=0,
+            note=examples.get(g, ""))
         for g, n in first_fail.most_common()
     ]
     return render(
