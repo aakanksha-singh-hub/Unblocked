@@ -16,7 +16,7 @@ sweeps find where the conclusion would flip.</p>
 {% if sweeps %}
 {% for s in sweeps %}
 <div class="card">
-  <h3>{{ s.parameter }}</h3>
+  <h2>{{ s.parameter }}</h2>
   <p class="hint">{{ s.rationale }}</p>
   {{ s.chart|safe }}
   <div class="kv" style="margin-top:14px">
@@ -28,7 +28,7 @@ sweeps find where the conclusion would flip.</p>
 {% endfor %}
 
 <div class="card">
-  <h3>So what is the claim, exactly?</h3>
+  <h2>So what is the claim, exactly?</h2>
   <p class="hint">Narrower than "cause-matching works".</p>
   <p style="margin:0;color:var(--text-secondary)">
     <strong>Most of the advantage is the intake-repair mechanism</strong> — finding invoices that

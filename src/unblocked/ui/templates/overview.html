@@ -28,21 +28,21 @@ claims live on <a href="/evaluation">Evaluation</a>, computed on a larger held-o
 </div>
 
 <div class="card">
-  <h3>Where the money is stuck</h3>
+  <h2>Where the money is stuck</h2>
   <p class="hint">Outstanding balance by the cause the agent inferred. Cause is a
     belief, not a label the merchant's system holds.</p>
   {{ cause_chart|safe }}
 </div>
 
 <div class="card">
-  <h3>What the agent did</h3>
+  <h2>What the agent did</h2>
   <p class="hint">Action mix across the run. The largest bar is a document chase —
     invoices blocked at the buyer's intake, which an aging report shows as ordinary overdue.</p>
   {{ action_chart|safe }}
 </div>
 
 <div class="card">
-  <h3>Biggest balances</h3>
+  <h2>Biggest balances</h2>
   <table>
     <thead><tr><th>Buyer</th><th>Inferred cause</th><th class="num">Outstanding</th>
       <th class="num">Recovered</th><th class="num">Days late</th><th>Last action</th></tr></thead>

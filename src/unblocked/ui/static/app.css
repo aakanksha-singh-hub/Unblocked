@@ -116,7 +116,7 @@ h2 { font-size: 15px; margin: 30px 0 12px; letter-spacing: -0.01em; }
   margin-bottom: 16px;
   overflow-x: auto;
 }
-.card > h3 { margin: 0 0 3px; font-size: 13.5px; }
+.card > h2 { margin: 0 0 3px; font-size: 13.5px; }
 .card > .hint { margin: 0 0 14px; color: var(--muted); font-size: 12.5px; }
 
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 12px; margin-bottom: 20px; }
@@ -340,7 +340,7 @@ section.band > .lede {
 .compare > div {
   background: var(--surface-1); border: 1px solid var(--grid); border-radius: 11px; padding: 20px;
 }
-.compare h4 { margin: 0 0 4px; font-size: 14px; }
+.compare h3 { margin: 0 0 4px; font-size: 14px; }
 .compare .cap { color: var(--muted); font-size: 12.5px; margin: 0 0 16px; }
 @media (max-width: 700px) { .compare { grid-template-columns: 1fr; } }
 

@@ -4,7 +4,7 @@
 <p class="sub">The one layer where a model earns its place.</p>
 
 <div class="card">
-  <h3>Try it</h3>
+  <h2>Try it</h2>
   <p class="hint">Type a reply the way a buyer would actually send it. Hinglish, typos,
     no punctuation. Both extractors run on it.</p>
   <form method="post" action="/understanding">
@@ -20,7 +20,7 @@
 
 {% if results %}
 <div class="card">
-  <h3>What each extractor read</h3>
+  <h2>What each extractor read</h2>
   <table>
     <thead><tr><th>Extractor</th><th>Intent</th><th class="num">Confidence</th>
       <th>Evidence span</th><th>Extracted</th></tr></thead>
@@ -44,7 +44,7 @@
 {% endif %}
 
 <div class="card">
-  <h3>Why the output cannot be weaponised</h3>
+  <h2>Why the output cannot be weaponised</h2>
   <p class="hint">Buyer replies are untrusted text written by a third party.</p>
   <p style="margin:0;color:var(--text-secondary)">The extractor returns a constrained schema —
     intent, date, amount, reference — consumed by deterministic guardrails. There is no field
@@ -54,7 +54,7 @@
 </div>
 
 <div class="card">
-  <h3>The study</h3>
+  <h2>The study</h2>
   {% if extraction %}
   <div class="kv">
     <dt>Inter-annotator kappa</dt><dd>{{ '%.3f'|format(extraction.kappa) }}</dd>

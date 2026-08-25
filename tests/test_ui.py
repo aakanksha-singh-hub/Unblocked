@@ -106,3 +106,23 @@ def test_landing_states_the_scale_of_its_headline_numbers(client):
     changed. The buyer count is now on the page so that is visible, not silent."""
     body = client.get("/").text
     assert "buyers</div>" in body or "buyers<" in body
+
+
+@pytest.mark.parametrize(
+    "path",
+    ["/", "/book", "/buyers", "/restraint", "/evaluation", "/sensitivity",
+     "/understanding", "/method"],
+)
+def test_heading_levels_do_not_skip(client, path):
+    """One h1, and no jump from h1 straight to h3. Six pages did exactly that."""
+    import re
+
+    body = client.get(path).text
+    levels = [int(m) for m in re.findall(r"<h([1-6])[ >]", body)]
+    assert levels.count(1) == 1, f"{path} has {levels.count(1)} h1 elements"
+    seen = set()
+    for lv in levels:
+        assert lv <= max(seen, default=0) + 1 or lv in seen, (
+            f"{path} jumps to h{lv} without an h{lv - 1} before it"
+        )
+        seen.add(lv)
