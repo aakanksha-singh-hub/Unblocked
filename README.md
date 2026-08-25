@@ -236,7 +236,7 @@ live, and the markup is inspectable.
 ## Quickstart
 
 ```bash
-uv venv --python 3.11 && uv pip install -e ".[dev,llm]"
+uv venv --python 3.11 && uv pip install -e ".[dev]"
 
 vasooli ui            # the dashboard
 vasooli train         # fit the archetype model

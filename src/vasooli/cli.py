@@ -85,9 +85,13 @@ def ui(port: int = 8000, host: str = "127.0.0.1", reload: bool = False) -> None:
 
 
 @app.command()
-def corpus() -> None:
-    """Build the locked reply corpus from returned contributor sheets."""
-    raise typer.Exit(_script("build_corpus.py"))
+def corpus(allow_pilot: bool = False) -> None:
+    """Build the locked reply corpus from returned contributor sheets.
+
+    Refuses to build if the provenance audit says the corpus cannot carry
+    evidential weight; --allow-pilot builds it as a labelled pilot set.
+    """
+    raise typer.Exit(_script("build_corpus.py", *(["--allow-pilot"] if allow_pilot else [])))
 
 
 @app.command()

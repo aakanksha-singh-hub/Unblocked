@@ -29,7 +29,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from vasooli.eval.provenance import audit  # noqa: E402
 
-SHEETS = Path("data/corpus/sheets")
+#: Both elicitation formats land under data/corpus. Scanning only the long-form
+#: directory meant `vasooli corpus` reported "no replies found" while a full set
+#: of WhatsApp replies sat in the sibling folder.
+SHEET_DIRS = (Path("data/corpus/sheets"), Path("data/corpus/whatsapp"))
 OUT = Path("data/corpus/replies.jsonl")
 
 
@@ -41,7 +44,10 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--test-frac", type=float, default=0.55)
     ap.add_argument("--seed", type=int, default=20260824)
-    ap.add_argument("--sheets", type=Path, default=SHEETS)
+    ap.add_argument(
+        "--sheets", type=Path, default=None,
+        help="a single sheet directory; by default every known one is scanned",
+    )
     ap.add_argument(
         "--allow-pilot",
         action="store_true",
@@ -55,7 +61,8 @@ def main() -> int:
     seen: set[str] = set()
     empty = dupes = 0
 
-    for path in sorted(args.sheets.glob("*.json")):
+    sheet_dirs = [args.sheets] if args.sheets else [d for d in SHEET_DIRS if d.exists()]
+    for path in sorted(p for d in sheet_dirs for p in d.glob("*.json")):
         blob = json.loads(path.read_text(encoding="utf-8"))
         for it in blob.get("items", []):
             reply = (it.get("reply") or "").strip()
@@ -77,7 +84,8 @@ def main() -> int:
             )
 
     if not items:
-        print(f"No replies found in {args.sheets}/*.json")
+        looked = ", ".join(str(d) for d in sheet_dirs) or "(no sheet directory exists)"
+        print(f"No replies found. Looked in: {looked}")
         print("Contributors fill the 'reply' field of each item. Nothing to build yet.")
         return 1
 
