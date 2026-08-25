@@ -9,7 +9,13 @@
   --plane: #f9f9f7;
   --text-primary: #0b0b0b;
   --text-secondary: #52514e;
-  --muted: #898781;
+  /* Was #898781, which measures 3.41:1 against the page plane and 3.50:1
+     against the card surface - below the 4.5:1 AA floor for normal text. It
+     carries every table header, hint and caption on the site, all at 11-12.5px,
+     so it was the one token failing on the most text. #74726c is the same hue
+     stepped down until it clears: 4.56:1 on plane, 4.69:1 on surface.
+     The dark-mode value is left alone; #898781 measures 4.85:1 there. */
+  --muted: #74726c;
   --grid: #e1e0d9;
   --axis: #c3c2b7;
 
