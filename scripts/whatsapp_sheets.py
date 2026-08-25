@@ -21,6 +21,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+# Sibling script, not a package: add its own directory rather than relying on
+# the caller to set PYTHONPATH.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from elicit import CONTEXT_VARIANTS, SCENARIOS  # noqa: E402
 

@@ -210,17 +210,41 @@ reconciled. The capture is attested by Razorpay, not by our bookkeeping. The
 adapter refuses any key not prefixed `rzp_test_`. Webhook signatures are verified
 over raw bytes with a constant-time compare and fail closed on a missing secret.
 
+## The dashboard
+
+```
+vasooli ui        # http://127.0.0.1:8000
+```
+
+Seven pages, server-rendered, **no external assets** — it runs with the network
+off, and a test asserts that.
+
+| page | what it shows |
+|---|---|
+| Overview | the book, what was recovered, what it cost, where the money is stuck |
+| Buyers | every buyer with the inferred cause **beside the simulator's truth**, so mistakes are visible rather than buried |
+| Buyer detail | the full decision trail — including the holds — with the gate that blocked each one |
+| Restraint | why the agent stayed quiet, counted by gate, with the promise freezes quoted |
+| Evaluation | the policy comparison, cost columns on the same table as recovery |
+| Sensitivity | where the conclusion stops holding |
+| Understanding | paste a Hinglish reply and watch both extractors read it |
+| Method | what this evaluation does and does not establish |
+
+Charts are server-rendered SVG rather than a client library — nothing to fail
+live, and the markup is inspectable.
+
 ## Quickstart
 
 ```bash
 uv venv --python 3.11 && uv pip install -e ".[dev,llm]"
 
+vasooli ui            # the dashboard
 vasooli train         # fit the archetype model
 vasooli evaluate      # the comparison table above
 vasooli restraint     # why the agent stayed quiet
 vasooli trail         # one buyer's full decision history
 vasooli breakeven     # where our finding stops holding
-pytest                # 65 tests
+pytest                # 126 tests
 ```
 
 ## What broke

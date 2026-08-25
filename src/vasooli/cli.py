@@ -22,7 +22,7 @@ from pathlib import Path
 
 import typer
 from rich.console import Console
-from rich.table import Table
+from rich.table import Table  # noqa: F401
 
 from .agent.inference import ArchetypeModel
 from .agent.policy import CauseMatchedPolicy
@@ -172,30 +172,68 @@ def trail(
     console.print(f"[dim]ground truth (hidden from the agent): {truth.archetype} "
                   f"| effective terms {truth.effective_terms_days}d[/dim]\n")
 
-    table = Table(show_lines=False, header_style="bold")
-    table.add_column("date", style="dim", width=11)
-    table.add_column("action", width=21)
-    table.add_column("belief", width=22)
-    table.add_column("why")
+    # Same collapsing the dashboard uses: routine cadence gates fold together so
+    # a promise freeze is not buried under a hundred identical spacing holds.
+    from .ui.app import ROUTINE_GATES
 
+    rows: list[dict] = []
     for d in result.decisions:
         if d.buyer_id != buyer:
             continue
-        belief = (
-            f"{d.inferred_archetype} {d.archetype_confidence:.0%}"
-            if d.inferred_archetype
-            else "[dim]cold start[/dim]"
+        failed = [g for g in d.gates if not g.passed]
+        gate = failed[0].gate if failed else ""
+        hold = d.chosen is Intervention.HOLD
+        routine = hold and gate in ROUTINE_GATES
+        key = (d.chosen.value, "routine" if routine else gate)
+        if rows and rows[-1]["key"] == key:
+            rows[-1]["n"] += 1
+            rows[-1]["until"] = d.as_of
+            rows[-1]["gates"].add(gate)
+            continue
+        rows.append(
+            {
+                "key": key, "when": d.as_of, "until": d.as_of, "n": 1,
+                "action": d.chosen, "why": d.rationale, "hold": hold,
+                "routine": routine, "gates": {gate} if gate else set(),
+                "belief": d.inferred_archetype, "conf": d.archetype_confidence,
+                "approval": d.requires_human_approval,
+            }
         )
-        style = "yellow" if d.chosen is Intervention.HOLD else "green"
-        action = d.chosen.value + (" [red](needs sign-off)[/red]" if d.requires_human_approval else "")
-        table.add_row(d.as_of.isoformat(), f"[{style}]{action}[/{style}]", belief, d.rationale)
 
-    console.print(table)
+    # Rendered as a list, not a table. The rationale is a sentence, and a fixed
+    # column narrow enough to fit beside three others wraps it into a ragged
+    # column of two-word lines - which is what the table version did.
+    console.print()
+    for r in rows:
+        when = r["when"].isoformat()
+        if r["n"] > 1:
+            when += f" +{r['n'] - 1}d"
+        belief = (
+            f"{r['belief']} {r['conf']:.0%}" if r["belief"] else "cold start"
+        )
+        if r["routine"]:
+            gates = ", ".join(sorted(g for g in r["gates"] if g))
+            console.print(f"  [dim]{when:<18}[/dim] [yellow]hold[/yellow]  [dim]{gates}[/dim]")
+            continue
+        mark = " [red](needs sign-off)[/red]" if r["approval"] else ""
+        colour = "yellow" if r["hold"] else "green"
+        console.print(
+            f"  [dim]{when:<18}[/dim] [{colour}]{r['action'].value}[/{colour}]{mark}"
+            f"   [dim]{belief}[/dim]"
+        )
+        # The rationale opens with the action name, which is already in the line
+        # above. Strip it rather than printing it twice.
+        why = r["why"]
+        prefix = f"{r['action'].value}: "
+        if why.startswith(prefix):
+            why = why[len(prefix):]
+        console.print(f"  {'':<18} [dim]{why}[/dim]")
 
     paid = [p for p in result.state.payments if p.buyer_id == buyer]
     total = sum(p.amount for p in paid)
     owed = sum(world.invoices[i].amount for i in world.invoices if world.invoices[i].buyer_id == buyer)
     console.print(f"\nrecovered {fmt(total)} of {fmt(owed)}  ({len(paid)} payments)")
+    console.print("[dim]* requires human sign-off · run `vasooli ui` for the full trail[/dim]")
 
 
 @app.command()
