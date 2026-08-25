@@ -126,3 +126,12 @@ def test_heading_levels_do_not_skip(client, path):
             f"{path} jumps to h{lv} without an h{lv - 1} before it"
         )
         seen.add(lv)
+
+
+def test_provenance_is_disclosed_above_the_numbers(client):
+    """A reader should learn the book is simulated before they read a figure, not
+    after. It used to live in the footer, which is the same information
+    discovered rather than disclosed."""
+    body = client.get("/").text
+    assert "Simulated book" in body
+    assert body.index("Simulated book") < body.index("more collected, per buyer")

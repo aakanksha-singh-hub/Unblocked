@@ -278,6 +278,19 @@ button.ghost { background: transparent; border-color: var(--axis); color: var(--
   font-size: var(--fs-h3); line-height: 1.55; color: var(--text-secondary);
   margin: 0 0 30px; max-width: 60ch;
 }
+/* Provenance, stated before the numbers rather than after them. It was in the
+   page footer, which meant a reader formed an impression of the figures as real
+   and then found out otherwise at the bottom - the same information, discovered
+   instead of disclosed. */
+.hero .provenance {
+  display: inline-flex; align-items: center; gap: 9px; flex-wrap: wrap;
+  margin: 0 0 26px; padding: 9px 14px;
+  background: var(--surface-1); border: 1px solid var(--grid);
+  border-radius: 9px; font-size: var(--fs-small); color: var(--text-secondary);
+}
+.hero .provenance b { color: var(--text-primary); font-weight: 620; }
+.hero .provenance .sep { color: var(--axis); }
+
 .hero .cta { display: flex; gap: 10px; flex-wrap: wrap; }
 .hero .cta a {
   text-decoration: none; padding: 11px 20px; border-radius: 9px;
