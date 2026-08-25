@@ -257,3 +257,140 @@ def sweep_line(
         "</svg>"
     )
     return "".join(parts)
+
+
+# ---------------------------------------------------------------------------
+# Landing-page diagrams
+#
+# Two pictures that carry the thesis, drawn side by side so the contrast is the
+# message: the same six buyers, treated one way and then another. Text-only
+# explanation of this took three paragraphs and did not land.
+# ---------------------------------------------------------------------------
+
+CAUSES = [
+    ("on a 60-day cycle", "chase the paperwork", "their AP runs monthly; asking again changes nothing"),
+    ("invoice never uploaded", "fix the intake", "nobody at the buyer can even see it"),
+    ("waiting on a credit note", "settle the dispute", "a reminder reads as not listening"),
+    ("genuinely short of cash", "offer instalments", "a lump-sum demand returns nothing"),
+    ("no reason, no urgency", "escalate, on the record", "the only one pressure works on"),
+    ("would have paid anyway", "leave them alone", "any contact here is pure cost"),
+]
+
+
+def ladder_diagram(width: int = 420) -> str:
+    """One escalation ladder applied to every buyer regardless of cause."""
+    rows = [("day 30", "reminder"), ("day 45", "firmer reminder"),
+            ("day 60", "phone call"), ("day 90", "escalate to the owner")]
+    h = 44 + len(rows) * 46 + 16
+    p = [f'<svg class="chart" viewBox="0 0 {width} {h}" role="img" '
+         f'aria-label="a single escalation ladder applied to every buyer">']
+    p.append(f'<text x="0" y="14" class="axlabel">every buyer, same ladder</text>')
+    for i, (when, what) in enumerate(rows):
+        y = 32 + i * 46
+        p.append(
+            f'<rect x="0" y="{y}" width="{width - 4}" height="34" rx="7" '
+            f'fill="var(--plane)" stroke="var(--grid)"/>'
+            f'<text x="14" y="{y + 22}" class="val" '
+            f'style="font-size:11.5px;fill:var(--muted)">{_esc(when)}</text>'
+            f'<text x="86" y="{y + 22}" class="cat" '
+            f'style="fill:var(--text-primary)">{_esc(what)}</text>'
+        )
+        if i < len(rows) - 1:
+            p.append(
+                f'<path d="M{width / 2:.0f} {y + 34} L{width / 2:.0f} {y + 44}" '
+                f'stroke="var(--axis)" stroke-width="1.5"/>'
+            )
+    p.append("</svg>")
+    return "".join(p)
+
+
+def causes_diagram(width: int = 420) -> str:
+    """Six causes, six different right answers."""
+    h = 32 + len(CAUSES) * 46 + 12
+    p = [f'<svg class="chart" viewBox="0 0 {width} {h}" role="img" '
+         f'aria-label="six causes each with a different intervention">']
+    p.append(f'<text x="0" y="14" class="axlabel">same six buyers, six answers</text>')
+    for i, (cause, action, why) in enumerate(CAUSES):
+        y = 32 + i * 46
+        colour = "var(--series-3)" if action == "leave them alone" else "var(--series-1)"
+        p.append(
+            f'<g class="markwrap" data-tip="{_esc(why)}">'
+            f'<rect x="0" y="{y}" width="{width - 4}" height="34" rx="7" '
+            f'fill="var(--plane)" stroke="var(--grid)"/>'
+            f'<rect x="0" y="{y}" width="3" height="34" rx="1.5" fill="{colour}"/>'
+            f'<text x="14" y="{y + 15}" class="cat" '
+            f'style="font-size:11.5px;fill:var(--muted)">{_esc(cause)}</text>'
+            f'<text x="14" y="{y + 28}" class="cat" '
+            f'style="fill:var(--text-primary);font-weight:600">{_esc(action)}</text>'
+            f"</g>"
+        )
+    p.append("</svg>")
+    return "".join(p)
+
+
+def diverging_bar(
+    bars: list[Bar],
+    *,
+    width: int = 660,
+    row_h: int = 40,
+    label_w: int = 180,
+    value_w: int = 96,
+    caption: str = "",
+) -> str:
+    """Bars measured from zero in both directions.
+
+    Written because the absolute version of this chart was unreadable: four
+    policies whose net values were 8.26, 7.89, 8.30 and 8.63 crore rendered as
+    four bars of visibly identical length. Every one was correct and the chart
+    said nothing, because the quantity a reader wants is the *difference* and it
+    was 4% of the bar.
+
+    Plotting the difference against a zero line makes the same data legible and
+    makes the sign visible - which matters here, since one policy's honest answer
+    is a bar pointing the wrong way.
+    """
+    if not bars:
+        return '<p class="empty">No data.</p>'
+    span = max(abs(b.value) for b in bars) or 1.0
+    plot_w = width - label_w - value_w
+    zero_x = label_w + plot_w / 2
+    half = plot_w / 2
+    height = row_h * len(bars) + 30
+
+    p = [f'<svg class="chart" viewBox="0 0 {width} {height}" role="img" '
+         f'aria-label="{_esc(caption or "difference chart")}">']
+
+    for i, b in enumerate(bars):
+        y = 10 + i * row_h
+        bar_h = row_h - 18
+        w = max(1.5, half * (abs(b.value) / span))
+        pos = b.value >= 0
+        x = zero_x if pos else zero_x - w
+        # Green for gain, red for loss. Status colours, not series colours: the
+        # sign is the message and it ships with the number beside it.
+        colour = "var(--good)" if b.value > 0 else ("var(--critical)" if b.value < 0 else "var(--axis)")
+        tip = f"{b.label}: {b.display}" + (f" — {b.note}" if b.note else "")
+        p.append(
+            f'<text x="{label_w - 12}" y="{y + bar_h / 2 + 4:.1f}" class="cat" '
+            f'text-anchor="end">{_esc(b.label)}</text>'
+            f'<g class="markwrap" data-tip="{_esc(tip)}">'
+            f'<rect x="{x:.1f}" y="{y}" width="{w:.1f}" height="{bar_h}" rx="4" fill="{colour}"/>'
+            f'<rect x="{label_w}" y="{y}" width="{plot_w}" height="{bar_h}" fill="transparent"/>'
+            f"</g>"
+            f'<text x="{label_w + plot_w + 10}" y="{y + bar_h / 2 + 4:.1f}" class="val">'
+            f"{_esc(b.display)}</text>"
+        )
+        if b.note:
+            p.append(
+                f'<text x="{label_w - 12}" y="{y + bar_h + 11:.1f}" class="axlabel" '
+                f'text-anchor="end">{_esc(b.note)}</text>'
+            )
+
+    p.append(
+        f'<line x1="{zero_x:.1f}" y1="4" x2="{zero_x:.1f}" y2="{row_h * len(bars) + 10}" '
+        f'class="axis"/>'
+        f'<text x="{zero_x:.1f}" y="{height - 6}" class="axlabel" text-anchor="middle">'
+        f"same as doing nothing</text>"
+        "</svg>"
+    )
+    return "".join(p)

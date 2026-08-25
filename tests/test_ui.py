@@ -22,7 +22,8 @@ def client():
 
 @pytest.mark.parametrize(
     "path",
-    ["/", "/buyers", "/restraint", "/evaluation", "/sensitivity", "/understanding", "/method"],
+    ["/", "/book", "/buyers", "/restraint", "/evaluation", "/sensitivity",
+     "/understanding", "/method"],
 )
 def test_page_renders(client, path):
     r = client.get(path)
@@ -73,9 +74,25 @@ def test_no_external_asset_references(client):
             assert marker not in body, f"{path} references an external asset: {marker}"
 
 
+def test_landing_leads_with_the_problem_not_a_number(client):
+    """The home page exists for someone who does not know what this is. If it
+    opens with a metric it has failed at the only job it has."""
+    body = client.get("/").text
+    assert "Most overdue invoices" in body
+    assert body.index("Most overdue invoices") < body.index("recovered per buyer")
+
+
 def test_ground_truth_is_labelled_as_such(client):
     """The buyers table shows the simulator's truth beside the agent's guess.
     That is deliberate and must stay visibly labelled, not presented as something
     the agent knew."""
     body = client.get("/buyers").text
     assert "Truth" in body and "Inferred" in body
+
+
+def test_landing_states_the_scale_of_its_headline_numbers(client):
+    """A reduced-scale evaluation run once overwrote the full-scale artifact and
+    the landing page kept quoting the smaller figures with no sign anything had
+    changed. The buyer count is now on the page so that is visible, not silent."""
+    body = client.get("/").text
+    assert "buyers, held out" in body

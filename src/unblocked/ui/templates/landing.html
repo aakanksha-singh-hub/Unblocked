@@ -1,0 +1,159 @@
+{% extends "base.html" %}{% block title %}Unblocked{% endblock %}
+{% block body %}
+
+<div class="hero">
+  <div class="eyebrow">Razorpay AI Buildathon · Track 03</div>
+  <h1>Most overdue invoices<br>aren't unpaid.<br>They're stuck.</h1>
+  <p>A small manufacturer is owed money for goods she already delivered. She knows
+     exactly who owes her. What she doesn't know is <em>why</em> each one hasn't paid —
+     and that is the only thing that decides what to do about it.</p>
+  <div class="cta">
+    <a class="primary" href="/restraint">See it decide not to send →</a>
+    <a class="ghost" href="/book">Browse the book</a>
+    <a class="ghost" href="/method">What this proves, and doesn't</a>
+  </div>
+</div>
+
+<div class="headline">
+  <div><div class="n accent">+{{ hero.recovered }}</div>
+    <div class="l">recovered per buyer</div>
+    <div class="s">vs never contacting anyone, across {{ hero.eval_n }} buyers, held out.</div></div>
+  <div><div class="n">+{{ hero.net }}</div>
+    <div class="l">after costs</div>
+    <div class="s">Charging churn and the owner's time. No baseline manages this.</div></div>
+  <div><div class="n">{{ hero.hold }}%</div>
+    <div class="l">of decisions are to do nothing</div>
+    <div class="s">Restraint is the product, not a side effect.</div></div>
+  <div><div class="n">₹2,500</div>
+    <div class="l">actually captured</div>
+    <div class="s">Real Razorpay payment, reconciled. Not a simulated rupee.</div></div>
+</div>
+
+<section class="band">
+  <h2>The bind</h2>
+  <p class="lede">Every reminder costs something. That is the whole problem, and it is
+    why software that stops at the aging report has not helped.</p>
+  <div class="three">
+    <div class="box"><h4>She knows who owes her</h4>
+      <p>Tally, Zoho, any ERP will tell her. The aging report is not the missing piece.</p></div>
+    <div class="box"><h4>Chasing has a price</h4>
+      <p>Too soft and it's ignored. Too firm and she loses an account worth a fifth of
+         her revenue. There is no free reminder.</p></div>
+    <div class="box"><h4>So she waits</h4>
+      <p>Waiting is the safest move on any single invoice, and it is what quietly
+         kills the business.</p></div>
+  </div>
+</section>
+
+<section class="band">
+  <h2>The idea</h2>
+  <p class="lede">Non-payment has a <strong>cause</strong>. Collections software escalates on
+    <em>age</em> — which only works if every buyer is late for the same reason. They aren't.</p>
+  <div class="compare">
+    <div>
+      <h4>What collections software does</h4>
+      <p class="cap">Escalate on age. One ladder for everyone.</p>
+      {{ ladder_svg|safe }}
+    </div>
+    <div>
+      <h4>What this does</h4>
+      <p class="cap">Work out the cause, then do the one thing that fixes it.</p>
+      {{ causes_svg|safe }}
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <h2>What it recovers</h2>
+  <p class="lede">Net value <strong>per buyer, measured against doing nothing</strong> —
+    after charging relationship damage and the owner's time. Same {{ hero.eval_n }} buyers,
+    same random draws, so the differences are paired rather than two lucky runs.</p>
+  {{ compare_chart|safe }}
+  <p class="note">Blast-weekly recovers significantly more than doing nothing and then loses
+    all of it to churn. That is why cost columns sit on the same table as recovery, never
+    in an appendix. <a href="/evaluation">Full comparison →</a></p>
+</section>
+
+<section class="band">
+  <h2>How one decision gets made</h2>
+  <p class="lede">Once per buyer, per day.</p>
+  <div class="steps">
+    <div class="stepbox"><div class="num">1</div><div>
+      <h4>Read what actually happened</h4>
+      <p>Invoices, payments, and the buyer's own replies — in Hinglish, with implicit
+         dates, disputed amounts and transaction references that have to be checked
+         against the ledger rather than believed.</p>
+      <span class="tag">LLM</span></div></div>
+    <div class="stepbox"><div class="num">2</div><div>
+      <h4>Work out why they haven't paid</h4>
+      <p>Six causes, as a probability rather than a label. A buyer on a fixed 60-day
+         payment cycle is not the same problem as one who can't afford it, and neither
+         is the one whose invoice never reached the portal.</p>
+      <span class="tag">fitted classifier</span></div></div>
+    <div class="stepbox"><div class="num">3</div><div>
+      <h4>Score every action against that belief</h4>
+      <p>Twelve actions, from doing nothing to a statutory notice. Relationship damage
+         and the owner's time are charged in the same units as the money at stake, so
+         an action has to be worth more than it costs.</p>
+      <span class="tag">deterministic</span></div></div>
+    <div class="stepbox"><div class="num">4</div><div>
+      <h4>Guardrails can veto — and usually do</h4>
+      <p>A promise made, a dispute open, someone who said they can't pay, a public
+         holiday, a buyer worth too much to risk. No model runs here.
+         <strong>An LLM that can be talked out of a stopping rule is not a stopping
+         rule.</strong></p>
+      <span class="tag hard">hard-coded</span></div></div>
+  </div>
+</section>
+
+<section class="band">
+  <h2>Two things that aren't ours</h2>
+  <p class="lede">Everything else on this site is produced by a simulator we wrote.
+     These two are not.</p>
+  <div class="proofrow">
+    <div class="proof">
+      <h4>A real payment, reconciled</h4>
+      <p>₹2,500 against invoice PKG/26-27/0412 on Razorpay test mode — attested by their
+         API, matched on the reference we set when the link was issued, never on anything
+         the payer controls. The agent marks it settled and stops chasing.</p>
+      <code>"final_status": "paid"
+"reconciled": true
+"agent_action_after_capture": "stop_chasing"</code>
+    </div>
+    <div class="proof amber">
+      <h4>Forty replies we didn't write</h4>
+      <p>Elicited from people never shown the intent taxonomy, labelled independently by
+         two annotators who are not the author. <strong>Agreement κ = 0.911</strong>,
+         reported before any model number.</p>
+      <p>The model reads them at 83% against a 25% baseline — but on 24 held-out items
+         that gap is <strong>not statistically significant</strong>, and the page says so.</p>
+      <a href="/understanding" style="font-size:13px">The study →</a>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <h2>Look around</h2>
+  <div class="explore">
+    <a href="/restraint"><strong>Restraint</strong><span>Every time it stayed quiet, and the
+      rule that stopped it. Start here.</span></a>
+    <a href="/book"><strong>The book</strong><span>{{ n_buyers }} buyers, what's owed, what came
+      back.</span></a>
+    <a href="/buyers"><strong>Buyers</strong><span>The agent's guess beside the real answer,
+      so mistakes are visible.</span></a>
+    <a href="/evaluation"><strong>Evaluation</strong><span>Money recovered, and what it cost to
+      get it.</span></a>
+    <a href="/sensitivity"><strong>Sensitivity</strong><span>Which of our assumptions the result
+      actually depends on.</span></a>
+    <a href="/understanding"><strong>Understanding</strong><span>Type a Hinglish reply and watch
+      it get read.</span></a>
+    <a href="/method"><strong>Method</strong><span>What this evaluation establishes, and what it
+      does not.</span></a>
+  </div>
+</section>
+
+<footer class="foot">
+  Built for the Razorpay AI Buildathon, Track 03 — AI Revenue Recovery.
+  Simulated book, real payment rail, honest intervals.
+</footer>
+{% endblock %}

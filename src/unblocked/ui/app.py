@@ -19,7 +19,9 @@ from fastapi.templating import Jinja2Templates
 from ..domain.enums import Intervention
 from ..domain.money import Paise, fmt
 from . import state as app_state
-from .charts import Bar, grouped_bar, hbar, sweep_line
+from .charts import (
+    Bar, causes_diagram, diverging_bar, grouped_bar, hbar, ladder_diagram, sweep_line,
+)
 
 HERE = Path(__file__).parent
 
@@ -54,6 +56,63 @@ def render(request: Request, template: str, page: str, **ctx) -> HTMLResponse:
 
 
 @app.get("/", response_class=HTMLResponse)
+def landing(request: Request):
+    """The page that explains what this is.
+
+    Added after watching someone open the dashboard and be unable to tell what
+    they were looking at. Every other page assumes you already know the project;
+    this one does not, and it is the only page that leads with the problem rather
+    than with a number.
+    """
+    s = get_state()
+    ev = s.artifacts.get("evaluation")
+
+    rec = net = "—"
+    bars: list[Bar] = []
+    if ev:
+        pol = {p["policy"]: p for p in ev["policies"]}
+        n = ev["n_buyers"]
+        cm, nc = pol.get("cause-matched"), pol.get("never-chase")
+        if cm and nc:
+            rec = money((cm["recovered"] - nc["recovered"]) / n)
+            net = money((cm["net_value"] - nc["net_value"]) / n)
+        # Plotted as the difference per buyer against doing nothing. Absolute
+        # net values across policies differ by ~4%, which renders as four bars
+        # of identical length: correct, and communicating nothing.
+        label = {"blast-weekly": "chase everyone weekly",
+                 "static-ladder": "30/60/90 ladder",
+                 "cause-matched": "work out the cause"}
+        base = nc["net_value"] / n if nc else 0
+        for name in ("blast-weekly", "static-ladder", "cause-matched"):
+            if name in pol:
+                delta = pol[name]["net_value"] / n - base
+                bars.append(
+                    Bar(label=label[name], value=delta,
+                        display=("+" if delta > 0 else "") + money(delta),
+                        note=f'{pol[name]["messages"]:,} messages · '
+                             f'{pol[name]["churned_accounts"]} accounts lost')
+                )
+
+    # Surface the scale the headline numbers came from. An earlier run of the
+    # evaluation at reduced size silently overwrote the full-scale artifact, and
+    # the landing page went on quoting the smaller figures with no sign anything
+    # had changed. Showing the buyer count makes that visible instead of wrong.
+    eval_n = ev["n_buyers"] if ev else 0
+
+    return render(
+        request, "landing.html", "landing",
+        hero={"recovered": rec, "net": net, "eval_n": f"{eval_n:,}",
+              "hold": f"{s.summary.restraint_rate * 100:.0f}"},
+        n_buyers=len(s.cards),
+        ladder_svg=ladder_diagram(),
+        causes_svg=causes_diagram(),
+        compare_chart=diverging_bar(
+            bars, label_w=200, caption="net value per buyer against doing nothing"
+        ),
+    )
+
+
+@app.get("/book", response_class=HTMLResponse)
 def overview(request: Request):
     s = get_state()
     book = sum(i.amount for i in s.world.invoices.values())
