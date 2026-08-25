@@ -151,13 +151,16 @@ h2 { font-size: var(--fs-h2); margin: 30px 0 12px; letter-spacing: -0.01em; }
 
 /* ---- tables ---- */
 
-table { width: 100%; border-collapse: collapse; font-size: var(--fs-body); }
+table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
 th {
   text-align: left; font-weight: 600; color: var(--muted);
   font-size: var(--fs-small); text-transform: uppercase; letter-spacing: 0.04em;
   padding: 7px 10px; border-bottom: 1px solid var(--axis); white-space: nowrap;
 }
-td { padding: 8px 10px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+td { padding: 9px 10px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+/* Identity column needs room; without it long company names wrapped to three
+   lines and pushed the trailing columns off the page. */
+td:first-child, th:first-child { min-width: 190px; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); }
 tbody tr:hover { background: var(--plane); }
 tr.hi td { font-weight: 620; }
@@ -433,3 +436,34 @@ footer.foot {
 }
 .story .outcome .big { font-size: var(--fs-stat); font-weight: 680; color: var(--good); letter-spacing: -0.02em; }
 .story .outcome span { color: var(--text-secondary); font-size: var(--fs-small); }
+
+
+/* ── Guess vs answer ───────────────────────────────────────────────────────
+   The architectural claim of this project is that the agent cannot see ground
+   truth. Presenting its inference and the real answer in identical table
+   styling quietly undoes that argument on the one page where it is being
+   demonstrated - the two columns looked like two equally-authoritative facts.
+
+   The guess is set as the agent's own voice: primary weight, its confidence
+   under it. The answer is set as reference data: monospace, dimmer, tinted by
+   whether the guess matched, and captioned as something the agent never saw. */
+
+.guess { font-weight: 600; color: var(--text-primary); }
+.guess .conf { display: block; font-weight: 400; font-size: var(--fs-caption); color: var(--muted); }
+
+.answer {
+  font-family: var(--mono); font-size: var(--fs-caption);
+  color: var(--text-secondary); display: inline-flex; align-items: baseline; gap: 7px;
+}
+.answer::before {
+  content: "="; color: var(--good); font-weight: 700; font-family: var(--sans);
+}
+.answer.miss { color: var(--critical); }
+.answer.miss::before { content: "\2260"; color: var(--critical); }
+
+th.hidden-col { color: var(--muted); font-style: italic; }
+th.hidden-col::after {
+  content: " — agent never sees this"; font-style: normal; text-transform: none;
+  letter-spacing: 0; font-weight: 400; opacity: .8;
+}
+td.answer-cell { background: color-mix(in srgb, var(--plane) 60%, transparent); }

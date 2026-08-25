@@ -135,3 +135,14 @@ def test_provenance_is_disclosed_above_the_numbers(client):
     body = client.get("/").text
     assert "Simulated book" in body
     assert body.index("Simulated book") < body.index("more collected, per buyer")
+
+
+def test_guess_and_answer_are_visually_distinct(client):
+    """The project's architectural claim is that the agent cannot see ground
+    truth. Rendering its inference and the real answer in identical styling
+    undoes that argument on the page demonstrating it."""
+    body = client.get("/buyers").text
+    assert 'class="guess"' in body
+    assert 'class="answer' in body
+    assert "hidden-col" in body  # the caption itself is a CSS ::after
+    assert "held back from the agent" in body
