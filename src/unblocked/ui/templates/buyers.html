@@ -1,8 +1,8 @@
 {% extends "base.html" %}{% block title %}Buyers · Unblocked{% endblock %}
 {% block body %}
 <h1>Buyers</h1>
-<p class="sub">{{ cards|length }} buyers. <b>Why it thinks they haven't paid</b> sits next to
-<b>the real reason</b>, so its mistakes are visible. The agent never sees that second column.</p>
+<p class="sub">{{ cards|length }} buyers. Its guess sits next to the real answer — which
+the agent never sees.</p>
 
 <div class="filters">
   <a href="/buyers" class="{{ 'on' if not active }}">All</a>

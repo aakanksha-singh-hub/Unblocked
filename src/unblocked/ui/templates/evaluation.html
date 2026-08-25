@@ -1,10 +1,8 @@
 {% extends "base.html" %}{% block title %}Evaluation · Unblocked{% endblock %}
 {% block body %}
 <h1>Evaluation</h1>
-<p class="sub">Measured on the full held-out book — a different, larger run than the one
-this dashboard browses. Policies are compared under common random numbers, so each
-buyer faces identical dice under every policy and differences are paired rather than
-two independent draws.</p>
+<p class="sub">Held-out book. Every policy faces identical random draws, so the
+differences are paired rather than two lucky runs.</p>
 
 <div class="banner">
   <strong>What this establishes.</strong> Policy quality <em>conditional on the assumptions in
@@ -27,8 +25,7 @@ two independent draws.</p>
 
 <div class="card">
   <h3>Every policy, with what it cost</h3>
-  <p class="hint">Cost columns sit on the same table as recovery, never in an appendix.
-    A policy that wins on rupees by harassing people should be visibly doing that.</p>
+  <p class="hint">Costs sit beside the money, never in an appendix.</p>
   <table>
     <thead><tr><th>Policy</th><th class="num">Recovered</th><th class="num">Rate</th>
       <th class="num">Net</th><th class="num">Messages</th><th class="num">Wasted</th>

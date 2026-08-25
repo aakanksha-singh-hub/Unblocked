@@ -1,8 +1,8 @@
 {% extends "base.html" %}{% block title %}Restraint · Unblocked{% endblock %}
 {% block body %}
 <h1>When it decided not to send</h1>
-<p class="sub">Anyone can build something that chases. The interesting part is the silence.
-Every rule below is plain code — no model runs here, so no message can talk it out of one.</p>
+<p class="sub">Every rule below is plain code. No model runs here, so no message can
+talk it out of one.</p>
 
 <div class="tiles">
   <div class="tile"><div class="k">Times it could have sent</div><div class="v">{{ total }}</div>
@@ -54,9 +54,7 @@ Every rule below is plain code — no model runs here, so no message can talk it
 
 <div class="card">
   <h3>Things it will not do alone</h3>
-  <p class="hint">Samadhaan filing is never executed by the agent under any
-    circumstances — it may recommend it and nothing more. A reference to the MSEFC is
-    a legal act against a counterparty and belongs to a human.</p>
+  <p class="hint">Legal escalation is recommended, never executed. That belongs to a person.</p>
   {% if approvals %}
   <table><thead><tr><th class="num">Date</th><th>Buyer</th><th>Action</th><th>Why</th></tr></thead>
   <tbody>{% for a in approvals %}<tr><td class="num">{{ a.when }}</td>

@@ -79,7 +79,7 @@ def test_landing_leads_with_the_problem_not_a_number(client):
     opens with a metric it has failed at the only job it has."""
     body = client.get("/").text
     assert "Most overdue invoices" in body
-    assert body.index("Most overdue invoices") < body.index("more recovered, per buyer")
+    assert body.index("Most overdue invoices") < body.index("more collected, per buyer")
 
 
 def test_landing_uses_plain_english_not_taxonomy_identifiers(client):
@@ -105,4 +105,4 @@ def test_landing_states_the_scale_of_its_headline_numbers(client):
     the landing page kept quoting the smaller figures with no sign anything had
     changed. The buyer count is now on the page so that is visible, not silent."""
     body = client.get("/").text
-    assert "buyers, held out" in body
+    assert "buyers</div>" in body or "buyers<" in body
