@@ -1,0 +1,83 @@
+{% extends "base.html" %}{% block title %}Method · Vasooli{% endblock %}
+{% block body %}
+<h1>Method, and what it does not establish</h1>
+<p class="sub">Read this before believing any number in this project.</p>
+
+<div class="card">
+  <h3>The problem with our own headline result</h3>
+  <p style="color:var(--text-secondary)">This project ships a simulator and an agent. The
+  simulator's effect matrix encodes a thesis. The agent's central mechanism is inferring which
+  buyer is which. The agent then beats baselines that do not make that distinction.
+  <strong>That result was determined the moment the effect matrix was written.</strong></p>
+  <p style="color:var(--text-secondary)">It is tempting to defend this by pointing at commit
+  history — the environment was built and frozen before the agent existed. That defence does not
+  work and we do not make it. Commit ordering proves <em>sequence</em>, not <em>independence</em>:
+  same author, same afternoon, and the thesis predates both commits. Freezing a hypothesis before
+  testing it against a world you also wrote is not pre-registration, it is bookkeeping.</p>
+</div>
+
+<div class="card">
+  <h3>Three things that keep it honest anyway</h3>
+  <table>
+    <thead><tr><th>Mechanism</th><th>What it buys</th></tr></thead>
+    <tbody>
+      <tr><td><strong>The policy never reads the simulator's parameters</strong></td>
+        <td>Its beliefs live in a separately authored playbook, wrong in two places on purpose —
+          it thinks a soft nudge and a payment link are harmless to a buyer with a grievance;
+          both mildly backfire. Mean absolute error against truth 0.077, two sign errors. It wins anyway.</td></tr>
+      <tr><td><strong>Ground truth is unreachable by type</strong></td>
+        <td>The buyer object the agent receives has no cause field. Truth lives in a separate
+          record joined only inside the evaluation. A test walks the agent's entire object graph
+          asserting no truth is reachable from it.</td></tr>
+      <tr><td><strong>The breakeven is reported above the headline</strong></td>
+        <td>Where our conclusion would flip is stated before the conclusion. <a href="/sensitivity">See the sweeps →</a></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3>Where AI is used, and where it deliberately is not</h3>
+  <table>
+    <thead><tr><th>Layer</th><th>Mechanism</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Reply understanding</td><td><span class="pill mono">LLM</span></td>
+        <td>Hinglish, implicit dates, disputes with amounts, references to reconcile. Rules die here.</td></tr>
+      <tr><td>Cause inference</td><td><span class="pill mono">fitted classifier</span></td>
+        <td>Structured features, measurable, held-out.</td></tr>
+      <tr><td>Intervention choice</td><td><span class="pill mono">deterministic</span></td>
+        <td>Expected value over the posterior. Explainable line by line.</td></tr>
+      <tr class="hi"><td>Stopping rules</td><td><span class="pill esc">hard-coded</span></td>
+        <td><strong>An LLM that can be talked out of a stopping rule is not a stopping rule.</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3>The legal ladder is real</h3>
+  <p style="color:var(--text-secondary);margin-top:0">MSMED Act 2006 s.15 caps the payment period
+  at 45 days <strong>from acceptance</strong>, not from invoice date — so a notice on an invoice
+  accepted late is blocked even when the aging report says 90 days. s.16 sets compound interest at
+  three times the RBI bank rate. Both are gated on Udyam registration: an unregistered supplier
+  issuing an MSMED notice is bluffing, and the agent is not permitted to bluff.</p>
+  <p class="note">On contact hours we are careful not to overclaim. RBI's recovery-conduct norms
+  bind regulated entities chasing loans, not a manufacturer chasing its own trade receivables —
+  they do not legally apply here. We adopt them anyway, because an agent that reasons "no rule
+  forbids this" about a 10pm message has the wrong disposition to be automating contact with anyone.</p>
+</div>
+
+<div class="card">
+  <h3>Known limitations</h3>
+  <ol style="color:var(--text-secondary);margin:0;padding-left:20px;line-height:1.75">
+    <li><strong>Generator circularity</strong> — the dominant one, above.</li>
+    <li><strong>{{ n_priors }} of {{ n_params }} parameters are designer priors</strong>, printed at the head of every run.</li>
+    <li><strong>Promises still carry a small causal effect they should not.</strong> The correct
+      treatment is a latent intended pay-date that the promise merely reports. Larger than the
+      remaining time allows; it is the first thing we would do with another week.</li>
+    <li><strong>The cause model is trained on data from our own baseline policies.</strong> Pooling
+      across three reduces the distribution shift against the agent's own behaviour; it does not eliminate it.</li>
+    <li><strong>Nothing here is fitted to observed data.</strong> No public dataset of Indian MSME
+      invoice-level payment behaviour exists, and inventing one and calling it empirical would be
+      worse than inventing one and saying so.</li>
+  </ol>
+</div>
+{% endblock %}

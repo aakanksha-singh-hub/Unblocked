@@ -8,9 +8,9 @@ sim/calibration.py. It is not evidence those assumptions hold.
 See docs/EVALUATION.md.
 
   ran never-chase        1.6s
-  ran blast-weekly       7.0s
-  ran static-ladder      2.5s
-  ran cause-matched     16.3s
+  ran blast-weekly       7.5s
+  ran static-ladder      2.7s
+  ran cause-matched     16.0s
 
 policy            recovered   rate        net   msgs  waste  churn   hrs  hold%  promise
 ----------------------------------------------------------------------------------------

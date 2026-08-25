@@ -1,0 +1,66 @@
+{% extends "base.html" %}{% block title %}Overview · Vasooli{% endblock %}
+{% block body %}
+<h1>The book</h1>
+<p class="sub">One merchant portfolio, {{ n_buyers }} buyers, simulated over {{ horizon }} days.
+Every figure on this page comes from the run the dashboard is browsing. The measured
+claims live on <a href="/evaluation">Evaluation</a>, computed on a larger held-out book.</p>
+
+<div class="tiles">
+  <div class="tile"><div class="k">Invoiced</div><div class="v">{{ f.book }}</div>
+    <div class="d">{{ n_invoices }} invoices</div></div>
+  <div class="tile"><div class="k">Recovered</div><div class="v">{{ f.recovered }}</div>
+    <div class="d">{{ '%.1f'|format(rate) }}% of the book</div></div>
+  <div class="tile"><div class="k">Still outstanding</div><div class="v">{{ f.outstanding }}</div>
+    <div class="d">{{ open_buyers }} buyers with a balance</div></div>
+  <div class="tile"><div class="k">Messages sent</div><div class="v">{{ summary.messages }}</div>
+    <div class="d">{{ '%.0f'|format(summary.restraint_rate*100) }}% of decisions were to hold</div></div>
+  <div class="tile"><div class="k">Owner's time</div><div class="v">{{ '%.0f'|format(summary.human_minutes/60) }}h</div>
+    <div class="d">across {{ horizon }} days</div></div>
+  <div class="tile"><div class="k">Accounts lost</div><div class="v">{{ summary.churned_accounts }}</div>
+    <div class="d">relationship budget exhausted</div></div>
+</div>
+
+<div class="banner">
+  <strong>Against doing nothing.</strong> On this same book a policy that never contacts anyone
+  recovers {{ f.baseline_recovered }} ({{ '%.1f'|format(baseline_rate) }}%). The agent recovers
+  {{ f.recovered }} — a difference of <strong>{{ f.delta }}</strong> — while sending
+  {{ summary.messages }} messages and losing {{ summary.churned_accounts }} accounts.
+</div>
+
+<div class="card">
+  <h3>Where the money is stuck</h3>
+  <p class="hint">Outstanding balance by the cause the agent inferred. Cause is a
+    belief, not a label the merchant's system holds.</p>
+  {{ cause_chart|safe }}
+</div>
+
+<div class="card">
+  <h3>What the agent did</h3>
+  <p class="hint">Action mix across the run. The largest bar is a document chase —
+    invoices blocked at the buyer's intake, which an aging report shows as ordinary overdue.</p>
+  {{ action_chart|safe }}
+</div>
+
+<div class="card">
+  <h3>Biggest balances</h3>
+  <table>
+    <thead><tr><th>Buyer</th><th>Inferred cause</th><th class="num">Outstanding</th>
+      <th class="num">Recovered</th><th class="num">Days late</th><th>Last action</th></tr></thead>
+    <tbody>
+    {% for c in top %}
+      <tr>
+        <td><a href="/buyers/{{ c.buyer_id }}">{{ c.name }}</a>
+          <div class="note" style="margin:0">{{ c.city }}, {{ c.state }}</div></td>
+        <td>{% if c.inferred %}<span class="pill mono">{{ c.inferred }}</span>
+            <span class="note">{{ '%.0f'|format(c.confidence*100) }}%</span>
+            {% else %}<span class="note">cold start</span>{% endif %}</td>
+        <td class="num">{{ money(c.outstanding) }}</td>
+        <td class="num">{{ '%.0f'|format(c.recovery_pct) }}%</td>
+        <td class="num">{{ c.oldest_dpd }}</td>
+        <td><span class="pill {{ 'act' if c.last_action != 'none' else 'hold' }}">{{ c.last_action }}</span></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

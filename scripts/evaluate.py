@@ -81,12 +81,16 @@ def main() -> int:
     for i in world.invoices.values():
         seg[world.truth[i.buyer_id].archetype] += i.amount
     names = [n for n, _ in policies]
+    segments: dict[str, dict[str, float]] = {}
     print(f"  {'archetype':20s}" + "".join(f"{n[:13]:>15s}" for n in names))
     for a in sorted(seg):
         cells = ""
+        segments[a.value] = {}
         for n in names:
             got = sum(p.amount for p in runs[n].state.payments if world.truth[p.buyer_id].archetype == a)
-            cells += f"{100 * got / seg[a]:>14.1f}%"
+            pct = 100 * got / seg[a]
+            segments[a.value][n] = round(pct, 2)
+            cells += f"{pct:>14.1f}%"
         print(f"  {a:20s}{cells}")
 
     best = runs["cause-matched"]
@@ -103,6 +107,7 @@ def main() -> int:
                 "n_buyers": len(world.buyers),
                 "provenance": cal.provenance_report(),
                 "policies": [r.as_dict() for r in rows],
+                "segments": segments,
                 "caveat": (
                     "Policy quality conditional on the assumptions in sim/calibration.py. "
                     "Not evidence those assumptions hold."

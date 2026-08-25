@@ -3,6 +3,7 @@
     vasooli evaluate            compare policies on the held-out book
     vasooli train               fit the archetype model
     vasooli breakeven           find where the headline finding stops holding
+    vasooli ui                  the dashboard
     vasooli trail <buyer>       one buyer's full decision history
     vasooli restraint           the moments the agent chose not to send
     vasooli prove               end-to-end recovery against Razorpay test mode
@@ -67,6 +68,20 @@ def breakeven(metric: str = "net_value", merchants: int = 8) -> None:
 def sensitivity(merchants: int = 6) -> None:
     """Sweep the assumptions that might be carrying the result."""
     raise typer.Exit(_script("sensitivity.py", "--merchants", str(merchants)))
+
+
+@app.command()
+def ui(port: int = 8000, host: str = "127.0.0.1", reload: bool = False) -> None:
+    """Launch the dashboard.
+
+    Runs one simulation at startup and holds it in memory, so every page is
+    reading the same book. No external assets - it renders with the network off.
+    """
+    import uvicorn
+
+    console.print(f"\n  Vasooli dashboard -> [bold]http://{host}:{port}[/bold]")
+    console.print("  [dim]first request builds the run; give it a few seconds[/dim]\n")
+    uvicorn.run("vasooli.ui.app:app", host=host, port=port, reload=reload, log_level="warning")
 
 
 @app.command()

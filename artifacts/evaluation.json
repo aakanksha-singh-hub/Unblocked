@@ -158,5 +158,43 @@
       }
     }
   ],
+  "segments": {
+    "avoider": {
+      "never-chase": 66.49,
+      "blast-weekly": 66.81,
+      "static-ladder": 66.63,
+      "cause-matched": 75.06
+    },
+    "cashflow_stressed": {
+      "never-chase": 76.57,
+      "blast-weekly": 85.95,
+      "static-ladder": 77.85,
+      "cause-matched": 87.99
+    },
+    "disputer": {
+      "never-chase": 47.45,
+      "blast-weekly": 41.13,
+      "static-ladder": 47.48,
+      "cause-matched": 51.32
+    },
+    "distressed": {
+      "never-chase": 24.3,
+      "blast-weekly": 26.23,
+      "static-ladder": 24.34,
+      "cause-matched": 37.54
+    },
+    "process_bound": {
+      "never-chase": 57.42,
+      "blast-weekly": 57.42,
+      "static-ladder": 57.71,
+      "cause-matched": 78.83
+    },
+    "prompt": {
+      "never-chase": 59.89,
+      "blast-weekly": 63.08,
+      "static-ladder": 61.27,
+      "cause-matched": 66.6
+    }
+  },
   "caveat": "Policy quality conditional on the assumptions in sim/calibration.py. Not evidence those assumptions hold."
 }

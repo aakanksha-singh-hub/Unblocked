@@ -1,0 +1,86 @@
+{% extends "base.html" %}{% block title %}Evaluation · Vasooli{% endblock %}
+{% block body %}
+<h1>Evaluation</h1>
+<p class="sub">Measured on the full held-out book — a different, larger run than the one
+this dashboard browses. Policies are compared under common random numbers, so each
+buyer faces identical dice under every policy and differences are paired rather than
+two independent draws.</p>
+
+<div class="banner">
+  <strong>What this establishes.</strong> Policy quality <em>conditional on the assumptions in
+  <span class="pill mono">sim/calibration.py</span></em> — not evidence those assumptions hold.
+  We wrote the simulator, so beating baselines inside it cannot prove the thesis that shaped
+  it. Commit ordering proves sequence, not independence, and this project does not argue
+  otherwise. <a href="/method">The full argument →</a>
+</div>
+
+{% if ev %}
+<div class="tiles">
+  <div class="tile"><div class="k">Buyers</div><div class="v">{{ ev.n_buyers }}</div><div class="d">held-out book</div></div>
+  <div class="tile"><div class="k">Recovered vs nothing</div><div class="v">+{{ headline.rec }}</div>
+    <div class="d">per buyer · CI [{{ headline.rec_lo }}, {{ headline.rec_hi }}]</div></div>
+  <div class="tile"><div class="k">Net value vs nothing</div><div class="v">+{{ headline.net }}</div>
+    <div class="d">after churn and human time · significant</div></div>
+  <div class="tile"><div class="k">Designer priors</div><div class="v">{{ ev.provenance.prior }}</div>
+    <div class="d">of {{ ev.provenance.values()|sum }} parameters</div></div>
+</div>
+
+<div class="card">
+  <h3>Every policy, with what it cost</h3>
+  <p class="hint">Cost columns sit on the same table as recovery, never in an appendix.
+    A policy that wins on rupees by harassing people should be visibly doing that.</p>
+  <table>
+    <thead><tr><th>Policy</th><th class="num">Recovered</th><th class="num">Rate</th>
+      <th class="num">Net</th><th class="num">Messages</th><th class="num">Wasted</th>
+      <th class="num">Lost accts</th><th class="num">Hours</th><th class="num">Held</th>
+      <th class="num">Promises kept</th></tr></thead>
+    <tbody>
+      {% for p in policies %}
+      <tr class="{{ 'hi' if p.policy=='cause-matched' }}">
+        <td>{{ p.policy }}</td>
+        <td class="num">{{ money(p.recovered) }}</td>
+        <td class="num">{{ '%.1f'|format(p.recovery_rate*100) }}%</td>
+        <td class="num">{{ money(p.net_value) }}</td>
+        <td class="num">{{ p.messages }}</td>
+        <td class="num">{{ '%.0f'|format(p.wasted_message_rate*100) }}%</td>
+        <td class="num">{{ p.churned_accounts }}</td>
+        <td class="num">{{ '%.0f'|format(p.human_minutes/60) }}</td>
+        <td class="num">{{ '%.0f'|format(p.restraint_rate*100) }}%</td>
+        <td class="num">{{ '%.0f'|format(p.promise_respect_rate*100) }}%</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p class="note"><strong>Wasted</strong> is the false-positive cost: messages whose action could
+    not raise the payment hazard for that buyer's cause, and which repaired nothing. It is
+    knowable only inside the simulator, which is exactly why it belongs there and not in the agent.</p>
+</div>
+
+<div class="card">
+  <h3>Recovery by cause</h3>
+  <p class="hint">Percentage of each segment's book collected. The agent's advantage is
+    concentrated, not uniform.</p>
+  {{ segment_chart|safe }}
+</div>
+{% else %}
+<div class="card"><p class="empty">No evaluation artifact found. Run <span class="pill mono">vasooli evaluate</span>.</p></div>
+{% endif %}
+
+{% if inference %}
+<div class="card">
+  <h3>Cause inference</h3>
+  <p class="hint"><strong>Macro-F1 on recovering a latent generator variable in simulation.</strong>
+    Not a real-world buyer classification result: inside the simulator archetypes are ground
+    truth by construction, so this measures how invertible our own generator is.</p>
+  <div class="kv">
+    <dt>Macro-F1 (holdout)</dt><dd>{{ '%.3f'|format(inference.macro_f1) }}</dd>
+    <dt>Train / holdout</dt><dd>{{ inference.n_train }} / {{ inference.n_holdout }} snapshots</dd>
+    <dt>Distressed read as avoider</dt>
+    <dd>{{ inference.distressed_as_avoider }}/{{ inference.distressed_support }}
+      ({{ '%.1f'|format(100*inference.distressed_as_avoider/inference.distressed_support) }}%)</dd>
+  </div>
+  <p class="note">That last row is tracked on its own because mistaking someone who
+    <em>cannot</em> pay for someone who <em>will not</em> is the error that does human damage.</p>
+</div>
+{% endif %}
+{% endblock %}

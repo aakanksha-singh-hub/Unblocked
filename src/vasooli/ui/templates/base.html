@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Vasooli{% endblock %}</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">Vasooli <small>receivables recovery agent</small></div>
+  <nav class="top">
+    <a href="/" class="{{ 'on' if page=='overview' }}">Overview</a>
+    <a href="/buyers" class="{{ 'on' if page=='buyers' }}">Buyers</a>
+    <a href="/restraint" class="{{ 'on' if page=='restraint' }}">Restraint</a>
+    <a href="/evaluation" class="{{ 'on' if page=='evaluation' }}">Evaluation</a>
+    <a href="/sensitivity" class="{{ 'on' if page=='sensitivity' }}">Sensitivity</a>
+    <a href="/understanding" class="{{ 'on' if page=='understanding' }}">Understanding</a>
+    <a href="/method" class="{{ 'on' if page=='method' }}">Method</a>
+    <button id="theme" class="ghost" style="padding:5px 10px;font-size:12px;margin-left:8px">◐</button>
+  </nav>
+</header>
+<main>{% block body %}{% endblock %}</main>
+<script src="/static/app.js"></script>
+</body>
+</html>

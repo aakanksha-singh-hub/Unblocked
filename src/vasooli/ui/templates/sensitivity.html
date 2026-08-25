@@ -1,0 +1,48 @@
+{% extends "base.html" %}{% block title %}Sensitivity · Vasooli{% endblock %}
+{% block body %}
+<h1>Where this stops being true</h1>
+<p class="sub">Our headline finding rests on parameters we invented rather than measured.
+Rather than defend the values, these sweeps locate the point at which the conclusion
+would flip — so a reader who disagrees with our priors can check their own belief
+against a number instead of taking our word.</p>
+
+<div class="banner">
+  <strong>The result we did not expect.</strong> We built this to report the contact-fatigue
+  threshold. There isn't one: from fatigue disabled entirely to severe, the margin moves about
+  10% and never crosses zero. The conclusion does not depend on the constant we assumed was
+  carrying it. That failure exposed a defect worth admitting — the two probabilities most
+  likely to be load-bearing were hardcoded literals in the dynamics code rather than
+  parameters, so the sweep could not have reached them.
+</div>
+
+{% if sweeps %}
+{% for s in sweeps %}
+<div class="card">
+  <h3>{{ s.parameter }}</h3>
+  <p class="hint">{{ s.rationale }}</p>
+  {{ s.chart|safe }}
+  <div class="kv" style="margin-top:14px">
+    <dt>Our chosen value</dt><dd>{{ '%.3f'|format(s.chosen) }}</dd>
+    <dt>Worst case in range</dt><dd>{{ '%.0f'|format(s.worst_ratio*100) }}% of the margin</dd>
+    <dt>Verdict</dt><dd>{{ s.verdict }}</dd>
+  </div>
+</div>
+{% endfor %}
+
+<div class="card">
+  <h3>So what is the claim, exactly?</h3>
+  <p class="hint">Narrower than "cause-matching works".</p>
+  <p style="margin:0;color:var(--text-secondary)">
+    <strong>Most of the advantage is the intake-repair mechanism</strong> — finding invoices that
+    never reached the buyer's system. If chasing paperwork rarely unblocks an invoice in
+    reality, most of this evaporates. That is the assumption to attack, and naming it is more
+    useful than a limitations paragraph that lists every parameter equally.
+  </p>
+  <p class="note">We report worst-case collapse rather than only whether a crossing exists,
+    because "no crossing" cannot distinguish a parameter that wipes out 88% of the margin
+    from one that costs 17%.</p>
+</div>
+{% else %}
+<div class="card"><p class="empty">No sensitivity artifact. Run <span class="pill mono">vasooli sensitivity</span>.</p></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}{% block title %}Restraint · Vasooli{% endblock %}
+{% block body %}
+<h1>Why the agent stayed quiet</h1>
+<p class="sub">Anyone can build something that chases. The interesting output is the
+silence. Every gate below is deterministic code — no model runs in the guardrail
+layer, so nothing here can be argued out of by a message.</p>
+
+<div class="tiles">
+  <div class="tile"><div class="k">Decisions</div><div class="v">{{ total }}</div>
+    <div class="d">buyer-days with something overdue</div></div>
+  <div class="tile"><div class="k">Held</div><div class="v">{{ '%.0f'|format(hold_rate) }}%</div>
+    <div class="d">{{ holds }} decisions to do nothing</div></div>
+  <div class="tile"><div class="k">Promises kept quiet</div><div class="v">{{ promise_holds }}</div>
+    <div class="d">silence on the buyer's own word</div></div>
+  <div class="tile"><div class="k">Escalations</div><div class="v">{{ escalations }}</div>
+    <div class="d">all requiring human sign-off</div></div>
+</div>
+
+<div class="card">
+  <h3>What stopped it</h3>
+  <p class="hint">Count of decisions where this gate was the first to block.</p>
+  {{ gate_chart|safe }}
+</div>
+
+<div class="card">
+  <h3>Every gate, and what it is for</h3>
+  <table>
+    <thead><tr><th>Gate</th><th class="num">Fired</th><th>Example</th></tr></thead>
+    <tbody>
+    {% for g in gates %}
+      <tr><td><span class="pill mono">{{ g.name }}</span></td>
+        <td class="num">{{ g.count }}</td><td class="why">{{ g.example }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3>Promise freezes</h3>
+  <p class="hint">The agent going silent because the buyer named a date. It quotes
+    their own words back as the reason.</p>
+  {% if promises %}
+  <table>
+    <thead><tr><th class="num">Date</th><th>Buyer</th><th>Reason</th></tr></thead>
+    <tbody>
+      {% for p in promises %}
+      <tr><td class="num">{{ p.when }}</td>
+        <td><a href="/buyers/{{ p.buyer_id }}">{{ p.name }}</a></td>
+        <td class="why">{{ p.reason }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p class="empty">No promise freezes in this run.</p>{% endif %}
+</div>
+
+<div class="card">
+  <h3>Actions that require a person</h3>
+  <p class="hint">Samadhaan filing is never executed by the agent under any
+    circumstances — it may recommend it and nothing more. A reference to the MSEFC is
+    a legal act against a counterparty and belongs to a human.</p>
+  {% if approvals %}
+  <table><thead><tr><th class="num">Date</th><th>Buyer</th><th>Action</th><th>Why</th></tr></thead>
+  <tbody>{% for a in approvals %}<tr><td class="num">{{ a.when }}</td>
+    <td><a href="/buyers/{{ a.buyer_id }}">{{ a.name }}</a></td>
+    <td><span class="pill esc">{{ a.action }}</span></td><td class="why">{{ a.why }}</td></tr>{% endfor %}</tbody></table>
+  {% else %}<p class="empty">No irreversible action was taken.</p>{% endif %}
+</div>
+{% endblock %}
