@@ -39,7 +39,7 @@ Runs of the same decision are collapsed into one row.</p>
       {% if row.repeat > 1 %}<div class="repeat">{{ row.repeat }} days</div>{% endif %}
     </span>
     <span class="why">
-      {{ row.why }}
+      {{ humanise(row.why) }}
       {% if row.gates %}<div class="gatelist">
         {% for g in row.gates %}<span class="g {{ 'fail' if not g.passed }}">{{ gate_label(g.gate) }}</span>{% endfor %}
       </div>{% endif %}

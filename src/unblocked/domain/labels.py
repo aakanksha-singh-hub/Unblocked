@@ -101,3 +101,34 @@ def action(i: Intervention | str) -> str:
 
 def gate(name: str) -> str:
     return GATE.get(name, name.replace("_", " "))
+
+
+def days_late(n: int) -> str:
+    """Render days-past-due for a person.
+
+    A negative number here means the invoice is not due yet, and printing
+    "-11 days late" asks the reader to do the arithmetic and the inference.
+    """
+    if n < 0:
+        return f"not due for {abs(n)}d"
+    if n == 0:
+        return "due today"
+    return f"{n}d"
+
+
+def humanise(rationale: str) -> str:
+    """Turn a decision rationale into something a reader can take at face value.
+
+    The rationale is written for the audit trail and opens with the action
+    identifier - "owner_escalation: avoider at 45% (margin 12%)". On a page that
+    otherwise speaks plain English, that reads as a different system talking.
+    """
+    import re
+
+    text = rationale
+    for key, label in ACTION.items():
+        text = re.sub(rf"^{re.escape(key.value)}: ", "", text)
+        text = text.replace(key.value, label.lower())
+    for key, label in CAUSE.items():
+        text = text.replace(key.value, label.lower())
+    return text[:1].upper() + text[1:] if text else text

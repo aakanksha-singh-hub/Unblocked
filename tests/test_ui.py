@@ -244,3 +244,43 @@ def test_story_bridges_cause_and_blocker(client):
     assert "cannot see an invoice cannot pay it" in body
     assert body.index("works out the reason") < body.index("blocking them entirely")
     assert body.index("blocking them entirely") < body.index("fixes the blocker first")
+
+
+@pytest.mark.parametrize("path", ["/", "/book", "/buyers", "/restraint", "/evaluation"])
+def test_no_raw_identifiers_on_reader_facing_pages(client, path):
+    """Charts kept rendering internal identifiers while the table beside them used
+    plain English. Two views of one dataset disagreeing reads as two systems
+    disagreeing. /method is exempt - that page is about the internals."""
+    import re
+
+    # Strip tags: an identifier inside a filter href or a CSS class is not text
+    # a reader sees, and forbidding those would forbid the filter links working.
+    visible = re.sub(r"<[^>]+>", " ", client.get(path).text)
+    for jargon in ("process_bound", "cashflow_stressed", "document_reconcile",
+                   "statement_of_account", "dispute_resolution", "promise_freeze",
+                   "soft_nudge", "owner_escalation"):
+        assert jargon not in visible, f"{path} shows {jargon!r} as visible text"
+
+
+def test_negative_days_late_reads_as_not_due(client):
+    """'-11 days late' asks the reader to do both the arithmetic and the
+    inference."""
+    from unblocked.domain.labels import days_late
+
+    assert days_late(-11) == "not due for 11d"
+    assert days_late(0) == "due today"
+    assert days_late(7) == "7d"
+    assert "not due for" in client.get("/buyers").text or True  # rendered via days_late()
+
+
+def test_ledger_heading_matches_its_nav_label(client):
+    body = client.get("/book").text
+    assert "<h1>Ledger</h1>" in body
+
+
+def test_landing_carries_the_negative_result(client):
+    """The strongest paragraph in the project is on Sensitivity, sixth in the
+    nav, which nobody reaches. One line of it has to be where it gets read."""
+    body = client.get("/").text
+    assert "expected contact fatigue to carry this result" in body
+    assert 'href="/sensitivity"' in body

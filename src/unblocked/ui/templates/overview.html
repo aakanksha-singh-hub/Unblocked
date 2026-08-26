@@ -1,6 +1,6 @@
 {% extends "base.html" %}{% block title %}Overview · Unblocked{% endblock %}
 {% block body %}
-<h1>The book</h1>
+<h1>Ledger</h1>
 <p class="sub">The live ledger this dashboard is browsing — {{ n_buyers }} buyers across
 {{ horizon }} simulated days.</p>
 <p class="note">Every figure here comes from that run. The measured claims live on
@@ -55,13 +55,14 @@
       <tr>
         <td><a href="/buyers/{{ c.buyer_id }}">{{ c.name }}</a>
           <div class="note" style="margin:0">{{ c.city }}, {{ c.state }}</div></td>
-        <td>{% if c.inferred %}<span class="pill mono">{{ c.inferred }}</span>
-            <span class="note">{{ '%.0f'|format(c.confidence*100) }}%</span>
-            {% else %}<span class="note">cold start</span>{% endif %}</td>
+        <td>{% if c.inferred %}{{ cause_label(c.inferred) }}
+            <div class="note" style="margin:0">{{ '%.0f'|format(c.confidence*100) }}% sure</div>
+            {% else %}<span class="note">not enough history yet</span>{% endif %}</td>
         <td class="num">{{ money(c.outstanding) }}</td>
         <td class="num">{{ '%.0f'|format(c.recovery_pct) }}%</td>
-        <td class="num">{{ c.oldest_dpd }}</td>
-        <td><span class="pill {{ 'act' if c.last_action != 'none' else 'hold' }}">{{ c.last_action }}</span></td>
+        <td class="num">{{ days_late(c.oldest_dpd) }}</td>
+        <td>{% if c.last_action != 'none' %}{{ action_label(c.last_action) }}
+            {% else %}<span class="note">nothing yet</span>{% endif %}</td>
       </tr>
     {% endfor %}
     </tbody>

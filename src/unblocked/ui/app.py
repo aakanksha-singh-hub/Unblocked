@@ -43,6 +43,8 @@ templates.env.globals["cause_label"] = labels.cause
 templates.env.globals["cause_means"] = labels.cause_means
 templates.env.globals["action_label"] = labels.action
 templates.env.globals["gate_label"] = labels.gate
+templates.env.globals["days_late"] = labels.days_late
+templates.env.globals["humanise"] = labels.humanise
 
 
 def get_state() -> app_state.AppState:
@@ -231,13 +233,15 @@ def overview(request: Request):
             by_cause[c.inferred or "cold start"] = by_cause.get(c.inferred or "cold start", 0) + c.outstanding
     # One measure across categories: single hue. See Bar.series.
     cause_bars = [
-        Bar(label=k, value=v, display=money(v))
+        Bar(label=labels.cause(k) if k != "cold start" else "Not enough history yet",
+            value=v, display=money(v))
         for k, v in sorted(by_cause.items(), key=lambda kv: -kv[1])
     ]
 
     mix = Counter(m.intervention.value for m in s.result.state.outbound)
     action_bars = [
-        Bar(label=k, value=v, display=str(v), series=0) for k, v in mix.most_common()
+        Bar(label=labels.action(k), value=v, display=f"{v:,}", series=0)
+        for k, v in mix.most_common()
     ]
 
     return render(
@@ -258,8 +262,8 @@ def overview(request: Request):
             "baseline_recovered": money(base_rec),
             "delta": money(rec - base_rec),
         },
-        cause_chart=hbar(cause_bars, caption="outstanding by inferred cause"),
-        action_chart=hbar(action_bars, caption="action mix", label_w=175),
+        cause_chart=hbar(cause_bars, width=940, caption="outstanding by inferred cause", label_w=300),
+        action_chart=hbar(action_bars, width=940, caption="action mix", label_w=330),
         top=s.cards[:12],
     )
 
@@ -476,7 +480,10 @@ def evaluation(request: Request):
         if seg:
             values = [[seg[c].get(n, 0.0) for n in names] for c in cats]
             displays = [[f"{seg[c].get(n, 0.0):.1f}%" for n in names] for c in cats]
-            segment_chart = grouped_bar(cats, names, values, displays, caption="recovery by cause")
+            segment_chart = grouped_bar(
+                [labels.cause(c) for c in cats], names, values, displays,
+                width=940, label_w=300, caption="recovery by cause",
+            )
 
     headline = {}
     if policies:

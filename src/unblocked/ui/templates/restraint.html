@@ -70,7 +70,7 @@ expected-value calculation declining to act ({{ by_value|comma }}) or the calend
   <table><thead><tr><th class="num">Date</th><th>Buyer</th><th>Action</th><th>Why</th></tr></thead>
   <tbody>{% for a in approvals %}<tr><td class="num">{{ a.when }}</td>
     <td><a href="/buyers/{{ a.buyer_id }}">{{ a.name }}</a></td>
-    <td><span class="pill esc">{{ action_label(a.action) }}</span></td><td class="why">{{ a.why }}</td></tr>{% endfor %}</tbody></table>
+    <td><span class="pill esc">{{ action_label(a.action) }}</span></td><td class="why">{{ humanise(a.why) }}</td></tr>{% endfor %}</tbody></table>
   {% else %}<p class="empty">No irreversible action was taken.</p>{% endif %}
 </div>
 {% endblock %}

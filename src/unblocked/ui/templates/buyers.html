@@ -39,7 +39,7 @@ visible.</p>
       <td class="num">{{ money(c.outstanding) }}</td>
       <td><div class="bar-inline"><i style="width:{{ c.recovery_pct }}%"></i></div>
           <span class="note">{{ '%.0f'|format(c.recovery_pct) }}%</span></td>
-      <td class="num">{{ c.oldest_dpd }}</td>
+      <td class="num">{{ days_late(c.oldest_dpd) }}</td>
       <td class="num">{{ c.messages }}</td>
       <td class="num">{{ c.replies }}</td>
       <td>{% if c.last_action!='none' %}{{ action_label(c.last_action) }}

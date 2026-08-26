@@ -559,3 +559,16 @@ td.answer-cell { background: color-mix(in srgb, var(--plane) 60%, transparent); 
   color: var(--muted); margin: 0 0 6px;
 }
 .figref .n { color: var(--text-secondary); }
+
+
+/* The best paragraph on this site is on Sensitivity, sixth in the nav, which
+   nobody reaches. One line of it belongs where it will be read: a team that
+   reports the experiment which embarrassed them is a team to believe about
+   everything else. */
+.admission {
+  margin: 22px 0 0; padding: 14px 18px;
+  border-left: 3px solid var(--series-2);
+  background: var(--surface-1); border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: var(--fs-body); color: var(--text-secondary); max-width: var(--measure);
+}
+.admission a { color: var(--text-primary); }
