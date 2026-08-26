@@ -505,3 +505,19 @@ th.hidden-col::after {
   letter-spacing: 0; font-weight: 400; opacity: .8;
 }
 td.answer-cell { background: color-mix(in srgb, var(--plane) 60%, transparent); }
+
+
+/* ── Breadcrumb ────────────────────────────────────────────────────────────
+   On the buyer detail page only. It is the one view reached from elsewhere
+   rather than from the nav, so it is the one place a reader needs telling
+   where they came from. No other page gets one, and nothing gets a back
+   button. */
+.crumb {
+  font-family: var(--mono); font-size: var(--fs-caption);
+  text-transform: uppercase; letter-spacing: var(--track-micro);
+  color: var(--muted); margin: 0 0 14px;
+}
+.crumb a { color: var(--text-secondary); text-decoration: none; }
+.crumb a:hover { color: var(--text-primary); text-decoration: underline; }
+.crumb .sep { margin: 0 8px; color: var(--axis); }
+.crumb .here { color: var(--text-primary); }

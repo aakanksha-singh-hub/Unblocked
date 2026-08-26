@@ -1,5 +1,6 @@
 {% extends "base.html" %}{% block title %}{{ c.name }} · Unblocked{% endblock %}
 {% block body %}
+<p class="crumb"><a href="/buyers">Buyers</a><span class="sep">/</span><span class="here">{{ c.name }}</span></p>
 <h1>{{ c.name }}</h1>
 <p class="sub">{{ c.city }}, {{ c.state }} · {{ c.terms }}-day terms ·
 {{ '%.1f'|format(c.revenue_share*100) }}% of revenue · {{ c.tenure }} months trading</p>

@@ -146,3 +146,15 @@ def test_guess_and_answer_are_visually_distinct(client):
     assert 'class="answer' in body
     assert "hidden-col" in body  # the caption itself is a CSS ::after
     assert "held back from the agent" in body
+
+
+def test_breadcrumb_only_on_buyer_detail(client):
+    """The buyer page is the one view reached from elsewhere rather than from the
+    nav, so it is the only one that gets a breadcrumb."""
+    bid = ui_app.STATE.cards[0].buyer_id
+    detail = client.get(f"/buyers/{bid}").text
+    assert 'class="crumb"' in detail
+    assert '<a href="/buyers">Buyers</a>' in detail
+    for path in ("/", "/book", "/buyers", "/restraint", "/evaluation",
+                 "/sensitivity", "/understanding", "/method"):
+        assert 'class="crumb"' not in client.get(path).text, f"{path} grew a breadcrumb"
