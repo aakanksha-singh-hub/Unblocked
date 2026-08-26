@@ -378,3 +378,25 @@ def test_sheet_names_cannot_be_confused_with_completed_work(tmp_path: Path):
         head = (tmp_path / n).read_text(encoding="utf-8").splitlines()[:2]
         assert "fill the" in head[0]
         assert "save this file as: LABELLED_" in head[1]
+
+
+def test_label_files_are_read_with_their_own_columns(tmp_path: Path):
+    """Merging annotation rounds must not impose the annotator header on files
+    that have a different shape. adjudicated.csv is item_id,intent,confidence,note
+    - reading it with the 10-column sheet header pulled `intent` out of the note
+    column, and two sentences of prose appeared in a classification report as
+    though they were class labels."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("sx", ROOT / "scripts/score_extraction.py")
+    sx = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(sx)
+
+    adj = tmp_path / "adjudicated.csv"
+    adj.write_text(
+        "item_id,intent,confidence,note\n"
+        'x01,payment_claim,ambiguous,"Compound: a claim, and a promise for the rest."\n',
+        encoding="utf-8")
+    intents, _, ambiguous = sx.read_labels(adj)
+    assert intents == {"x01": "payment_claim"}, intents
+    assert ambiguous == {"x01"}

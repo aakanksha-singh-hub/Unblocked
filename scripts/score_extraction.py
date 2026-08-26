@@ -47,19 +47,32 @@ def read_labels(path: Path) -> tuple[dict[str, str], dict[str, str], set[str]]:
     dates: dict[str, str] = {}
     ambiguous: set[str] = set()
 
-    paths = [path]
+    # Only annotation sheets are merged across rounds. Other label files -
+    # adjudicated.csv above all - have their own column layout, and imposing the
+    # annotator header on them silently read `intent` out of a different column.
+    # That is how two note-field sentences ended up in a classification report as
+    # if they were class labels.
     if "_round" in path.name:
         stem = path.name.split("_round")[0]
-        paths = sorted(path.parent.glob(f"{stem}_round*.csv"))
-    lines: list[str] = []
-    for pth in paths:
-        if pth.exists():
-            lines += [ln for ln in pth.read_text(encoding="utf-8").splitlines()
-                      if not ln.startswith("#") and not ln.startswith("item_id,")]
-    if not lines:
-        return intents, dates, ambiguous
-    header = "item_id,scenario,reply,intent,promised_date_raw,promised_date_resolved,disputed_amount,claimed_utr,documents_requested,confidence"
-    lines = [header] + lines
+        rounds = sorted(path.parent.glob(f"{stem}_round*.csv"))
+        body: list[str] = []
+        header = ""
+        for pth in rounds:
+            raw = [ln for ln in pth.read_text(encoding="utf-8").splitlines()
+                   if not ln.startswith("#")]
+            if not raw:
+                continue
+            header = header or raw[0]
+            body += raw[1:]
+        if not header:
+            return intents, dates, ambiguous
+        lines = [header] + body
+    else:
+        lines = [ln for ln in path.read_text(encoding="utf-8").splitlines()
+                 if not ln.startswith("#")]
+        if not lines:
+            return intents, dates, ambiguous
+
     for row in csv.DictReader(lines):
         item = (row.get("item_id") or "").strip()
         intent = (row.get("intent") or "").strip().lower()
