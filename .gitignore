@@ -13,3 +13,6 @@ artifacts/runs/
 .env.*
 !.env.example
 *.key
+
+# Transient run logs; the JSON artifacts beside them are the record.
+artifacts/*.log
