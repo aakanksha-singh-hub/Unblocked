@@ -327,3 +327,32 @@ def test_second_build_is_recorded_as_a_second_look(tmp_path: Path):
     lock = (out.parent / "CORPUS_LOCK.txt").read_text(encoding="utf-8")
     assert "build rounds       = 2" in lock
     assert "second look" in lock
+
+
+def test_second_round_sheets_exclude_already_labelled_items(tmp_path: Path):
+    """A second annotation round must not re-ask for judgements already made. It
+    wastes an hour of a volunteer's time and invites them to contradict their own
+    earlier call on the same item."""
+    corpus = tmp_path / "replies.jsonl"
+    corpus.write_text("\n".join(
+        json.dumps({"item_id": f"x{i:02d}", "contributor": "c1", "scenario": "s",
+                    "reply": f"reply {i}", "split": "dev"})
+        for i in range(6)
+    ), encoding="utf-8")
+    (tmp_path / "annotate_a_filled.csv").write_text(
+        "item_id,scenario,reply,intent,promised_date_raw,promised_date_resolved,"
+        "disputed_amount,claimed_utr,documents_requested,confidence\n"
+        "x00,s,r,promise_to_pay,,,,,,clear\n"
+        "x01,s,r,dispute,,,,,,clear\n", encoding="utf-8")
+
+    r = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/make_annotation_sheets.py"),
+         "--corpus", str(corpus)],
+        capture_output=True, text=True, cwd=ROOT,
+    )
+    assert r.returncode == 0, r.stdout + r.stderr
+
+    lines = [l for l in (tmp_path / "annotate_a.csv").read_text(encoding="utf-8").splitlines()
+             if not l.startswith("#")]
+    ids = {row["item_id"] for row in csv.DictReader(lines)}
+    assert ids == {"x02", "x03", "x04", "x05"}, ids

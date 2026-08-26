@@ -46,6 +46,13 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--corpus", type=Path, default=Path("data/corpus/replies.jsonl"))
     ap.add_argument("--seed", type=int, default=20260824)
+    ap.add_argument(
+        "--all", action="store_true",
+        help="include items that already carry a label. By default only new items "
+             "are emitted, so a second round does not ask an annotator to re-judge "
+             "work they have already done - which wastes their time and invites "
+             "them to contradict their own earlier call.",
+    )
     args = ap.parse_args()
 
     if not args.corpus.exists():
@@ -53,6 +60,23 @@ def main() -> int:
         return 1
 
     items = [json.loads(line) for line in args.corpus.read_text(encoding="utf-8").splitlines()]
+
+    already: set[str] = set()
+    if not args.all:
+        for name in ("a", "b"):
+            for suffix in ("_filled", ""):
+                prior = args.corpus.parent / f"annotate_{name}{suffix}.csv"
+                if not prior.exists():
+                    continue
+                lines = [l for l in prior.read_text(encoding="utf-8").splitlines()
+                         if not l.startswith("#")]
+                for row in csv.DictReader(lines):
+                    if (row.get("intent") or "").strip():
+                        already.add((row.get("item_id") or "").strip())
+        if already:
+            before = len(items)
+            items = [i for i in items if i["item_id"] not in already]
+            print(f"  {before - len(items)} already labelled, {len(items)} new")
 
     for name, salt in (("a", 1), ("b", 2)):
         rows = items[:]

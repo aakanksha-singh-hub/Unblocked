@@ -4,42 +4,42 @@
     {
       "item_id": "r05_i01",
       "scenario": "The GST number printed on the bill is wrong, so your accounts team cannot process it. The supplier is asking why payment is delayed. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "bill me GST number galat hai, accounts wale process nahi kar pa rahe. correct invoice bhej do"
     },
     {
       "item_id": "r05_i02",
       "scenario": "Your bank shows the transfer went out but the supplier says it has not arrived. They are chasing you. The bill is about three weeks overdue.",
-      "reply": ""
+      "reply": "hamare bank se transfer successful dikha raha hai. aap bank me ek baar check karo"
     },
     {
       "item_id": "r05_i03",
       "scenario": "You will have money after a large customer of yours pays you, which you expect sometime near the end of the month. The supplier is asking for an update.",
-      "reply": ""
+      "reply": "month end tak ek customer ka payment expected hai, woh aate hi aapka payment kar denge"
     },
     {
       "item_id": "r05_i04",
       "scenario": "Your company requires all supplier bills to be uploaded to a vendor portal. This one is not showing up there. The supplier says they sent it by email. The bill is more than three months overdue.",
-      "reply": ""
+      "reply": "email pe invoice mila tha but portal pe nahi hai. portal pe upload kar do warna accounts process nahi karega"
     },
     {
       "item_id": "r05_i05",
       "scenario": "You paid this bill a few days ago by bank transfer. The supplier seems not to have noticed and is asking again. The bill is more than three months overdue.",
-      "reply": ""
+      "reply": "ye payment already ho gaya hai, bank transfer se kiya tha. statement check kar lena"
     },
     {
       "item_id": "r05_i06",
       "scenario": "You have no particular reason for not paying and no clear plan for when you will. The supplier has messaged asking for an update. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "abhi exact update nahi hai, dekh raha hu kab kar paunga"
     },
     {
       "item_id": "r05_i07",
       "scenario": "Your own customers owe you a lot of money and have not paid, so you cannot pay your suppliers either. The supplier is following up. The bill is more than three months overdue.",
-      "reply": ""
+      "reply": "customer side se payments stuck hain kaafi time se, isi wajah se suppliers ko bhi delay ho raha hai"
     },
     {
       "item_id": "r05_i08",
       "scenario": "You need the e-way bill and delivery challan copies to process this. You don't have them. The supplier is asking for payment. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "eway bill aur delivery challan bhej do please, documents ke bina payment process nahi hoga"
     }
   ]
 }

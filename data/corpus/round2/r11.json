@@ -4,42 +4,42 @@
     {
       "item_id": "r11_i01",
       "scenario": "The GST number printed on the bill is wrong, so your accounts team cannot process it. The supplier is asking why payment is delayed. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "GST no galat printed hai bill pe, isliye accounts ne hold kiya hai. corrected bill bhej dena"
     },
     {
       "item_id": "r11_i02",
       "scenario": "You have been putting off this supplier for a while. They have now sent a firmer message mentioning the agreed payment terms. The bill is about three weeks overdue.",
-      "reply": ""
+      "reply": "haan samajh gaya, thoda delay ho gaya. abhi arrange karne ka try kar raha hu"
     },
     {
       "item_id": "r11_i03",
       "scenario": "The rate on the bill is higher than what was agreed in the purchase order. The supplier is chasing payment. You have only recently started buying from them.",
-      "reply": ""
+      "reply": "PO me jo rate tha usse invoice ka rate different hai. please correct karke bhejo"
     },
     {
       "item_id": "r11_i04",
       "scenario": "You are not sure whether this bill has been paid or not and you need to check with your accounts person. The supplier is asking. The supplier has messaged you once before about this.",
-      "reply": ""
+      "reply": "accounts wale se confirm karta hu, payment status abhi mere paas nahi hai"
     },
     {
       "item_id": "r11_i05",
       "scenario": "You genuinely forgot about this bill. It is a small amount and you can pay it quickly. The supplier has just messaged. This is the first time they have contacted you about it.",
-      "reply": ""
+      "reply": "oh haan ye miss ho gaya tha 😅 abhi kar deta hu"
     },
     {
       "item_id": "r11_i06",
       "scenario": "Two of the cartons in the last delivery arrived crushed and you had to reject them. Nobody has sent you a corrected bill. The supplier is asking for full payment. You have a long-standing relationship with this supplier.",
-      "reply": ""
+      "reply": "2 carton damage the delivery me, isliye reject kiye. revised invoice bhejo fir payment karte hain"
     },
     {
       "item_id": "r11_i07",
       "scenario": "The quality of this batch was not up to standard and your production team has complained. You have not paid. The supplier has messaged. The bill is about three weeks overdue.",
-      "reply": ""
+      "reply": "production wale batch ki quality ko leke happy nahi hain, isliye payment hold pe hai"
     },
     {
       "item_id": "r11_i08",
       "scenario": "This is a small supplier and you have bigger payments to worry about this month. You are not planning to pay them yet. They have messaged you again.",
-      "reply": ""
+      "reply": "is month kuch bade payments hain, iska payment abhi nahi kar paunga"
     }
   ]
 }
