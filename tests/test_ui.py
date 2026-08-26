@@ -183,3 +183,21 @@ def test_understanding_figure_appears_with_results(client):
     assert not re.search(r"FIG_\d{3}", client.get("/understanding").text)
     posted = client.post("/understanding", data={"text": "month end tak ho jayega"}).text
     assert re.findall(r"FIG_(\d{3})", posted) == ["001"]
+
+
+@pytest.mark.parametrize(
+    "path",
+    ["/book", "/buyers", "/restraint", "/evaluation", "/sensitivity",
+     "/understanding", "/method"],
+)
+def test_every_page_opens_with_one_sentence(client, path):
+    """A single .sub directly under the h1 saying what the page shows. One
+    sentence, not a paragraph - anything longer was demoted to a .note."""
+    import re
+
+    body = client.get(path).text
+    subs = re.findall(r'<p class="sub">(.*?)</p>', body, re.S)
+    assert len(subs) == 1, f"{path} has {len(subs)} ledes"
+    text = re.sub(r"<[^>]+>", "", subs[0]).strip()
+    sentences = [s for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
+    assert len(sentences) == 1, f"{path} lede is {len(sentences)} sentences: {text[:90]}"

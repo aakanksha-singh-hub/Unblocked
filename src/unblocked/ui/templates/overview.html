@@ -1,9 +1,10 @@
 {% extends "base.html" %}{% block title %}Overview · Unblocked{% endblock %}
 {% block body %}
 <h1>The book</h1>
-<p class="sub">One merchant portfolio, {{ n_buyers }} buyers, simulated over {{ horizon }} days.
-Every figure on this page comes from the run the dashboard is browsing. The measured
-claims live on <a href="/evaluation">Evaluation</a>, computed on a larger held-out book.</p>
+<p class="sub">The live ledger this dashboard is browsing — {{ n_buyers }} buyers across
+{{ horizon }} simulated days.</p>
+<p class="note">Every figure here comes from that run. The measured claims live on
+<a href="/evaluation">Evaluation</a>, computed on a larger held-out book.</p>
 
 <div class="tiles">
   <div class="tile"><div class="k">Invoiced</div><div class="v">{{ f.book }}</div>

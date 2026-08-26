@@ -1,9 +1,11 @@
 {% extends "base.html" %}{% block title %}Buyers · Unblocked{% endblock %}
 {% block body %}
 <h1>Buyers</h1>
-<p class="sub">{{ cards|length }} buyers. The agent's guess is on the left in its own voice.
-The column beside it is the real answer, held back from the agent entirely — shown here only
-so its mistakes are visible.</p>
+<p class="sub">Every buyer, with the cause the agent inferred beside the real one it was
+never shown.</p>
+<p class="note">The agent's guess is on the left in its own voice. The column beside it is the
+real answer, held back from the agent entirely — shown here only so its mistakes are
+visible.</p>
 
 <div class="filters">
   <a href="/buyers" class="{{ 'on' if not active }}">All</a>

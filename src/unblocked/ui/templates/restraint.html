@@ -1,8 +1,9 @@
 {% extends "base.html" %}{% block title %}Restraint · Unblocked{% endblock %}
 {% block body %}
 <h1>When it decided not to send</h1>
-<p class="sub">Every rule below is plain code. No model runs here, so no message can
-talk it out of one.</p>
+<p class="sub">Every time the agent held back, and which rule stopped it.</p>
+<p class="note">Every rule below is plain code. No model runs here, so no message can talk it
+out of one.</p>
 
 <div class="tiles">
   <div class="tile"><div class="k">Times it could have sent</div><div class="v">{{ total|comma }}</div>
