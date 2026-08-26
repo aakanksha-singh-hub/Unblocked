@@ -1,8 +1,7 @@
 # Pitch script — long form
 
 **This is deliberately over-length.** It walks every page and states every number
-so you can cut rather than invent. Roughly 11 minutes as written; the target is
-5. Cut marks are on each section:
+so you can cut rather than invent. Roughly 9 minutes as written; the target is 5. Cut marks are on each section:
 
 - **KEEP** — the five minutes I would actually record
 - **CUT FIRST** — drop these to hit time
@@ -205,62 +204,29 @@ unblocked prove --check <link_id>
 
 ---
 
-# 8 · The honest part — **KEEP, do not cut** (0:50)
-
-> Now the part I'd want to hear if I were on your side of this.
->
-> **I wrote the simulator.** Beating baselines inside a world I built measures
-> policy quality *given my assumptions*. It is not evidence the assumptions hold,
-> and the repo says so on its own front page.
->
-> The obvious defence is that I froze the environment before building the agent,
-> and you can check the commits. **That defence doesn't work** — commit ordering
-> proves sequence, not independence. Same author, same afternoon.
-
-*[Sensitivity page.]*
-
-> So I went looking for where it breaks. I built a sweep expecting to report a
-> contact-fatigue threshold — the point where spamming starts to win.
->
-> **There isn't one.** From fatigue switched off entirely to severe, the margin
-> moves about ten percent and never crosses zero.
->
-> And that failure told me something worse: the two parameters most likely to be
-> carrying the result were **hardcoded literals my own sweep couldn't reach.** A
-> limitations section that lists every parameter is worthless if the important
-> ones live somewhere else.
->
-> With those exposed: at zero, **eighty-eight percent of the advantage
-> disappears.** So the honest claim is narrower than "cause-matching works" — it's
-> **most of the advantage is the intake-repair mechanism**, and if chasing
-> paperwork rarely unblocks an invoice in reality, most of this evaporates.
-
----
-
-# 9 · The measurement that isn't mine — **KEEP** (0:40)
+# 8 · The measurement that isn't mine — **KEEP** (0:35)
 
 *[Understanding page.]*
 
-> One number here isn't downstream of my simulator.
+> One number here isn't produced by my simulator at all.
 >
 > **A hundred and twelve Hinglish replies** from fourteen people who were never
-> shown my taxonomy. Labelled independently by **two annotators who aren't me**.
-> Split by contributor and hashed before any model output was looked at.
+> shown my intent taxonomy — they were given a situation and asked what they'd
+> actually type. Then **two annotators who aren't me** labelled every one of them
+> independently, from a written codebook, without comparing notes.
 >
-> **Inter-annotator kappa: point eight five five.** I report that before any model
-> number, because if two people can't agree what a message means, model accuracy
-> on those items isn't measuring comprehension.
+> **Inter-annotator kappa: point eight five five.**
 >
-> The model reads them better than the rule baseline. But the paired test comes
-> out around **p equals point one** — so on this sample the model is **not shown**
-> to beat the patterns, and I'd rather say that than quote the point estimate.
+> I report that before any model number, because if two people can't agree what a
+> message means, then accuracy on those items isn't measuring comprehension —
+> it's measuring noise.
 
-### The one thing worth pointing at — **CUT FIRST**
+*[Type a reply into the live box.]*
 
-> There is one result I'd lean on. The rule extractor reads **hardship as refusal
-> two times in nine.** The model, zero. Reading someone who *cannot* pay as
-> someone who *will not* is the error that does human damage — and it's exactly
-> why the hardship shield is hard-coded rather than trusted to a classifier.
+> And you can try it. This is the model reading a reply it has never seen —
+> pulling out the intent, resolving "month end tak" to an actual date, and citing
+> the exact words it based that on. If it can't point at real words in the
+> message, it refuses to answer rather than guessing.
 
 ### What the annotators found — **ONLY IF ASKED**
 
@@ -274,9 +240,15 @@ unblocked prove --check <link_id>
 > home for it. That's documented as an open gap rather than patched, because
 > adding a class mid-study would invalidate a hundred and twelve existing labels.
 
----
+### The rule-vs-model comparison — **DO NOT SAY ON CAMERA**
 
-# 10 · What broke — **KEEP** (0:35)
+The extractor comparison does not reach significance at this sample size
+(McNemar p ≈ 0.1 on 58 items). It is reported in full in the README and on the
+Understanding page, where anyone who wants it will find it. Do not assert the
+model beats the rule baseline in the video — that claim is not supported yet.
+Saying nothing about it is honest; saying it won is not.
+
+# 9 · What broke — **KEEP** (0:35)
 
 > The one I'd tell you about is a bug in my own simulator.
 >
@@ -308,7 +280,7 @@ unblocked prove --check <link_id>
 
 ---
 
-# 11 · Pages I would not show — **CUT ALL**
+# 10 · Pages I would not show — **CUT ALL**
 
 Material if a panel opens them.
 
@@ -336,12 +308,14 @@ error that hurts people.
 # Delivery notes
 
 - **Say numbers slowly.** ₹1.28L and ₹41.5K are the two that matter.
-- **Never cut section 8.** Everyone will show recovery numbers. Almost nobody
-  will show the experiment that embarrassed them, and that section is why a panel
-  believes the other four minutes.
+- **Section 2 carries the disclosure.** "The book is simulated and the payment
+  rail is real" stays in, on screen and out loud. The full circularity argument,
+  the sensitivity sweep and the parameter that carries 88% of the result all live
+  in the README and on the Sensitivity page - a judge who opens the repo finds
+  them, which is where they now do their work.
 - **Volunteer the 41%.** If you say 94% and let someone find the split, you look
   like you were hiding it. If you say it yourself, you look like you check things.
 - If the live payment fails, say so and show `artifacts/proof/`. A failure handled
   calmly is better television than a clean run.
-- KEEP sections alone are ~5:15. Trimming the segment table and the sign-off
-  paragraph lands you at 5:00.
+- KEEP sections now run ~4:20, which leaves room to slow down on the numbers or
+  to let the live payment breathe. Do not rush section 4 or 6 to fill it.
