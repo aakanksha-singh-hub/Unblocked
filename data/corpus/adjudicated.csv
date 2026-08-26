@@ -1,4 +1,10 @@
 item_id,intent,confidence,note
 h01_i02,payment_claim,ambiguous,"Compound: a payment already made AND a commitment for the balance. Codebook priority puts payment_claim above promise_to_pay, so B's reading is the one the written rule produces. Flagged ambiguous because the reply genuinely carries both."
-h02_i02,payment_claim,ambiguous,"Same compound case."
-h04_i02,payment_claim,ambiguous,"Same compound case."
+h02_i02,payment_claim,ambiguous,Same compound case.
+h04_i02,payment_claim,ambiguous,Same compound case.
+r01_i08,acknowledgement,ambiguous,"Receipt plus a vague intention. 'jaldi update deta hu' is a promise to update, not to pay."
+r03_i06,refusal,ambiguous,Reason is a choice - other payments come first. Codebook: a choice is refusal.
+r07_i05,refusal,ambiguous,"Same: deliberate deprioritisation, not inability."
+r07_i06,promise_to_pay,ambiguous,Commits to acting after a named point in time.
+r07_i08,acknowledgement,ambiguous,"Acknowledges and reports looking at it. No commitment, no reason."
+r08_i07,hardship,ambiguous,Reason is an inability - money owed to them has not arrived. Codebook: inability is hardship.
