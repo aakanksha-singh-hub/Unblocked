@@ -435,7 +435,11 @@ def restraint(request: Request):
         hold_rate=100 * len(holds) / len(decisions) if decisions else 0,
         promise_holds=first_fail.get("promise_freeze", 0),
         escalations=len(approvals),
-        gate_chart=hbar(bars, caption="what stopped the agent", label_w=180),
+        # Wide label gutter: the gate labels became sentences when they were
+        # translated out of identifiers, and at 180px "Too soon after the last
+        # message" was clipped to "soon after the last message" - the text
+        # anchors right and simply ran off the left edge of the viewBox.
+        gate_chart=hbar(bars, width=940, caption="what stopped the agent", label_w=430),
         gates=[{"name": g, "count": n, "example": examples.get(g, "")} for g, n in first_fail.most_common()],
         promises=promises, approvals=approvals[:14],
     )

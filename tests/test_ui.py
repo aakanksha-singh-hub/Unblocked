@@ -216,3 +216,17 @@ def test_every_internal_link_resolves(client):
         hrefs |= set(re.findall(r'href="(/[^"#]*)"', client.get(p).text))
     broken = [h for h in sorted(hrefs) if client.get(h).status_code != 200]
     assert not broken, f"broken internal links: {broken}"
+
+
+def test_chart_labels_fit_their_gutter(client):
+    """Gate labels became sentences when translated out of identifiers. At the
+    old gutter width the longest was clipped mid-word, because the text anchors
+    right and ran off the left edge of the viewBox."""
+    import re
+
+    body = client.get("/restraint").text
+    svg = re.search(r"<svg class=\"chart\".*?</svg>", body, re.S)
+    assert svg, "no chart on /restraint"
+    for x, label in re.findall(r'<text x="([\d.]+)"[^>]*class="cat"[^>]*>([^<]+)<', svg.group(0)):
+        # ~7px per character at the caption step, anchored right at x.
+        assert float(x) - len(label) * 7 > -4, f"label clipped: {label!r}"
