@@ -1,0 +1,45 @@
+{
+  "contributor": "r10",
+  "items": [
+    {
+      "item_id": "r10_i01",
+      "scenario": "You have been putting off this supplier for a while. They have now sent a firmer message mentioning the agreed payment terms. The bill is more than three months overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "r10_i02",
+      "scenario": "You paid this bill a few days ago by bank transfer. The supplier seems not to have noticed and is asking again. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "r10_i03",
+      "scenario": "The GST number printed on the bill is wrong, so your accounts team cannot process it. The supplier is asking why payment is delayed.",
+      "reply": ""
+    },
+    {
+      "item_id": "r10_i04",
+      "scenario": "You will have money after a large customer of yours pays you, which you expect sometime near the end of the month. The supplier is asking for an update. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "r10_i05",
+      "scenario": "Two of the cartons in the last delivery arrived crushed and you had to reject them. Nobody has sent you a corrected bill. The supplier is asking for full payment. The bill is more than three months overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "r10_i06",
+      "scenario": "You are not sure whether this bill has been paid or not and you need to check with your accounts person. The supplier is asking. You have a long-standing relationship with this supplier.",
+      "reply": ""
+    },
+    {
+      "item_id": "r10_i07",
+      "scenario": "The goods receipt note has not been entered by your stores team yet, so the bill cannot move forward. The supplier is following up. You have a long-standing relationship with this supplier.",
+      "reply": ""
+    },
+    {
+      "item_id": "r10_i08",
+      "scenario": "Diwali is coming and your office will be shut for a week. You plan to clear pending bills after reopening. The supplier is asking. The supplier has messaged you once before about this.",
+      "reply": ""
+    }
+  ]
+}

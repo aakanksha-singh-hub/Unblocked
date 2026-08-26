@@ -1,0 +1,45 @@
+{
+  "contributor": "r09",
+  "items": [
+    {
+      "item_id": "r09_i01",
+      "scenario": "Someone else in your office handles this supplier and you are just replying because they messaged your number. The bill is more than three months overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "r09_i02",
+      "scenario": "You have no particular reason for not paying and no clear plan for when you will. The supplier has messaged asking for an update. You have only recently started buying from them.",
+      "reply": ""
+    },
+    {
+      "item_id": "r09_i03",
+      "scenario": "You genuinely forgot about this bill. It is a small amount and you can pay it quickly. The supplier has just messaged. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "r09_i04",
+      "scenario": "You need the e-way bill and delivery challan copies to process this. You don't have them. The supplier is asking for payment. You have only recently started buying from them.",
+      "reply": ""
+    },
+    {
+      "item_id": "r09_i05",
+      "scenario": "You could manage the payment if you were allowed to split it over a few months, but not in one go. The supplier is asking for the whole amount. You have only recently started buying from them.",
+      "reply": ""
+    },
+    {
+      "item_id": "r09_i06",
+      "scenario": "You paid this bill a few days ago by bank transfer. The supplier seems not to have noticed and is asking again.",
+      "reply": ""
+    },
+    {
+      "item_id": "r09_i07",
+      "scenario": "Your owner signs off on all payments above a certain amount and he is travelling until next week. The supplier wants to know when it will be released.",
+      "reply": ""
+    },
+    {
+      "item_id": "r09_i08",
+      "scenario": "You have been putting off this supplier for a while. They have now sent a firmer message mentioning the agreed payment terms. The supplier has messaged you once before about this.",
+      "reply": ""
+    }
+  ]
+}

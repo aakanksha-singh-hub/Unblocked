@@ -1,0 +1,45 @@
+{
+  "contributor": "r04",
+  "items": [
+    {
+      "item_id": "r04_i01",
+      "scenario": "This is a small supplier and you have bigger payments to worry about this month. You are not planning to pay them yet. They have messaged you again. You have only recently started buying from them.",
+      "reply": ""
+    },
+    {
+      "item_id": "r04_i02",
+      "scenario": "You have received a formal-sounding notice from this supplier mentioning legal provisions about delayed payment to small enterprises.",
+      "reply": ""
+    },
+    {
+      "item_id": "r04_i03",
+      "scenario": "Business has been very slow for several months and you honestly do not have the cash right now. The supplier is asking for payment. You have a long-standing relationship with this supplier.",
+      "reply": ""
+    },
+    {
+      "item_id": "r04_i04",
+      "scenario": "The quality of this batch was not up to standard and your production team has complained. You have not paid. The supplier has messaged. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "r04_i05",
+      "scenario": "Your owner signs off on all payments above a certain amount and he is travelling until next week. The supplier wants to know when it will be released.",
+      "reply": ""
+    },
+    {
+      "item_id": "r04_i06",
+      "scenario": "Your own customers owe you a lot of money and have not paid, so you cannot pay your suppliers either. The supplier is following up. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "r04_i07",
+      "scenario": "You paid this bill a few days ago by bank transfer. The supplier seems not to have noticed and is asking again. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "r04_i08",
+      "scenario": "You could manage the payment if you were allowed to split it over a few months, but not in one go. The supplier is asking for the whole amount. The supplier has messaged you once before about this.",
+      "reply": ""
+    }
+  ]
+}

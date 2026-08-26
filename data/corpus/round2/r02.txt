@@ -1,0 +1,21 @@
+Hi! Doing a student project on how businesses reply to payment reminders. Can you help - 5 mins?
+
+Below are 8 situations. For each, just type what you'd ACTUALLY reply if you were the one who owes the money. Short is fine. Hinglish, typos, WhatsApp style - please don't make it formal, that's the whole point.
+
+Please make everything up - no real company names, amounts or transaction numbers. Your replies go into an open dataset used to test whether AI can read messages like these. Skip any you don't want to answer.
+
+1. You paid roughly half of what is owed last week and plan to pay the rest later. The supplier is asking for the full amount. The bill is more than three months overdue.
+
+2. The GST number printed on the bill is wrong, so your accounts team cannot process it. The supplier is asking why payment is delayed. They have been following up regularly for over a month now.
+
+3. The goods receipt note has not been entered by your stores team yet, so the bill cannot move forward. The supplier is following up. The bill is more than three months overdue.
+
+4. Your accounts team cannot find the purchase order number for this bill, so it is stuck. The supplier is asking about payment. The supplier has messaged you once before about this.
+
+5. You have no particular reason for not paying and no clear plan for when you will. The supplier has messaged asking for an update. The supplier has messaged you once before about this.
+
+6. You paid this bill a few days ago by bank transfer. The supplier seems not to have noticed and is asking again. The supplier has messaged you once before about this.
+
+7. This is a small supplier and you have bigger payments to worry about this month. You are not planning to pay them yet. They have messaged you again.
+
+8. Your company pays all suppliers in one batch on the 10th of each month. This bill missed the last batch. The supplier has messaged asking where the payment is. The supplier has messaged you once before about this.

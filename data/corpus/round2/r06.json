@@ -1,0 +1,45 @@
+{
+  "contributor": "r06",
+  "items": [
+    {
+      "item_id": "r06_i01",
+      "scenario": "Your own customers owe you a lot of money and have not paid, so you cannot pay your suppliers either. The supplier is following up. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "r06_i02",
+      "scenario": "You need the e-way bill and delivery challan copies to process this. You don't have them. The supplier is asking for payment. The bill is about three weeks overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "r06_i03",
+      "scenario": "Someone else in your office handles this supplier and you are just replying because they messaged your number.",
+      "reply": ""
+    },
+    {
+      "item_id": "r06_i04",
+      "scenario": "You are not sure whether this bill has been paid or not and you need to check with your accounts person. The supplier is asking. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "r06_i05",
+      "scenario": "You paid this bill a few days ago by bank transfer. The supplier seems not to have noticed and is asking again. The supplier has messaged you once before about this.",
+      "reply": ""
+    },
+    {
+      "item_id": "r06_i06",
+      "scenario": "The rate on the bill is higher than what was agreed in the purchase order. The supplier is chasing payment.",
+      "reply": ""
+    },
+    {
+      "item_id": "r06_i07",
+      "scenario": "Diwali is coming and your office will be shut for a week. You plan to clear pending bills after reopening. The supplier is asking. They have been following up regularly for over a month now.",
+      "reply": ""
+    },
+    {
+      "item_id": "r06_i08",
+      "scenario": "Your accounts team cannot find the purchase order number for this bill, so it is stuck. The supplier is asking about payment.",
+      "reply": ""
+    }
+  ]
+}

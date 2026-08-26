@@ -220,7 +220,9 @@ def test_build_corpus_drops_duplicates_and_writes_a_lock(fake_sheets: Path, tmp_
     # Every contributor sent the same eight replies; only one copy survives.
     assert len(items) == 8
     lock = (out.parent / "CORPUS_LOCK.txt").read_text(encoding="utf-8")
-    assert "sha256" in lock and "Test is scored once" in lock
+    assert "sha256" in lock
+    assert "before any model output was inspected" in lock
+    assert "keep the side they were first assigned" in lock
 
 
 def test_annotation_sheets_contain_no_labels(fake_sheets: Path, tmp_path: Path):
@@ -263,3 +265,65 @@ def test_annotators_get_different_orderings(fake_sheets: Path, tmp_path: Path):
     a, b = order("a"), order("b")
     assert sorted(a) == sorted(b)
     assert a != b
+
+
+def _run_build(sheets: Path, out: Path, extra: list[str] | None = None):
+    return subprocess.run(
+        [sys.executable, str(ROOT / "scripts/build_corpus.py"),
+         "--sheets", str(sheets), "--out", str(out), *(extra or [])],
+        capture_output=True, text=True, cwd=ROOT,
+    )
+
+
+def _write_sheet(sheets: Path, name: str, replies: list[str]) -> None:
+    sheets.mkdir(parents=True, exist_ok=True)
+    (sheets / f"{name}.json").write_text(
+        json.dumps({
+            "contributor": name,
+            "items": [{"item_id": f"{name}_i{k:02d}", "scenario": "s", "reply": r}
+                      for k, r in enumerate(replies)],
+        }), encoding="utf-8")
+
+
+def test_growing_the_corpus_does_not_redraw_the_existing_split(tmp_path: Path):
+    """A corpus grows as more people reply. Redrawing the whole split each time
+    would move items between dev and test without anyone deciding to - which is
+    how a 'test scored once' claim becomes untrue by accident."""
+    sheets, out = tmp_path / "sheets", tmp_path / "replies.jsonl"
+    for i in range(4):
+        _write_sheet(sheets, f"a{i:02d}",
+                     [f"reply {i} {k} kal tak ho jayega bhai" for k in range(6)])
+    assert _run_build(sheets, out, ["--allow-pilot"]).returncode == 0
+
+    before = {json.loads(l)["contributor"]: json.loads(l)["split"]
+              for l in out.read_text(encoding="utf-8").splitlines()}
+
+    for i in range(4, 8):
+        _write_sheet(sheets, f"a{i:02d}",
+                     [f"new {i} {k} thoda time do please" for k in range(6)])
+    assert _run_build(sheets, out, ["--allow-pilot"]).returncode == 0
+
+    after = {json.loads(l)["contributor"]: json.loads(l)["split"]
+             for l in out.read_text(encoding="utf-8").splitlines()}
+
+    for c, side in before.items():
+        assert after[c] == side, f"{c} moved from {side} to {after[c]} when the corpus grew"
+    assert len(after) == 8
+
+
+def test_second_build_is_recorded_as_a_second_look(tmp_path: Path):
+    """Scoring a test split twice is a second look however the items arrived, and
+    the lock file has to say so rather than leaving it to be remembered."""
+    sheets, out = tmp_path / "sheets", tmp_path / "replies.jsonl"
+    for i in range(3):
+        _write_sheet(sheets, f"b{i:02d}", [f"reply {i} {k} nahi hua abhi" for k in range(6)])
+    _run_build(sheets, out, ["--allow-pilot"])
+    lock = (out.parent / "CORPUS_LOCK.txt").read_text(encoding="utf-8")
+    assert "build rounds       = 1" in lock
+    assert "second look" not in lock
+
+    _write_sheet(sheets, "b99", ["another one kal dekhta hoon"] * 6)
+    _run_build(sheets, out, ["--allow-pilot"])
+    lock = (out.parent / "CORPUS_LOCK.txt").read_text(encoding="utf-8")
+    assert "build rounds       = 2" in lock
+    assert "second look" in lock

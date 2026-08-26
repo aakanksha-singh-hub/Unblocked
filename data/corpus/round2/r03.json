@@ -1,0 +1,45 @@
+{
+  "contributor": "r03",
+  "items": [
+    {
+      "item_id": "r03_i01",
+      "scenario": "You need the e-way bill and delivery challan copies to process this. You don't have them. The supplier is asking for payment. You have a long-standing relationship with this supplier.",
+      "reply": ""
+    },
+    {
+      "item_id": "r03_i02",
+      "scenario": "The GST number printed on the bill is wrong, so your accounts team cannot process it. The supplier is asking why payment is delayed. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "r03_i03",
+      "scenario": "You are waiting for your GST filing to be done before releasing payments this month. The supplier has followed up for the second time.",
+      "reply": ""
+    },
+    {
+      "item_id": "r03_i04",
+      "scenario": "You have no particular reason for not paying and no clear plan for when you will. The supplier has messaged asking for an update. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "r03_i05",
+      "scenario": "Your accounts team cannot find the purchase order number for this bill, so it is stuck. The supplier is asking about payment. The bill is more than three months overdue.",
+      "reply": ""
+    },
+    {
+      "item_id": "r03_i06",
+      "scenario": "This is a small supplier and you have bigger payments to worry about this month. You are not planning to pay them yet. They have messaged you again.",
+      "reply": ""
+    },
+    {
+      "item_id": "r03_i07",
+      "scenario": "The quality of this batch was not up to standard and your production team has complained. You have not paid. The supplier has messaged. This is the first time they have contacted you about it.",
+      "reply": ""
+    },
+    {
+      "item_id": "r03_i08",
+      "scenario": "Someone else in your office handles this supplier and you are just replying because they messaged your number. They have been following up regularly for over a month now.",
+      "reply": ""
+    }
+  ]
+}

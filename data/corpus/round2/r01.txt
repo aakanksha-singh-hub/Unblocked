@@ -1,0 +1,21 @@
+Hi! Doing a student project on how businesses reply to payment reminders. Can you help - 5 mins?
+
+Below are 8 situations. For each, just type what you'd ACTUALLY reply if you were the one who owes the money. Short is fine. Hinglish, typos, WhatsApp style - please don't make it formal, that's the whole point.
+
+Please make everything up - no real company names, amounts or transaction numbers. Your replies go into an open dataset used to test whether AI can read messages like these. Skip any you don't want to answer.
+
+1. You need the e-way bill and delivery challan copies to process this. You don't have them. The supplier is asking for payment.
+
+2. Your company requires all supplier bills to be uploaded to a vendor portal. This one is not showing up there. The supplier says they sent it by email. You have a long-standing relationship with this supplier.
+
+3. You could manage the payment if you were allowed to split it over a few months, but not in one go. The supplier is asking for the whole amount. You have a long-standing relationship with this supplier.
+
+4. Your accounts team cannot find the purchase order number for this bill, so it is stuck. The supplier is asking about payment. You have a long-standing relationship with this supplier.
+
+5. Diwali is coming and your office will be shut for a week. You plan to clear pending bills after reopening. The supplier is asking. This is the first time they have contacted you about it.
+
+6. You have been told by your manager not to release this payment but you have not been told why. The supplier is asking. This is the first time they have contacted you about it.
+
+7. You will have money after a large customer of yours pays you, which you expect sometime near the end of the month. The supplier is asking for an update. You have a long-standing relationship with this supplier.
+
+8. You have been putting off this supplier for a while. They have now sent a firmer message mentioning the agreed payment terms.

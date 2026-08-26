@@ -34,6 +34,7 @@ from unblocked.eval.provenance import audit  # noqa: E402
 #: of WhatsApp replies sat in the sibling folder.
 SHEET_DIRS = (
     Path("data/corpus/hinglish"),
+    Path("data/corpus/round2"),
     Path("data/corpus/sheets"),
     Path("data/corpus/whatsapp"),
 )
@@ -107,14 +108,38 @@ def main() -> int:
         print("Re-run with --allow-pilot to build it as a labelled pilot set.")
         return 2
 
+    # Existing split assignments are honoured; only NEW contributors are drawn.
+    #
+    # A corpus that grows is normal - more people reply - but redrawing the whole
+    # split each time would quietly move items between dev and test, which is how
+    # a "test opened once" claim becomes untrue without anyone deciding to make
+    # it untrue. Contributors already assigned keep their side. New ones are
+    # drawn against the same seed, and the lock records that the corpus grew and
+    # how many times.
+    prior_split: dict[str, str] = {}
+    prior_rounds = 0
+    if args.out.exists():
+        for line in args.out.read_text(encoding="utf-8").splitlines():
+            rec = json.loads(line)
+            prior_split[rec["contributor"]] = rec["split"]
+    lock = args.out.parent / "CORPUS_LOCK.txt"
+    if lock.exists():
+        for line in lock.read_text(encoding="utf-8").splitlines():
+            if line.startswith("build rounds"):
+                prior_rounds = int(line.split("=")[1].strip())
+
     # Split by CONTRIBUTOR, not by item. Two replies from the same person share
     # their idiom and their habits; splitting by item would leak that across the
     # boundary and quietly inflate the test number.
     contributors = sorted({i["contributor"] for i in items})
-    rng = random.Random(args.seed)
-    rng.shuffle(contributors)
-    n_test = max(1, round(len(contributors) * args.test_frac))
-    test_group = set(contributors[:n_test])
+    fresh = [c for c in contributors if c not in prior_split]
+
+    test_group = {c for c, sp in prior_split.items() if sp == "test"}
+    if fresh:
+        rng = random.Random(args.seed + prior_rounds)
+        rng.shuffle(fresh)
+        want = round(len(contributors) * args.test_frac) - len(test_group)
+        test_group |= set(fresh[: max(0, want)])
 
     for it in items:
         it["split"] = "test" if it["contributor"] in test_group else "dev"
@@ -125,8 +150,10 @@ def main() -> int:
             f.write(json.dumps({**it, "tier": tier}, ensure_ascii=False) + "\n")
 
     digest = hashlib.sha256(args.out.read_bytes()).hexdigest()[:16]
+    rounds = prior_rounds + 1
     (args.out.parent / "CORPUS_LOCK.txt").write_text(
         f"TIER               = {tier.upper()}\n"
+        f"build rounds       = {rounds}\n"
         + ("" if tier == "evidence" else
            "  This corpus did NOT pass the provenance audit. It proves the\n"
            "  pipeline runs end to end. It is not evidence, is not quoted as a\n"
@@ -137,7 +164,12 @@ def main() -> int:
         f"test contributors  = {sorted(test_group)}\n"
         f"split seed         = {args.seed}\n"
         f"\nSplit drawn at build time, before any model output was inspected.\n"
-        f"Test is scored once. If this hash changes, the split changed too.\n",
+        f"Contributors keep the side they were first assigned; only new ones are\n"
+        f"drawn. If this hash changes, the corpus changed.\n"
+        + ("" if rounds == 1 else
+           f"\nThis corpus has been built {rounds} times. The test split has therefore\n"
+           f"been looked at more than once, and any report using it must say so:\n"
+           f"a second scoring is a second look, however the items were added.\n"),
         encoding="utf-8",
     )
 
