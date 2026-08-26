@@ -1,0 +1,7 @@
+item_id,reply,annotator_a,annotator_b,intent,confidence
+r01_i08,"haan samajh raha hu, thoda delay ho gaya. abhi arrange kar raha hu, jaldi update deta hu",unclear,promise_to_pay,,
+r03_i06,"abhi is month cash thoda tight hai, pehle kuch urgent payments clear karne hain",unclear,acknowledgement,,
+r07_i05,abhi kuch urgent payments hain pehle woh clear karne hain. iska thoda time lagega,unclear,acknowledgement,,
+r07_i06,"Diwali holidays ke baad office khulega, uske baad payment side dekh lenge",promise_to_pay,acknowledgement,,
+r07_i08,"haan message dekh liya. thoda delay ho gaya hai, payment ka dekh raha hu",unclear,acknowledgement,,
+r08_i07,"customers se payments nahi aaye abhi tak, isliye supplier payments bhi delay ho gaye hain",unclear,acknowledgement,,

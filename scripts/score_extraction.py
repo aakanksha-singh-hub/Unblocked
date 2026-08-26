@@ -37,13 +37,29 @@ CORPUS = Path("data/corpus/replies.jsonl")
 
 
 def read_labels(path: Path) -> tuple[dict[str, str], dict[str, str], set[str]]:
-    """Returns (intent by item, promised date by item, ambiguous item ids)."""
+    """Returns (intent by item, promised date by item, ambiguous item ids).
+
+    A round-numbered path is treated as a stem: every round for that annotator is
+    merged, so a corpus that grew across rounds is scored as one set of labels
+    rather than only its most recent slice.
+    """
     intents: dict[str, str] = {}
     dates: dict[str, str] = {}
     ambiguous: set[str] = set()
-    if not path.exists():
+
+    paths = [path]
+    if "_round" in path.name:
+        stem = path.name.split("_round")[0]
+        paths = sorted(path.parent.glob(f"{stem}_round*.csv"))
+    lines: list[str] = []
+    for pth in paths:
+        if pth.exists():
+            lines += [ln for ln in pth.read_text(encoding="utf-8").splitlines()
+                      if not ln.startswith("#") and not ln.startswith("item_id,")]
+    if not lines:
         return intents, dates, ambiguous
-    lines = [ln for ln in path.read_text(encoding="utf-8").splitlines() if not ln.startswith("#")]
+    header = "item_id,scenario,reply,intent,promised_date_raw,promised_date_resolved,disputed_amount,claimed_utr,documents_requested,confidence"
+    lines = [header] + lines
     for row in csv.DictReader(lines):
         item = (row.get("item_id") or "").strip()
         intent = (row.get("intent") or "").strip().lower()

@@ -113,6 +113,39 @@ pure claimer or a pure promiser.
 Record the promised date in the extra fields even when the primary label is
 `dispute`.
 
+### The "reason, but no commitment" case (added after the second round)
+
+Eight of the fourteen round-two disagreements were one annotator marking
+`unclear` where the other marked `acknowledgement`, on replies like:
+
+- *"abhi is month cash thoda tight hai, pehle kuch urgent payments clear karne hain"*
+- *"abhi kuch urgent payments hain pehle woh clear karne hain. iska thoda time lagega"*
+- *"customers se payments nahi aaye abhi tak, isliye supplier payments bhi delay ho gaye hain"*
+
+These are not contentless — each gives a **reason** — but none commits to
+anything, none disputes the goods, and none quite says *cannot*. One annotator
+read "there is content here that I can't place" as `unclear`; the other read "no
+commitment, therefore nothing actionable" as `acknowledgement`. Both readings
+follow this document as written, which means this document was underspecified.
+
+**Rule.** Judge on the reason given, not on the absence of a commitment:
+
+- Reason is an *inability* to pay — no cash, customers haven't paid, business
+  slow → **`hardship`**.
+- Reason is an *internal process* — a cycle, an approval, a document → **`process_deflection`**.
+- Reason is a *choice* — other payments come first, you are not a priority this
+  month → **`refusal`**. This is the one the taxonomy handles worst; see below.
+- No reason at all, only receipt — "noted", "dekh raha hu" → **`acknowledgement`**.
+- Reserve `unclear` for replies you cannot place *at all*, not for replies that
+  are merely non-committal.
+
+**Known gap.** Deliberate deprioritisation — *"bade payments pehle, iska baad
+me"* — is a buyer who has the money and has chosen not to pay you yet. That is
+neither hardship nor a process nor a bare refusal, and the taxonomy has no clean
+home for it. It is currently ruled `refusal`, which loses the distinction. This
+is recorded rather than resolved: adding a class mid-study would invalidate
+labels already collected.
+
 ## Extra fields
 
 - **promised_date_raw** — the date expression verbatim: "month end tak", "15
