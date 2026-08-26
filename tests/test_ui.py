@@ -230,3 +230,17 @@ def test_chart_labels_fit_their_gutter(client):
     for x, label in re.findall(r'<text x="([\d.]+)"[^>]*class="cat"[^>]*>([^<]+)<', svg.group(0)):
         # ~7px per character at the caption step, anchored right at x.
         assert float(x) - len(label) * 7 > -4, f"label clipped: {label!r}"
+
+
+def test_story_bridges_cause_and_blocker(client):
+    """The hero narrative inferred 'short of cash' and then chased paperwork with
+    nothing connecting them, so the centrepiece of the landing page read like a
+    bug. The bridge - a structural blocker outranks the cause, because an invoice
+    nobody can see cannot be paid regardless - has to be on the page."""
+    import re
+
+    body = re.sub(r"\s+", " ", client.get("/").text)
+    assert "outranks" in body
+    assert "cannot see an invoice cannot pay it" in body
+    assert body.index("works out the reason") < body.index("blocking them entirely")
+    assert body.index("blocking them entirely") < body.index("fixes the blocker first")

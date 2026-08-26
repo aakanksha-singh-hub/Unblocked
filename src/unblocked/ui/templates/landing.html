@@ -69,15 +69,24 @@
 
       <li><span class="dot">2</span><div>
         <h4>It works out the reason</h4>
-        <p><b>{{ story.cause }}</b> — {{ story.confidence }}% sure, from how they've paid before.</p></div></li>
+        <p><b>{{ story.cause }}</b> — {{ story.confidence }}% sure, from how they've paid
+           before. That explains why they're slow.</p></div></li>
 
       <li><span class="dot">3</span><div>
-        <h4>So it fixes that instead</h4>
-        <p><b>{{ story.first_action }}.</b> {{ story.repairs }} invoice never reached their
-           system — nobody there could see it, so asking for payment could never work.</p></div></li>
+        <h4>But something is blocking them entirely</h4>
+        <p>{{ story.repairs }} of their invoices never reached the buyer's system — not
+           uploaded to their portal, no PO number. Nobody on their side can see them.</p>
+        <p style="margin-top:8px"><b>That outranks the cash problem.</b> A buyer who cannot
+           see an invoice cannot pay it, however willing they are — so no reminder, however
+           well judged, could have worked here.</p></div></li>
+
+      <li><span class="dot">4</span><div>
+        <h4>So it fixes the blocker first</h4>
+        <p><b>{{ story.first_action }}.</b> Only once the invoice is visible does the cause
+           decide what to do next.</p></div></li>
 
       {% if story.reply %}
-      <li><span class="dot quiet">4</span><div>
+      <li><span class="dot quiet">5</span><div>
         <h4>They name a date, so it goes quiet</h4>
         <span class="said">“{{ story.reply }}”
           <small>Read as {{ story.reply_read.meaning }}{% if story.reply_read.date %} →
