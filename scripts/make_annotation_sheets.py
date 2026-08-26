@@ -64,10 +64,7 @@ def main() -> int:
     already: set[str] = set()
     if not args.all:
         for name in ("a", "b"):
-            for suffix in ("_filled", ""):
-                prior = args.corpus.parent / f"annotate_{name}{suffix}.csv"
-                if not prior.exists():
-                    continue
+            for prior in sorted(args.corpus.parent.glob(f"LABELLED_annotator_{name}_round*.csv")):
                 lines = [l for l in prior.read_text(encoding="utf-8").splitlines()
                          if not l.startswith("#")]
                 for row in csv.DictReader(lines):
@@ -78,11 +75,22 @@ def main() -> int:
             items = [i for i in items if i["item_id"] not in already]
             print(f"  {before - len(items)} already labelled, {len(items)} new")
 
+    # Round number in the filename. An earlier round produced annotate_a.csv
+    # beside annotate_a_filled.csv, and the filled one - being the one that
+    # looked finished - got copied and returned as the new round's work. Two
+    # files that differ only by a suffix are an invitation to hand back the
+    # wrong one.
+    rnd = 1
+    while (args.corpus.parent / f"LABELLED_annotator_a_round{rnd}.csv").exists():
+        rnd += 1
+
     for name, salt in (("a", 1), ("b", 2)):
         rows = items[:]
         random.Random(args.seed + salt).shuffle(rows)
-        path = args.corpus.parent / f"annotate_{name}.csv"
+        path = args.corpus.parent / f"TO_LABEL_annotator_{name}_round{rnd}.csv"
         with path.open("w", newline="", encoding="utf-8") as f:
+            f.write(f"# ROUND {rnd} — fill the 'intent' and 'confidence' columns below,\n")
+            f.write(f"# then save this file as: LABELLED_annotator_{name}_round{rnd}.csv\n")
             f.write(f"# {GUIDE}\n")
             w = csv.DictWriter(f, fieldnames=HEADER, extrasaction="ignore")
             w.writeheader()
@@ -96,8 +104,9 @@ def main() -> int:
                 )
         print(f"  {path}  ({len(rows)} items)")
 
-    print("\nSend one file to each annotator. They fill 'intent' and 'confidence'")
+    print(f"\nSend one file to each annotator. They fill 'intent' and 'confidence'")
     print("at minimum; the other columns only where the reply states them.")
+    print(f"They save their work as LABELLED_annotator_<a|b>_round{rnd}.csv")
     return 0
 
 

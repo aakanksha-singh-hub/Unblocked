@@ -1,3 +1,5 @@
+# ROUND 2 — fill the 'intent' and 'confidence' columns below,
+# then save this file as: LABELLED_annotator_a_round2.csv
 # intent must be one of: promise_to_pay, payment_claim, dispute, document_request, process_deflection, hardship, refusal, acknowledgement, unclear  |  confidence must be 'clear' or 'ambiguous'  |  see docs/CODEBOOK.md  |  do NOT discuss items with the other annotator until both files are complete
 item_id,scenario,reply,intent,promised_date_raw,promised_date_resolved,disputed_amount,claimed_utr,documents_requested,confidence
 r04_i02,You have received a formal-sounding notice from this supplier mentioning legal provisions about delayed payment to small enterprises.,"notice mil gaya hai. internally check kar raha hu, concerned person se baat karke revert karta hu",,,,,,,

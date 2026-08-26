@@ -238,7 +238,7 @@ def test_annotation_sheets_contain_no_labels(fake_sheets: Path, tmp_path: Path):
     )
     assert r.returncode == 0, r.stdout + r.stderr
     for name in ("a", "b"):
-        path = out.parent / f"annotate_{name}.csv"
+        path = out.parent / f"TO_LABEL_annotator_{name}_round1.csv"
         lines = [ln for ln in path.read_text(encoding="utf-8").splitlines() if not ln.startswith("#")]
         rows = list(csv.DictReader(lines))
         assert rows
@@ -258,7 +258,7 @@ def test_annotators_get_different_orderings(fake_sheets: Path, tmp_path: Path):
     )
 
     def order(name: str) -> list[str]:
-        path = out.parent / f"annotate_{name}.csv"
+        path = out.parent / f"TO_LABEL_annotator_{name}_round1.csv"
         lines = [ln for ln in path.read_text(encoding="utf-8").splitlines() if not ln.startswith("#")]
         return [r["item_id"] for r in csv.DictReader(lines)]
 
@@ -339,7 +339,7 @@ def test_second_round_sheets_exclude_already_labelled_items(tmp_path: Path):
                     "reply": f"reply {i}", "split": "dev"})
         for i in range(6)
     ), encoding="utf-8")
-    (tmp_path / "annotate_a_filled.csv").write_text(
+    (tmp_path / "LABELLED_annotator_a_round1.csv").write_text(
         "item_id,scenario,reply,intent,promised_date_raw,promised_date_resolved,"
         "disputed_amount,claimed_utr,documents_requested,confidence\n"
         "x00,s,r,promise_to_pay,,,,,,clear\n"
@@ -352,7 +352,29 @@ def test_second_round_sheets_exclude_already_labelled_items(tmp_path: Path):
     )
     assert r.returncode == 0, r.stdout + r.stderr
 
-    lines = [l for l in (tmp_path / "annotate_a.csv").read_text(encoding="utf-8").splitlines()
+    lines = [l for l in (tmp_path / "TO_LABEL_annotator_a_round2.csv").read_text(encoding="utf-8").splitlines()
              if not l.startswith("#")]
     ids = {row["item_id"] for row in csv.DictReader(lines)}
     assert ids == {"x02", "x03", "x04", "x05"}, ids
+
+
+def test_sheet_names_cannot_be_confused_with_completed_work(tmp_path: Path):
+    """A round produced annotate_a.csv beside annotate_a_filled.csv. The filled
+    one - being the one that looked finished - was copied and handed back as the
+    next round's work, so 72 items went unlabelled while appearing done. Files to
+    fill in and files already filled in must not differ by a suffix."""
+    sheets, out = tmp_path / "sheets", tmp_path / "replies.jsonl"
+    _write_sheet(sheets, "c01", [f"reply {k} kal tak ho jayega" for k in range(6)])
+    _run_build(sheets, out, ["--allow-pilot"])
+    subprocess.run(
+        [sys.executable, str(ROOT / "scripts/make_annotation_sheets.py"), "--corpus", str(out)],
+        capture_output=True, text=True, cwd=ROOT, check=True,
+    )
+    names = {p.name for p in tmp_path.glob("*.csv")}
+    todo = {n for n in names if n.startswith("TO_LABEL_")}
+    assert todo, names
+    for n in todo:
+        # The instruction is inside the file, not only in a chat message.
+        head = (tmp_path / n).read_text(encoding="utf-8").splitlines()[:2]
+        assert "fill the" in head[0]
+        assert "save this file as: LABELLED_" in head[1]
