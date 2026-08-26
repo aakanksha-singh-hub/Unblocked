@@ -399,6 +399,14 @@ def restraint(request: Request):
     decisions = s.result.decisions
     holds = [d for d in decisions if d.chosen is Intervention.HOLD]
 
+    # Holds split three ways. "94% held" is true and was doing work it had not
+    # earned: only some of those are a rule stopping the agent. The rest are an
+    # expected-value calculation declining to act, or the calendar. The page
+    # subtitle says "which rule stopped it", so leading with a row that is not a
+    # rule is exactly the kind of thing this project criticises elsewhere.
+    CALENDAR = {"quiet_day"}
+    NO_VALUE = {"no_positive_value"}
+
     first_fail: Counter = Counter()
     examples: dict[str, str] = {}
     promises, approvals = [], []
@@ -424,6 +432,10 @@ def restraint(request: Request):
                  "action": d.chosen.value, "why": d.rationale}
             )
 
+    by_rule = sum(n for g, n in first_fail.items() if g not in CALENDAR | NO_VALUE)
+    by_value = sum(n for g, n in first_fail.items() if g in NO_VALUE)
+    by_calendar = sum(n for g, n in first_fail.items() if g in CALENDAR)
+
     bars = [
         Bar(label=labels.gate(g), value=n, display=f"{n:,}", series=0,
             note=examples.get(g, ""))
@@ -434,6 +446,8 @@ def restraint(request: Request):
         total=len(decisions), holds=len(holds),
         hold_rate=100 * len(holds) / len(decisions) if decisions else 0,
         promise_holds=first_fail.get("promise_freeze", 0),
+        by_rule=by_rule, by_value=by_value, by_calendar=by_calendar,
+        rule_share=(100 * by_rule / len(holds)) if holds else 0,
         escalations=len(approvals),
         # Wide label gutter: the gate labels became sentences when they were
         # translated out of identifiers, and at 180px "Too soon after the last

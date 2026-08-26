@@ -3,13 +3,19 @@
 <h1>When it decided not to send</h1>
 <p class="sub">Every time the agent held back, and which rule stopped it.</p>
 <p class="note">Every rule below is plain code. No model runs here, so no message can talk it
-out of one.</p>
+out of one. It held on {{ '%.0f'|format(hold_rate) }}% of decisions in total — but only
+{{ '%.0f'|format(rule_share) }}% of those were a rule stopping it. The rest were an
+expected-value calculation declining to act ({{ by_value|comma }}) or the calendar
+({{ by_calendar|comma }}), and calling either of those restraint would be overclaiming.</p>
 
 <div class="tiles">
   <div class="tile"><div class="k">Times it could have sent</div><div class="v">{{ total|comma }}</div>
     <div class="d">a buyer with something overdue</div></div>
-  <div class="tile"><div class="k">Times it didn't</div><div class="v">{{ '%.0f'|format(hold_rate) }}%</div>
-    <div class="d">{{ holds|comma }} decisions to stay quiet</div></div>
+  <div class="tile"><div class="k">Stopped by a rule</div><div class="v">{{ by_rule|comma }}</div>
+    <div class="d">{{ '%.0f'|format(rule_share) }}% of the {{ holds|comma }} holds — a guardrail
+      blocked it</div></div>
+  <div class="tile"><div class="k">Not worth its cost</div><div class="v">{{ by_value|comma }}</div>
+    <div class="d">no action cleared its own price; an expected-value call, not a rule</div></div>
   <div class="tile"><div class="k">Held on a promise</div><div class="v">{{ promise_holds|comma }}</div>
     <div class="d">silent because the buyer named a date</div></div>
   <div class="tile"><div class="k">Needed a human</div><div class="v">{{ escalations|comma }}</div>
