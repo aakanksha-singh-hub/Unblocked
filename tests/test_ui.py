@@ -201,3 +201,18 @@ def test_every_page_opens_with_one_sentence(client, path):
     text = re.sub(r"<[^>]+>", "", subs[0]).strip()
     sentences = [s for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
     assert len(sentences) == 1, f"{path} lede is {len(sentences)} sentences: {text[:90]}"
+
+
+def test_every_internal_link_resolves(client):
+    """Filter chips build query strings from cause keys, one of which is
+    'cold start' - a space, unencoded, producing a URL that cannot be requested
+    at all."""
+    import re
+
+    pages = ["/", "/book", "/buyers", "/restraint", "/evaluation", "/sensitivity",
+             "/understanding", "/method", f"/buyers/{ui_app.STATE.cards[0].buyer_id}"]
+    hrefs = set()
+    for p in pages:
+        hrefs |= set(re.findall(r'href="(/[^"#]*)"', client.get(p).text))
+    broken = [h for h in sorted(hrefs) if client.get(h).status_code != 200]
+    assert not broken, f"broken internal links: {broken}"

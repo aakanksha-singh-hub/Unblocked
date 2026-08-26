@@ -10,7 +10,7 @@ visible.</p>
 <div class="filters">
   <a href="/buyers" class="{{ 'on' if not active }}">All</a>
   {% for k, n in causes %}
-    <a href="/buyers?cause={{ k }}" class="{{ 'on' if active==k }}">{{ cause_label(k) }} <span class="note">{{ n }}</span></a>
+    <a href="/buyers?cause={{ k|urlencode }}" class="{{ 'on' if active==k }}">{{ cause_label(k) }} <span class="note">{{ n }}</span></a>
   {% endfor %}
   <a href="/buyers?filter=wrong" class="{{ 'on' if active=='wrong' }}">it got wrong</a>
   <a href="/buyers?filter=blocked" class="{{ 'on' if active=='blocked' }}">stuck at the buyer's end</a>
