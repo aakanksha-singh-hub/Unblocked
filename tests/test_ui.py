@@ -158,3 +158,28 @@ def test_breadcrumb_only_on_buyer_detail(client):
     for path in ("/", "/book", "/buyers", "/restraint", "/evaluation",
                  "/sensitivity", "/understanding", "/method"):
         assert 'class="crumb"' not in client.get(path).text, f"{path} grew a breadcrumb"
+
+
+@pytest.mark.parametrize(
+    "path,expected",
+    [("/", 3), ("/book", 3), ("/buyers", 1), ("/restraint", 4),
+     ("/evaluation", 2), ("/method", 2)],
+)
+def test_figures_are_numbered_sequentially(client, path, expected):
+    """Every chart and data table is a numbered plate, running 001..n within its
+    own page with no gaps or repeats."""
+    import re
+
+    nums = re.findall(r"FIG_(\d{3})", client.get(path).text)
+    assert len(nums) >= expected, f"{path}: {len(nums)} figures, expected >= {expected}"
+    assert [int(n) for n in nums] == list(range(1, len(nums) + 1)), f"{path}: {nums}"
+
+
+def test_understanding_figure_appears_with_results(client):
+    """That page's only table is rendered from a submitted reply, so on a bare
+    GET there is nothing to number - the plate appears with the results."""
+    import re
+
+    assert not re.search(r"FIG_\d{3}", client.get("/understanding").text)
+    posted = client.post("/understanding", data={"text": "month end tak ho jayega"}).text
+    assert re.findall(r"FIG_(\d{3})", posted) == ["001"]

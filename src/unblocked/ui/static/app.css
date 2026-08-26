@@ -521,3 +521,15 @@ td.answer-cell { background: color-mix(in srgb, var(--plane) 60%, transparent); 
 .crumb a:hover { color: var(--text-primary); text-decoration: underline; }
 .crumb .sep { margin: 0 8px; color: var(--axis); }
 .crumb .here { color: var(--text-primary); }
+
+
+/* ── Figure plates ─────────────────────────────────────────────────────────
+   Every chart and every data table is a numbered figure with a short name,
+   numbered sequentially within its page. Purely additive markup: the charts and
+   tables themselves are untouched. */
+.figref {
+  font-family: var(--mono); font-size: var(--fs-caption);
+  text-transform: uppercase; letter-spacing: var(--track-micro);
+  color: var(--muted); margin: 0 0 6px;
+}
+.figref .n { color: var(--text-secondary); }
