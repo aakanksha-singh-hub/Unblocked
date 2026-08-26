@@ -1,11 +1,9 @@
 __pycache__/
 *.py[cod]
 .venv/
-.env
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
-artifacts/runs/
 .DS_Store
 
 # Credentials. Never committed. See docs/SECRETS.md
@@ -14,5 +12,6 @@ artifacts/runs/
 !.env.example
 *.key
 
-# Transient run logs; the JSON artifacts beside them are the record.
+# Generated outputs; the JSON artifacts beside them are the record.
+artifacts/runs/
 artifacts/*.log
