@@ -312,18 +312,43 @@ button.ghost { background: transparent; border-color: var(--axis); color: var(--
   letter-spacing: .09em; text-transform: uppercase; margin-bottom: 16px;
 }
 .hero h1 {
-  font-size: clamp(30px, 5.2vw, 50px); line-height: 1.08;
-  letter-spacing: -0.03em; margin: 0 0 20px; font-weight: 680;
+  font-size: clamp(28px, 4.4vw, 44px); line-height: 1.1;
+  letter-spacing: -0.03em; margin: 0 0 18px; font-weight: 680;
 }
 .hero p {
   font-size: var(--fs-h3); line-height: 1.55; color: var(--text-secondary);
   margin: 0 0 30px; max-width: 60ch;
 }
+
+/* ── First screen ──────────────────────────────────────────────────────────
+   One statement, one figure, one disclosure, two links. Everything that used
+   to sit here - four tiles and the leading figures - is below the fold now.
+   Fifteen numbers before a reader has decided whether they care is the same as
+   no priority at all, which is what overwhelm actually is. */
+.hero { padding: 44px 0 64px; max-width: 860px; }
+
+.hero .oneliner {
+  font-size: var(--fs-h3); line-height: 1.5; font-weight: 450;
+  color: var(--text-primary); max-width: 42ch;
+  margin: 0 0 34px;
+}
+
+.hero-figure { margin: 0 0 30px; }
+.hero-figure .n {
+  font-size: var(--fs-stat); font-weight: 690; letter-spacing: -0.03em;
+  color: var(--series-1); font-variant-numeric: tabular-nums; line-height: 1;
+}
+.hero-figure .l {
+  font-size: var(--fs-h3); color: var(--text-primary);
+  font-weight: 600; margin-top: 10px;
+}
+.hero-figure .s { font-size: var(--fs-small); color: var(--muted); margin-top: 4px; }
 /* Provenance, stated before the numbers rather than after them. It was in the
    page footer, which meant a reader formed an impression of the figures as real
    and then found out otherwise at the bottom - the same information, discovered
    instead of disclosed. */
 .hero .provenance {
+  max-width: 100%;
   display: inline-flex; align-items: center; gap: 9px; flex-wrap: wrap;
   margin: 0 0 26px; padding: 9px 14px;
   background: var(--surface-1); border: 1px solid var(--grid);
@@ -342,6 +367,7 @@ button.ghost { background: transparent; border-color: var(--axis); color: var(--
 .hero .cta a:hover { opacity: .88; }
 
 .headline {
+  margin-top: 46px;
   display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 1px; background: var(--grid); border: 1px solid var(--grid);
   border-radius: 12px; overflow: hidden; margin: 8px 0 56px;

@@ -4,8 +4,17 @@
 <div class="hero">
   <div class="eyebrow">Razorpay AI Buildathon · Track 03</div>
   <h1>Most overdue invoices<br>aren't unpaid.<br>They're stuck.</h1>
-  <p>Every ERP tells you <em>who</em> owes you. None work out <em>why</em> — and that's
-     the only thing that decides what to do.</p>
+
+  <!-- ONE_LINER -->
+  <p class="oneliner">It works out why an invoice is stuck, fixes that, and stays
+     quiet the rest of the time.</p>
+
+  <div class="hero-figure">
+    <div class="n">+{{ hero.net }}</div>
+    <div class="l">still ahead after costs</div>
+    <div class="s">lost accounts and time charged</div>
+  </div>
+
   <p class="provenance">
     <span><b>Simulated book</b>, real payment rail.</span>
     <span class="sep">·</span>
@@ -13,26 +22,13 @@
     <span class="sep">·</span>
     <a href="/method">What that means for these numbers →</a>
   </p>
+
   <div class="cta">
     <a class="primary" href="/restraint">See it decide not to send →</a>
     <a class="ghost" href="/buyers">Browse the buyers</a>
   </div>
 </div>
 
-<div class="headline">
-  <div><div class="n accent">+{{ hero.recovered }}</div>
-    <div class="l">more collected, per buyer</div>
-    <div class="s">vs doing nothing · {{ hero.eval_n }} buyers</div></div>
-  <div><div class="n">+{{ hero.net }}</div>
-    <div class="l">still ahead after costs</div>
-    <div class="s">lost accounts and time charged</div></div>
-  <div><div class="n">{{ hero.hold }}%</div>
-    <div class="l">of the time it does nothing</div>
-    <div class="s">that's the product</div></div>
-  <div><div class="n">₹2,500</div>
-    <div class="l">really collected</div>
-    <div class="s">live Razorpay payment</div></div>
-</div>
 
 <section class="band">
   <h2>Escalate on cause, not age</h2>
@@ -46,6 +42,18 @@
       <p class="note" style="margin-top:14px">Hover any row for what it means for the money.</p></div>
   </div>
 </section>
+
+<div class="headline">
+  <div><div class="n accent">+{{ hero.recovered }}</div>
+    <div class="l">more collected, per buyer</div>
+    <div class="s">vs doing nothing · {{ hero.eval_n }} buyers</div></div>
+  <div><div class="n">{{ hero.hold }}%</div>
+    <div class="l">of the time it does nothing</div>
+    <div class="s">that's the product</div></div>
+  <div><div class="n">₹2,500</div>
+    <div class="l">really collected</div>
+    <div class="s">live Razorpay payment</div></div>
+</div>
 
 {% if story %}
 <section class="band">
