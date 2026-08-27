@@ -229,6 +229,11 @@ def main() -> int:
     gold_dates = {**da, **db, **adj_dates}
 
     unresolved = [i for i, _, _ in ag.disagreements if i not in adj]
+    stale = args.corpus.parent / "to_adjudicate.csv"
+    if not unresolved and stale.exists():
+        # A work queue nobody has to work. Leaving it on disk invites someone to
+        # open it later and think there is something outstanding.
+        stale.unlink()
     if unresolved:
         out = args.corpus.parent / "to_adjudicate.csv"
         with out.open("w", newline="", encoding="utf-8") as f:

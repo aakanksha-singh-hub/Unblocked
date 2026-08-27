@@ -1,5 +1,5 @@
 TIER               = EVIDENCE
-build rounds       = 2
+build rounds       = 3
 corpus sha256[:16] = 4b335ee0a7197525
 items              = 112
 contributors       = 14
@@ -10,6 +10,6 @@ Split drawn at build time, before any model output was inspected.
 Contributors keep the side they were first assigned; only new ones are
 drawn. If this hash changes, the corpus changed.
 
-This corpus has been built 2 times. The test split has therefore
+This corpus has been built 3 times. The test split has therefore
 been looked at more than once, and any report using it must say so:
 a second scoring is a second look, however the items were added.
