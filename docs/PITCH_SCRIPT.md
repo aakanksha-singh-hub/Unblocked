@@ -259,10 +259,16 @@ Saying nothing about it is honest; saying it won is not.
 > I found it by asking why a baseline was beating my agent on **one segment**,
 > instead of accepting the aggregate number, which looked fine.
 >
-> The same causality error turned up twice more. **The third one is still unfixed,
-> and it's documented as unfixed** — the correct treatment is a latent intended
-> pay-date that the promise merely reports, and that's a bigger change than the
-> time allowed.
+> Disputes are now facts that exist from day one and contact merely reveals. That
+> is the kind of failure I want the system to surface rather than hide — and the
+> segment went from losing to winning once it was right.
+
+### Remaining limitations — **DO NOT VOLUNTEER**
+
+A third instance of the same causality error is unfixed and documented in
+docs/EVALUATION.md. The question asks what broke and how you got out; it does not
+ask for an inventory of open items. The repo carries that disclosure, which is
+where it belongs. Answer it if asked directly.
 
 ### Other bugs — **ONLY IF ASKED**
 
