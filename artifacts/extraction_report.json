@@ -1,82 +1,83 @@
 {
   "split": "test",
-  "n_items": 24,
-  "kappa": 0.9012345679012346,
-  "raw_agreement": 0.9166666666666666,
+  "n_items": 64,
+  "kappa": 0.8544627629334849,
+  "raw_agreement": 0.875,
   "per_class_kappa": {
-    "acknowledgement": 1.0,
+    "acknowledgement": 0.6946564885496184,
     "dispute": 1.0,
     "document_request": 1.0,
     "hardship": 1.0,
-    "payment_claim": 0.46666666666666606,
+    "payment_claim": 0.6521739130434783,
     "process_deflection": 1.0,
-    "promise_to_pay": 0.7037037037037037
+    "promise_to_pay": 0.7419354838709677,
+    "unclear": 0.0
   },
-  "n_disagreements": 2,
-  "gold_labels": 24,
+  "n_disagreements": 8,
+  "gold_labels": 64,
   "reports": [
     {
       "extractor": "rules",
-      "n": 24,
-      "accuracy": 0.5416666666666666,
+      "n": 64,
+      "accuracy": 0.5625,
       "accuracy_ci": [
-        0.35074553553106635,
-        0.7210894164831857
+        0.4408599177828787,
+        0.6770618293457267
       ],
-      "macro_f1": 0.4158249158249158,
-      "baseline_accuracy": 0.25,
+      "macro_f1": 0.49112978524743234,
+      "baseline_accuracy": 0.1875,
       "beats_baseline": true,
-      "abstentions": 5,
-      "abstention_precision": 0.0,
-      "hard_subset_f1": 0.3333333333333333,
+      "abstentions": 13,
+      "abstention_precision": 0.23076923076923078,
+      "hard_subset_f1": 0.25396825396825395,
       "per_label": {
         "acknowledgement": {
-          "precision": 0.6666666666666666,
+          "precision": 0.75,
           "recall": 0.6666666666666666,
-          "f1": 0.6666666666666666,
-          "support": 3
+          "f1": 0.7058823529411765,
+          "support": 9
         },
         "dispute": {
           "precision": 1.0,
-          "recall": 0.8333333333333334,
-          "f1": 0.9090909090909091,
-          "support": 6
+          "recall": 0.75,
+          "f1": 0.8571428571428571,
+          "support": 12
         },
         "document_request": {
-          "precision": 1.0,
-          "recall": 1.0,
-          "f1": 1.0,
-          "support": 3
+          "precision": 0.8181818181818182,
+          "recall": 0.9,
+          "f1": 0.8571428571428572,
+          "support": 10
         },
         "hardship": {
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1": 0.0,
-          "support": 3
+          "precision": 0.6666666666666666,
+          "recall": 0.4,
+          "f1": 0.5,
+          "support": 10
         },
         "payment_claim": {
-          "precision": 0.6666666666666666,
-          "recall": 0.6666666666666666,
-          "f1": 0.6666666666666666,
-          "support": 3
+          "precision": 0.75,
+          "recall": 0.75,
+          "f1": 0.75,
+          "support": 4
         },
         "process_deflection": {
           "precision": 1.0,
           "recall": 0.3333333333333333,
           "f1": 0.5,
-          "support": 3
+          "support": 9
         },
         "promise_to_pay": {
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1": 0.0,
-          "support": 3
+          "precision": 0.25,
+          "recall": 0.25,
+          "f1": 0.25,
+          "support": 8
         },
         "refusal": {
           "precision": 0.0,
           "recall": 0.0,
           "f1": 0.0,
-          "support": 0
+          "support": 2
         },
         "unclear": {
           "precision": 0.0,
@@ -88,60 +89,72 @@
     },
     {
       "extractor": "llm:groq/openai/gpt-oss-120b",
-      "n": 24,
-      "accuracy": 0.8333333333333334,
+      "n": 64,
+      "accuracy": 0.65625,
       "accuracy_ci": [
-        0.6414652961213058,
-        0.9332143199927109
+        0.5340341181762038,
+        0.7607702496453097
       ],
-      "macro_f1": 0.8030612244897959,
-      "baseline_accuracy": 0.25,
+      "macro_f1": 0.5458941298668495,
+      "baseline_accuracy": 0.1875,
       "beats_baseline": true,
       "abstentions": 0,
       "abstention_precision": 0.0,
-      "hard_subset_f1": 1.0,
+      "hard_subset_f1": 0.23809523809523808,
       "per_label": {
         "acknowledgement": {
           "precision": 1.0,
-          "recall": 0.3333333333333333,
-          "f1": 0.5,
-          "support": 3
+          "recall": 0.2222222222222222,
+          "f1": 0.3636363636363636,
+          "support": 9
         },
         "dispute": {
           "precision": 1.0,
-          "recall": 1.0,
-          "f1": 1.0,
-          "support": 6
+          "recall": 0.8333333333333334,
+          "f1": 0.9090909090909091,
+          "support": 12
         },
         "document_request": {
           "precision": 1.0,
-          "recall": 1.0,
-          "f1": 1.0,
-          "support": 3
+          "recall": 0.8,
+          "f1": 0.888888888888889,
+          "support": 10
         },
         "hardship": {
-          "precision": 1.0,
-          "recall": 1.0,
-          "f1": 1.0,
-          "support": 3
+          "precision": 0.8571428571428571,
+          "recall": 0.6,
+          "f1": 0.7058823529411764,
+          "support": 10
         },
         "payment_claim": {
           "precision": 1.0,
-          "recall": 0.6666666666666666,
-          "f1": 0.8,
-          "support": 3
+          "recall": 0.75,
+          "f1": 0.8571428571428571,
+          "support": 4
         },
         "process_deflection": {
-          "precision": 0.5,
+          "precision": 0.42857142857142855,
           "recall": 0.6666666666666666,
-          "f1": 0.5714285714285715,
-          "support": 3
+          "f1": 0.5217391304347826,
+          "support": 9
         },
         "promise_to_pay": {
-          "precision": 0.6,
-          "recall": 1.0,
-          "f1": 0.7499999999999999,
-          "support": 3
+          "precision": 0.5384615384615384,
+          "recall": 0.875,
+          "f1": 0.6666666666666667,
+          "support": 8
+        },
+        "refusal": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 2
+        },
+        "unclear": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0
         }
       }
     }
