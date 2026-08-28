@@ -42,7 +42,7 @@ code change is required; everything below goes in the form.
 
 Start Command:
 
-    python -c "import os,uvicorn,unblocked.ui.app as a; a.STATE=a.app_state.build(merchants=3,buyers=30); uvicorn.run(a.app,host='0.0.0.0',port=int(os.environ['PORT']))"
+    python -c "import os,uvicorn,unblocked.ui.app as a; _o=a.app_state.build; a.app_state.build=lambda **k: _o(merchants=3,buyers=30); uvicorn.run(a.app,host='0.0.0.0',port=int(os.environ['PORT']))"
 
 Set `PYTHON_VERSION` to `3.11.9`.
 
@@ -60,9 +60,15 @@ smaller world before serving avoids that entirely. Measured:
 | 50 buyers | 278MB | 3.6s |
 
 It reads `PORT` from the environment rather than from the shell, so there is no
-quoting to get wrong. Building *before* `uvicorn.run` means the port opens only
-once the world is ready, so the first visitor gets a finished page rather than
-waiting through the build.
+quoting to get wrong.
+
+It replaces the builder rather than pre-seeding `STATE`, so the port binds
+within two seconds and the world is built lazily on the first request, as it is
+locally. That ordering is deliberate: **Render fails a deploy it cannot detect
+an open port for**, and the free instance is 0.1 CPU — a tenth of a core — on
+which a build measured at 5.3s here can take the better part of a minute.
+Binding first puts that time inside a request, where it costs one visitor a
+slow page, instead of in front of the port scan, where it can cost the deploy.
 
 This changes only **the run you can browse**. Every measured number on
 `/evaluation` and `/sensitivity` is read from the committed artifacts, which
