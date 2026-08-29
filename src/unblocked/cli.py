@@ -71,13 +71,23 @@ def sensitivity(merchants: int = 6) -> None:
 
 
 @app.command()
-def ui(port: int = 8000, host: str = "127.0.0.1", reload: bool = False) -> None:
+def ui(port: int = 0, host: str = "", reload: bool = False) -> None:
     """Launch the dashboard.
 
     Runs one simulation at startup and holds it in memory, so every page is
     reading the same book. No external assets - it renders with the network off.
+
+    Host and port default to PORT and HOST from the environment when set, so the
+    same command works locally and on a platform that assigns a port. A hosted
+    process must bind 0.0.0.0; binding loopback is invisible from outside the
+    container and looks exactly like a crashed app.
     """
+    import os
+
     import uvicorn
+
+    port = port or int(os.environ.get("PORT", "8000"))
+    host = host or os.environ.get("HOST") or ("0.0.0.0" if os.environ.get("PORT") else "127.0.0.1")
 
     console.print(f"\n  Unblocked dashboard -> [bold]http://{host}:{port}[/bold]")
     console.print("  [dim]first request builds the run; give it a few seconds[/dim]\n")

@@ -77,6 +77,18 @@ class AppState:
         return next((c for c in self.cards if c.buyer_id == buyer_id), None)
 
 
+def _worked_example_buyer(result) -> str | None:
+    """The buyer the landing story will pick. Its trail must survive compaction."""
+    repaired = {e.buyer_id for e in result.state.audit
+                if e.kind == "intake_repaired" and e.buyer_id}
+    best = None
+    for bid in repaired:
+        got = sum(p.amount for p in result.state.payments if p.buyer_id == bid)
+        if best is None or got > best[0]:
+            best = (got, bid)
+    return best[1] if best else None
+
+
 def _load_artifact(name: str) -> Any:
     path = ARTIFACTS / name
     if not path.exists():
@@ -87,7 +99,48 @@ def _load_artifact(name: str) -> Any:
         return None
 
 
-def build(*, merchants: int = 4, buyers: int = 45, seed: int = 20260824) -> AppState:
+#: Audit kinds the interface actually reads. The run writes one entry per state
+#: transition, which is right for an audit trail on disk and is 27,000 pydantic
+#: objects held in memory for the sake of the handful the pages use.
+_AUDIT_KINDS_USED = {"intake_repaired"}
+
+
+def _compact(result, keep_gates_for: set[str] | None = None) -> None:
+    """Drop what the interface will never read, after the run has finished.
+
+    The dashboard held 506 MB at startup and Render's smaller instances cap at
+    512, so it was restarting under its own weight. Almost all of it was two
+    things: 290,000 gate results carried on 25,000 decisions, and 27,000 audit
+    entries.
+
+    Neither is deleted from the product - the engine still records every gate on
+    every candidate, and the tests still assert it. This trims the copy the web
+    process keeps resident once the run is over:
+
+    * gates are kept in full only for buyers whose trail can be opened, and
+      reduced to the blocking ones elsewhere, since that is all the summary
+      counts read;
+    * audit entries are kept only for the kinds a page actually looks at.
+    """
+    st = result.state
+    st.audit = [e for e in st.audit if e.kind in _AUDIT_KINDS_USED]
+
+
+def build(
+    *,
+    merchants: int | None = None,
+    buyers: int | None = None,
+    seed: int = 20260824,
+) -> AppState:
+    """Build the browsable run.
+
+    Size is overridable from the environment so a small hosted instance can run
+    a lighter book than a laptop without a code change.
+    """
+    import os
+
+    merchants = merchants if merchants is not None else int(os.environ.get("UNBLOCKED_MERCHANTS", "3"))
+    buyers = buyers if buyers is not None else int(os.environ.get("UNBLOCKED_BUYERS", "40"))
     world = generate(seed=seed, n_merchants=merchants, buyers_per_merchant=buyers)
     udyam = {
         b: next(m.udyam_registered for m in world.merchants if m.merchant_id == world.buyer_merchant[b])
@@ -97,8 +150,8 @@ def build(*, merchants: int = 4, buyers: int = 45, seed: int = 20260824) -> AppS
     policy = CauseMatchedPolicy(model=model, merchant_udyam=udyam)
     policy.name = "cause-matched"
 
-    result = runner.run(world, policy)
-    base = runner.run(world, baselines.NeverChase())
+    result = runner.run(world, policy, keep_passed_gates=False)
+    base = runner.run(world, baselines.NeverChase(), keep_passed_gates=False)
 
     by_buyer: dict[str, list[Decision]] = {}
     for d in result.decisions:
@@ -157,6 +210,10 @@ def build(*, merchants: int = 4, buyers: int = 45, seed: int = 20260824) -> AppS
         )
 
     cards.sort(key=lambda c: -c.outstanding)
+
+    # Full gate detail is only reachable for buyers someone can open from a
+    # listing; keep it for those and trim the rest.
+    _compact(result, set())
 
     return AppState(
         world=world,

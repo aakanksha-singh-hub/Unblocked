@@ -1,0 +1,28 @@
+# Render deployment.
+#
+# The dashboard runs one simulation at startup and holds it in memory, so the
+# instance size and the book size have to agree. At the default local size the
+# process peaks around 277 MB; UNBLOCKED_MERCHANTS and UNBLOCKED_BUYERS shrink
+# the book if a smaller instance is needed.
+#
+# One worker, deliberately. Each worker builds its own copy of the run, so two
+# workers means two simulations resident and no shared benefit - the pages are
+# read-only.
+
+services:
+  - type: web
+    name: unblocked
+    runtime: python
+    plan: starter
+    buildCommand: pip install -e .
+    startCommand: unblocked-web
+    healthCheckPath: /method
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: UNBLOCKED_MERCHANTS
+        value: "3"
+      - key: UNBLOCKED_BUYERS
+        value: "40"
+      - key: WEB_CONCURRENCY
+        value: "1"

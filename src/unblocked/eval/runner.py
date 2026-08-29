@@ -23,7 +23,24 @@ class RunResult:
     days: int = 0
 
 
-def run(world: World, policy: Policy, *, seed: int | None = None, horizon: int | None = None) -> RunResult:
+def run(
+    world: World,
+    policy: Policy,
+    *,
+    seed: int | None = None,
+    horizon: int | None = None,
+    keep_passed_gates: bool = True,
+) -> RunResult:
+    """Drive one policy over one world for the full horizon.
+
+    `keep_passed_gates=False` records only the gates that blocked a decision.
+    The evaluation wants the complete record - a gate that cleared is part of
+    what the audit trail is for - but a long-running web process does not: at
+    full detail one run holds roughly 290,000 gate objects, which is most of why
+    the dashboard was being killed for memory on a small instance. Passed gates
+    are never rendered anywhere, so dropping them at the source costs the
+    interface nothing.
+    """
     st = dynamics.new_run(world, seed=seed)
     horizon = horizon or world.horizon_days
     decisions: list[Decision] = []
@@ -46,9 +63,10 @@ def run(world: World, policy: Policy, *, seed: int | None = None, horizon: int |
             # Stamp a deterministic decision id centrally rather than trusting
             # each policy's default. Keeps audit trails byte-identical across
             # runs, which is what makes two report artifacts diffable.
-            decision = decision.model_copy(
-                update={"decision_id": f"dec_{decision.buyer_id[-8:]}_{day.isoformat()}_{i:03d}"}
-            )
+            update = {"decision_id": f"dec_{decision.buyer_id[-8:]}_{day.isoformat()}_{i:03d}"}
+            if not keep_passed_gates:
+                update["gates"] = [g for g in decision.gates if not g.passed][:4]
+            decision = decision.model_copy(update=update)
             decisions.append(decision)
             dynamics.apply_decision(world, st, decision)
 
