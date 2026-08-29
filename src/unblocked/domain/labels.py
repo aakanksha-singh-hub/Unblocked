@@ -11,7 +11,7 @@ Not "what class is this buyer" but "why haven't they paid".
 
 from __future__ import annotations
 
-from .enums import BuyerArchetype, Intervention
+from .enums import BuyerArchetype, Intervention, ReplyIntent
 
 #: Why this buyer hasn't paid, in the words a person would use.
 CAUSE: dict[BuyerArchetype, str] = {
@@ -182,3 +182,33 @@ POLICY: dict[str, str] = {
 
 def policy(name: str) -> str:
     return POLICY.get(name, name.replace("-", " "))
+
+
+#: What a buyer's reply means, in the words a person would use. Shown live on the
+#: reply-parsing page, so it is the one label map a viewer watches being applied.
+INTENT: dict[ReplyIntent, str] = {
+    ReplyIntent.PROMISE_TO_PAY: "A promise to pay",
+    ReplyIntent.PAYMENT_CLAIM: "Says they already paid",
+    ReplyIntent.DISPUTE: "A complaint about the goods or the bill",
+    ReplyIntent.DOCUMENT_REQUEST: "Wants paperwork first",
+    ReplyIntent.PROCESS_DEFLECTION: "Describes their process, promises nothing",
+    ReplyIntent.HARDSHIP: "Says they cannot pay",
+    ReplyIntent.REFUSAL: "Declines to pay",
+    ReplyIntent.ACKNOWLEDGEMENT: "Acknowledges, nothing more",
+    ReplyIntent.UNCLEAR: "Not clear enough to act on",
+}
+
+#: The two things being compared on that page.
+EXTRACTOR: dict[str, str] = {"rules": "Pattern matching", "llm": "Language model"}
+
+
+def intent(i: ReplyIntent | str) -> str:
+    try:
+        return INTENT[ReplyIntent(i)]
+    except ValueError:
+        return str(i).replace("_", " ")
+
+
+def extractor(name: str) -> str:
+    base = name.split(":")[0]
+    return EXTRACTOR.get(base, base)

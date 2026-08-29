@@ -52,7 +52,7 @@ def test_extraction_demo_works_offline(client):
     """The rule extractor must answer even with no model reachable."""
     r = client.post("/understanding", data={"text": "month end tak ho jayega"})
     assert r.status_code == 200
-    assert "promise_to_pay" in r.text
+    assert "A promise to pay" in r.text
 
 
 def test_extraction_demo_survives_empty_input(client):
@@ -363,3 +363,17 @@ def test_pages_read_without_the_source(client, path):
                  "archetype", "parameter sweep", "macro-f1", "fig_", "_success",
                  "holdout", "snapshots", "distressed", "avoider"):
         assert term not in visible, f"{path} shows {term!r}"
+
+
+def test_extraction_results_read_plainly(client):
+    """The live demo's output table is the one place a viewer watches labels
+    being applied in real time. It was printing promise_to_pay and 'llm'."""
+    import re
+
+    body = client.post("/understanding", data={"text": "month end tak ho jayega"}).text
+    visible = re.sub(r"<[^>]+>", " ", body)
+    for term in ("promise_to_pay", "payment_claim", "process_deflection",
+                 "document_request", "acknowledgement"):
+        assert term not in visible, f"results table shows {term!r}"
+    assert "A promise to pay" in visible
+    assert "Pattern matching" in visible

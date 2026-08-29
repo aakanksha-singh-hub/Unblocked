@@ -47,6 +47,8 @@ templates.env.globals["days_late"] = labels.days_late
 templates.env.globals["humanise"] = labels.humanise
 templates.env.globals["parameter_label"] = labels.parameter
 templates.env.globals["policy_label"] = labels.policy
+templates.env.globals["intent_label"] = labels.intent
+templates.env.globals["extractor_label"] = labels.extractor
 
 
 def get_state() -> app_state.AppState:
