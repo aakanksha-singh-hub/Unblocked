@@ -45,6 +45,8 @@ templates.env.globals["action_label"] = labels.action
 templates.env.globals["gate_label"] = labels.gate
 templates.env.globals["days_late"] = labels.days_late
 templates.env.globals["humanise"] = labels.humanise
+templates.env.globals["parameter_label"] = labels.parameter
+templates.env.globals["policy_label"] = labels.policy
 
 
 def get_state() -> app_state.AppState:
@@ -481,7 +483,9 @@ def evaluation(request: Request):
             values = [[seg[c].get(n, 0.0) for n in names] for c in cats]
             displays = [[f"{seg[c].get(n, 0.0):.1f}%" for n in names] for c in cats]
             segment_chart = grouped_bar(
-                [labels.cause(c) for c in cats], names, values, displays,
+                [labels.cause(c) for c in cats],
+                [labels.policy(n) for n in names],
+                values, displays,
                 width=940, label_w=300, caption="recovery by cause",
             )
 
@@ -525,11 +529,18 @@ def sensitivity(request: Request):
             )
             sweeps.append(
                 {
-                    "parameter": sw["parameter"], "rationale": sw["rationale"],
+                    "parameter": labels.parameter(sw["parameter"]),
+                    "code_name": sw["parameter"],
+                    "rationale": (
+                        sw["rationale"]
+                        .split(" Generation-time:")[0]
+                        .replace("process-bound", "fixed-cycle")
+                        .replace("cause-matching", "working out the cause")
+                    ),
                     "chosen": sw["chosen"], "worst_ratio": ratio, "verdict": verdict,
                     "chart": sweep_line(
-                        xs, ys, x_label=sw["parameter"],
-                        y_label="margin over never-chase (rupees)",
+                        xs, ys, x_label=labels.parameter(sw["parameter"]),
+                        y_label="extra money recovered, against doing nothing",
                         marker=sw["chosen"], caption=sw["parameter"],
                         fmt_y=lambda v: money(v * 100),
                     ),

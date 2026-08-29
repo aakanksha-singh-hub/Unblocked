@@ -7,8 +7,8 @@ there.</p>
 rather than two lucky runs.</p>
 
 <div class="banner">
-  <strong>What this establishes.</strong> Policy quality <em>conditional on the assumptions in
-  <span class="pill mono">sim/calibration.py</span></em> — not evidence those assumptions hold.
+  <strong>What this establishes.</strong> How well the approach performs <em>given the
+  assumptions the simulation is built on</em> — not evidence those assumptions hold.
   We wrote the simulator, so beating baselines inside it cannot prove the thesis that shaped
   it. Commit ordering proves sequence, not independence, and this project does not argue
   otherwise. <a href="/method">The full argument →</a>
@@ -37,7 +37,7 @@ rather than two lucky runs.</p>
     <tbody>
       {% for p in policies %}
       <tr class="{{ 'hi' if p.policy=='cause-matched' }}">
-        <td>{{ p.policy }}</td>
+        <td>{{ policy_label(p.policy) }}</td>
         <td class="num">{{ money(p.recovered) }}</td>
         <td class="num">{{ '%.1f'|format(p.recovery_rate*100) }}%</td>
         <td class="num">{{ money(p.net_value) }}</td>
@@ -71,18 +71,15 @@ rather than two lucky runs.</p>
 <div class="card">
   <p class="figref"><span class="n">Figure 3</span>CAUSE INFERENCE</p>
   <h2>Cause inference</h2>
-  <p class="hint"><strong>Macro-F1 on recovering a latent generator variable in simulation.</strong>
-    Not a real-world buyer classification result: inside the simulator archetypes are ground
-    truth by construction, so this measures how invertible our own generator is.</p>
+  <p class="hint">How well it works out the reason a buyer has not paid, measured on buyers it was not trained on. This is scored inside the simulation, where the right answer is known by construction — it is not a claim about classifying real buyers.</p>
   <div class="kv">
-    <dt>Macro-F1 (holdout)</dt><dd>{{ '%.3f'|format(inference.macro_f1) }}</dd>
-    <dt>Train / holdout</dt><dd>{{ inference.n_train }} / {{ inference.n_holdout }} snapshots</dd>
-    <dt>Distressed read as avoider</dt>
+    <dt>Gets the reason right</dt><dd>{{ '%.0f'|format(inference.macro_f1*100) }}% of the time</dd>
+    <dt>Buyers it was tested on</dt><dd>{{ inference.n_holdout|comma }}, none of them used for training</dd>
+    <dt>Read as unwilling when they can't pay</dt>
     <dd>{{ inference.distressed_as_avoider }}/{{ inference.distressed_support }}
       ({{ '%.1f'|format(100*inference.distressed_as_avoider/inference.distressed_support) }}%)</dd>
   </div>
-  <p class="note">That last row is tracked on its own because mistaking someone who
-    <em>cannot</em> pay for someone who <em>will not</em> is the error that does human damage.</p>
+  <p class="note">That last row is tracked on its own because mistaking someone who <em>cannot</em> pay for someone who <em>will not</em> is the error that does human damage.</p>
 </div>
 {% endif %}
 {% endblock %}

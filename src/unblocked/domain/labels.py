@@ -132,3 +132,53 @@ def humanise(rationale: str) -> str:
     for key, label in CAUSE.items():
         text = text.replace(key.value, label.lower())
     return text[:1].upper() + text[1:] if text else text
+
+
+#: What each swept assumption means, in the words a person would use. The sweep
+#: identifies parameters by their code name; nobody reading a page should have to
+#: decode PORTAL_REPAIR_SUCCESS to find out what was tested.
+PARAMETER: dict[str, str] = {
+    "PORTAL_REPAIR_SUCCESS": "How often chasing paperwork actually unblocks an invoice",
+    "PO_REPAIR_SUCCESS": "How often a missing PO number can be recovered",
+    "DISPUTE_RESOLUTION_SUCCESS": "How often one conversation settles a complaint",
+    "DISPUTE_CREDIT_NOTE_SHARE": "How often settling a complaint means writing part of it off",
+    "FATIGUE_PER_EXCESS_CONTACT": "How much each extra message tires a buyer out",
+    "ARCHETYPE_MIX.process_bound": "How many buyers pay on a fixed monthly cycle",
+    "ARCHETYPE_MIX.cashflow_stressed": "How many buyers are short of cash",
+    "ARCHETYPE_MIX.disputer": "How many buyers are unhappy with the goods",
+    "ARCHETYPE_MIX.avoider": "How many buyers are simply ignoring you",
+    "ARCHETYPE_MIX.distressed": "How many buyers cannot pay in one go",
+    "ARCHETYPE_MIX.prompt": "How many buyers pay on time",
+    "contact retention": "How much each extra message tires a buyer out",
+}
+
+#: What a buyer is complaining about.
+DISPUTE: dict[str, str] = {
+    "short_delivery": "short delivery",
+    "damage": "damaged goods",
+    "rate_mismatch": "the rate not matching the order",
+    "quality": "quality",
+    "gst_mismatch": "a wrong GST number on the bill",
+    "missing_docs": "missing paperwork",
+}
+
+
+def parameter(name: str) -> str:
+    return PARAMETER.get(name, name.replace("_", " ").replace(".", " — ").lower())
+
+
+def dispute(kind: str) -> str:
+    return DISPUTE.get(kind, kind.replace("_", " "))
+
+
+#: Policies, as a reader would describe them rather than as the code names them.
+POLICY: dict[str, str] = {
+    "never-chase": "doing nothing",
+    "blast-weekly": "chasing everyone weekly",
+    "static-ladder": "a 30/60/90 ladder",
+    "cause-matched": "working out the cause",
+}
+
+
+def policy(name: str) -> str:
+    return POLICY.get(name, name.replace("-", " "))

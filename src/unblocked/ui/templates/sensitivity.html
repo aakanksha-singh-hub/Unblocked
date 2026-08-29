@@ -1,29 +1,28 @@
 {% extends "base.html" %}{% block title %}Sensitivity · Unblocked{% endblock %}
 {% block body %}
 <h1>Where this stops being true</h1>
-<p class="sub">How far each invented parameter can move before the result reverses.</p>
-<p class="note">Our numbers rest on parameters we chose rather than measured.</p>
+<p class="sub">How far each of our assumptions can be wrong before the result turns around.</p>
+<p class="note">These numbers rest on assumptions we chose rather than measured, so we went looking for the point where each one breaks.</p>
 
 <div class="banner">
-  <strong>The result we did not expect.</strong> We built this to report the contact-fatigue
-  threshold. There isn't one: from fatigue disabled entirely to severe, the margin moves about
-  10% and never crosses zero. The conclusion does not depend on the constant we assumed was
-  carrying it. That failure exposed a defect worth admitting — the two probabilities most
-  likely to be load-bearing were hardcoded literals in the dynamics code rather than
-  parameters, so the sweep could not have reached them.
+  <strong>The result we did not expect.</strong> We built this expecting to find the point where
+  messaging people too often starts to backfire badly enough to change the answer. There isn't one —
+  the result barely moves however tired of us we assume buyers get. And that failure showed us
+  something worse: the two assumptions most likely to be carrying the whole result were buried where
+  this test could never have reached them.
 </div>
 
 {% if sweeps %}
 {% for s in sweeps %}
 <div class="card">
-  <p class="figref"><span class="n">Figure {{ loop.index }}</span>PARAMETER SWEEP</p>
+  <p class="figref"><span class="n">Figure {{ loop.index }}</span>WHAT IF WE WERE WRONG</p>
   <h2>{{ s.parameter }}</h2>
   <p class="hint">{{ s.rationale }}</p>
   {{ s.chart|safe }}
   <div class="kv" style="margin-top:14px">
-    <dt>Our chosen value</dt><dd>{{ '%.3f'|format(s.chosen) }}</dd>
-    <dt>Worst case in range</dt><dd>{{ '%.0f'|format(s.worst_ratio*100) }}% of the margin</dd>
-    <dt>Verdict</dt><dd>{{ s.verdict }}</dd>
+    <dt>What we assumed</dt><dd>{{ '%.0f'|format(s.chosen*100) }}%</dd>
+    <dt>If we are badly wrong</dt><dd>{{ '%.0f'|format(s.worst_ratio*100) }}% of the benefit survives</dd>
+    <dt>So</dt><dd>{{ s.verdict }}</dd>
   </div>
 </div>
 {% endfor %}

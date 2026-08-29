@@ -238,7 +238,9 @@ class Guardrails:
             Intervention.DOCUMENT_RECONCILE,
             Intervention.HOLD,
         ):
-            kinds = ", ".join(d.kind for d in beliefs.open_disputes())
+            from ..domain.labels import dispute as _dispute
+
+            kinds = ", ".join(_dispute(d.kind) for d in beliefs.open_disputes())
             out.append(_no("dispute_freeze", f"Unresolved dispute ({kinds}). Resolve it first."))
 
         # A buyer who has said they cannot pay must not be escalated at. This is

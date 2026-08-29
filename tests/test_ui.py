@@ -282,7 +282,7 @@ def test_landing_carries_the_negative_result(client):
     """The strongest paragraph in the project is on Sensitivity, sixth in the
     nav, which nobody reaches. One line of it has to be where it gets read."""
     body = client.get("/").text
-    assert "expected contact fatigue to carry this result" in body
+    assert "messaging people too often would be what decides" in body
     assert 'href="/sensitivity"' in body
 
 
@@ -304,3 +304,62 @@ def test_figure_plates_have_no_underscores(client):
     for path in ("/", "/book", "/restraint", "/evaluation", "/method"):
         body = client.get(path).text
         assert "FIG_" not in body, f"{path} still shows an underscored figure id"
+
+
+@pytest.mark.parametrize(
+    "path",
+    ["/", "/book", "/buyers", "/restraint", "/evaluation", "/sensitivity", "/understanding"],
+)
+def test_no_code_identifiers_are_visible(client, path):
+    """Nobody reading a page should have to decode PORTAL_REPAIR_SUCCESS, a
+    snake_case enum value, or a source filename. /method is exempt - that page is
+    explicitly about the internals."""
+    import re
+
+    visible = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", client.get(path).text, flags=re.S)
+    visible = re.sub(r"<[^>]+>", " ", visible)
+
+    screaming = re.findall(r"\b[A-Z][A-Z0-9]{3,}_[A-Z0-9_]+\b", visible)
+    assert not screaming, f"{path} shows constant names: {set(screaming)}"
+
+    files = re.findall(r"\b[a-z_]+/[a-z_]+\.py\b|\b[a-z_]{3,}\.py\b", visible)
+    assert not files, f"{path} shows source filenames: {set(files)}"
+
+    snake = {w for w in re.findall(r"\b[a-z]{3,}_[a-z_]{3,}\b", visible)}
+    assert not snake, f"{path} shows snake_case identifiers: {snake}"
+
+
+@pytest.mark.parametrize(
+    "path",
+    ["/", "/book", "/buyers", "/restraint", "/evaluation", "/sensitivity", "/understanding"],
+)
+def test_no_engineering_jargon_is_visible(client, path):
+    """Policy code names, internal archetype words and implementation nouns read
+    as clutter to anyone who has not seen the source."""
+    import re
+
+    visible = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", client.get(path).text, flags=re.S)
+    visible = re.sub(r"<[^>]+>", " ", visible)
+    for term in ("never-chase", "blast-weekly", "static-ladder", "cause-matched",
+                 "process-bound", "hardcoded", "literals", "dynamics code",
+                 "archetype", "parameter sweep"):
+        assert term not in visible, f"{path} shows {term!r}"
+
+
+@pytest.mark.parametrize(
+    "path",
+    ["/", "/book", "/buyers", "/restraint", "/evaluation", "/sensitivity", "/understanding"],
+)
+def test_pages_read_without_the_source(client, path):
+    """A reader should never have to decode a constant name, a metric acronym, a
+    policy code name or an internal class word to follow a page. /method is
+    exempt; it is explicitly about the internals."""
+    import re
+
+    visible = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", client.get(path).text, flags=re.S)
+    visible = re.sub(r"<[^>]+>", " ", visible).lower()
+    for term in ("never-chase", "blast-weekly", "static-ladder", "cause-matched",
+                 "process-bound", "hardcoded", "literals", "dynamics code",
+                 "archetype", "parameter sweep", "macro-f1", "fig_", "_success",
+                 "holdout", "snapshots", "distressed", "avoider"):
+        assert term not in visible, f"{path} shows {term!r}"
