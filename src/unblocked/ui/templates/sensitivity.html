@@ -16,7 +16,7 @@
 {% if sweeps %}
 {% for s in sweeps %}
 <div class="card">
-  <p class="figref"><span class="n">FIG_{{ "%03d"|format(loop.index) }}</span> · PARAMETER SWEEP</p>
+  <p class="figref"><span class="n">Figure {{ loop.index }}</span>PARAMETER SWEEP</p>
   <h2>{{ s.parameter }}</h2>
   <p class="hint">{{ s.rationale }}</p>
   {{ s.chart|safe }}

@@ -117,7 +117,7 @@ def landing(request: Request):
         causes_svg=causes_diagram(),
         story=story,
         compare_chart=diverging_bar(
-            bars, label_w=200, caption="net value per buyer against doing nothing"
+            bars, caption="net value per buyer against doing nothing"
         ),
     )
 

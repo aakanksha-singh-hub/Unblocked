@@ -331,10 +331,10 @@ def causes_diagram(width: int = 420) -> str:
 def diverging_bar(
     bars: list[Bar],
     *,
-    width: int = 660,
-    row_h: int = 40,
-    label_w: int = 180,
-    value_w: int = 96,
+    width: int = 900,
+    row_h: int = 46,
+    label_w: int = 300,
+    value_w: int = 104,
     caption: str = "",
 ) -> str:
     """Bars measured from zero in both directions.
@@ -382,7 +382,7 @@ def diverging_bar(
         )
         if b.note:
             p.append(
-                f'<text x="{label_w - 12}" y="{y + bar_h + 11:.1f}" class="axlabel" '
+                f'<text x="{label_w - 12}" y="{y + bar_h + 13:.1f}" class="axlabel" '
                 f'text-anchor="end">{_esc(b.note)}</text>'
             )
 

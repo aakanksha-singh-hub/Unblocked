@@ -167,16 +167,16 @@ h2 { font-size: var(--fs-h2); margin: 30px 0 12px; letter-spacing: -0.01em; }
 .card {
   background: var(--surface-1);
   border: 1px solid var(--grid);
-  border-radius: var(--radius);
-  padding: 18px;
-  margin-bottom: 16px;
+  border-radius: 14px;
+  padding: 24px 26px;
+  margin-bottom: 20px;
   overflow-x: auto;
 }
-.card > h2 { margin: 0 0 3px; font-size: var(--fs-h3); }
-.card > .hint { margin: 0 0 14px; color: var(--muted); font-size: var(--fs-small); }
+.card > h2 { margin: 0 0 4px; font-size: var(--fs-h3); letter-spacing: -0.01em; }
+.card > .hint { margin: 0 0 20px; color: var(--text-secondary); font-size: var(--fs-small); max-width: var(--measure); }
 
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 12px; margin-bottom: 20px; }
-.tile { background: var(--surface-1); border: 1px solid var(--grid); border-radius: var(--radius); padding: 14px 16px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 26px; }
+.tile { background: var(--surface-1); border: 1px solid var(--grid); border-radius: 14px; padding: 18px 20px; }
 .tile .k { color: var(--muted); font-size: var(--fs-caption); text-transform: uppercase; letter-spacing: 0.05em; }
 .tile .v { font-size: var(--fs-stat); font-weight: 640; letter-spacing: -0.02em; margin-top: 3px; font-variant-numeric: tabular-nums; }
 .tile .d { color: var(--text-secondary); font-size: var(--fs-small); margin-top: 2px; }
@@ -192,9 +192,9 @@ table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
 th {
   text-align: left; font-weight: 600; color: var(--muted);
   font-size: var(--fs-small); text-transform: uppercase; letter-spacing: 0.04em;
-  padding: 7px 10px; border-bottom: 1px solid var(--axis); white-space: nowrap;
+  padding: 9px 12px; border-bottom: 1px solid var(--axis); white-space: nowrap;
 }
-td { padding: 9px 10px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+td { padding: 11px 12px; border-bottom: 1px solid var(--grid); vertical-align: top; }
 /* Identity column needs room; without it long company names wrapped to three
    lines and pushed the trailing columns off the page. */
 td:first-child, th:first-child { min-width: 190px; }
@@ -204,7 +204,7 @@ tr.hi td { font-weight: 620; }
 
 /* ---- charts ---- */
 
-.chart { width: 100%; height: auto; display: block; }
+.chart { width: 100%; height: auto; display: block; margin: 4px 0 2px; }
 .chart .grid { stroke: var(--grid); stroke-width: 1; }
 .chart .axis { stroke: var(--axis); stroke-width: 1; }
 .chart .zero { stroke: var(--axis); stroke-width: 1; stroke-dasharray: 3 3; }
@@ -381,7 +381,7 @@ button.ghost { background: transparent; border-color: var(--axis); color: var(--
 .headline .l { color: var(--text-primary); font-size: var(--fs-body); font-weight: 600; margin-top: 7px; }
 .headline .s { color: var(--muted); font-size: var(--fs-small); margin-top: 3px; line-height: 1.45; }
 
-section.band { padding: 46px 0; border-top: 1px solid var(--grid); }
+section.band { padding: 56px 0; border-top: 1px solid var(--grid); }
 section.band > h2 {
   font-size: var(--fs-h2); letter-spacing: -0.02em; margin: 0 0 8px; font-weight: 660;
 }
@@ -421,9 +421,10 @@ section.band > .lede {
 .explore { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
 .explore a {
   text-decoration: none; background: var(--surface-1); border: 1px solid var(--grid);
-  border-radius: 11px; padding: 18px 20px; display: block; transition: border-color .12s;
+  border-radius: 14px; padding: 22px 24px; display: block;
+  transition: border-color .12s, background .12s;
 }
-.explore a:hover { border-color: var(--series-1); }
+.explore a:hover { border-color: var(--axis); background: var(--plane); }
 .explore a strong { display: block; font-size: var(--fs-h3); margin-bottom: 5px; }
 .explore a span { color: var(--text-secondary); font-size: var(--fs-small); line-height: 1.5; }
 
@@ -554,11 +555,18 @@ td.answer-cell { background: color-mix(in srgb, var(--plane) 60%, transparent); 
    numbered sequentially within its page. Purely additive markup: the charts and
    tables themselves are untouched. */
 .figref {
-  font-family: var(--mono); font-size: var(--fs-caption);
-  text-transform: uppercase; letter-spacing: var(--track-micro);
-  color: var(--muted); margin: 0 0 6px;
+  font-size: var(--fs-caption); letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted);
+  margin: 0 0 10px; display: flex; align-items: center; gap: 9px;
 }
-.figref .n { color: var(--text-secondary); }
+.figref .n {
+  font-family: var(--mono); color: var(--text-secondary); font-weight: 600;
+  letter-spacing: 0; text-transform: none;
+}
+.figref .n::after {
+  content: ""; display: inline-block; width: 14px; height: 1px;
+  background: var(--axis); margin: 0 2px 0 10px; vertical-align: 4px;
+}
 
 
 /* The best paragraph on this site is on Sensitivity, sixth in the nav, which
@@ -566,9 +574,14 @@ td.answer-cell { background: color-mix(in srgb, var(--plane) 60%, transparent); 
    reports the experiment which embarrassed them is a team to believe about
    everything else. */
 .admission {
-  margin: 22px 0 0; padding: 14px 18px;
+  margin: 26px 0 0; padding: 18px 22px;
   border-left: 3px solid var(--series-2);
   background: var(--surface-1); border-radius: 0 var(--radius) var(--radius) 0;
   font-size: var(--fs-body); color: var(--text-secondary); max-width: var(--measure);
 }
 .admission a { color: var(--text-primary); }
+
+
+/* An arrow that wraps onto its own line reads as a stray mark. */
+a { text-wrap: pretty; }
+.note a, .hint a, .admission a { white-space: nowrap; }

@@ -170,7 +170,7 @@ def test_figures_are_numbered_sequentially(client, path, expected):
     own page with no gaps or repeats."""
     import re
 
-    nums = re.findall(r"FIG_(\d{3})", client.get(path).text)
+    nums = re.findall(r"Figure (\d+)</span>", client.get(path).text)
     assert len(nums) >= expected, f"{path}: {len(nums)} figures, expected >= {expected}"
     assert [int(n) for n in nums] == list(range(1, len(nums) + 1)), f"{path}: {nums}"
 
@@ -180,9 +180,9 @@ def test_understanding_figure_appears_with_results(client):
     GET there is nothing to number - the plate appears with the results."""
     import re
 
-    assert not re.search(r"FIG_\d{3}", client.get("/understanding").text)
+    assert not re.search(r"Figure \d+</span>", client.get("/understanding").text)
     posted = client.post("/understanding", data={"text": "month end tak ho jayega"}).text
-    assert re.findall(r"FIG_(\d{3})", posted) == ["001"]
+    assert re.findall(r"Figure (\d+)</span>", posted) == ["1"]
 
 
 @pytest.mark.parametrize(
@@ -284,3 +284,23 @@ def test_landing_carries_the_negative_result(client):
     body = client.get("/").text
     assert "expected contact fatigue to carry this result" in body
     assert 'href="/sensitivity"' in body
+
+
+@pytest.mark.parametrize("path", ["/", "/book", "/restraint"])
+def test_no_chart_text_runs_off_the_left_edge(client, path):
+    """Right-anchored labels and their notes vanish rather than wrap when they
+    outgrow the gutter: '16,960 messages' rendered as '60 messages'."""
+    import re
+
+    for svg in re.findall(r"<svg class=\"chart\".*?</svg>", client.get(path).text, re.S):
+        for x, text in re.findall(
+            r'<text x="([\d.]+)"[^>]*text-anchor="end"[^>]*>([^<]+)<', svg
+        ):
+            assert float(x) - len(text) * 6.6 > -6, f"{path}: clipped {text!r}"
+
+
+def test_figure_plates_have_no_underscores(client):
+    """FIG_003 reads as a stray mark. Figures are numbered in words."""
+    for path in ("/", "/book", "/restraint", "/evaluation", "/method"):
+        body = client.get(path).text
+        assert "FIG_" not in body, f"{path} still shows an underscored figure id"
