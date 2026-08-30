@@ -7,6 +7,8 @@ one thing that fixes it — and stays quiet the rest of the time.
 
 Razorpay AI Buildathon · Track 03 — AI Revenue Recovery
 
+**▶ [Watch the 5-minute pitch](https://youtu.be/8qnH3T6vUoY)**
+
 ---
 
 ## The problem
