@@ -5,7 +5,7 @@
 A B2B receivables agent that works out *why* a buyer hasn't paid, then does the
 one thing that fixes it - and stays quiet the rest of the time.
 
-**▶ [Watch the 5-minute pitch](https://youtu.be/8qnH3T6vUoY)**
+**▶ [Watch the pitch](https://youtu.be/8qnH3T6vUoY)**
 
 ---
 
