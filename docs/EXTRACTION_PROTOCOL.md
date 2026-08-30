@@ -69,15 +69,15 @@ in this project.
 
 The checks, none of which proves anything about authorship on its own:
 
-- **cross-contributor duplicates** — the same text verbatim under two people.
+- **cross-contributor duplicates** - the same text verbatim under two people.
   This is the one that settles it, and it is a hard failure.
-- **code-switching** — a Hinglish corpus with no Hindi tokens is not the thing
+- **code-switching** - a Hinglish corpus with no Hindi tokens is not the thing
   this protocol describes.
-- **casing and punctuation variation** — real informal writing is ragged.
+- **casing and punctuation variation** - real informal writing is ragged.
   Uniformly capitalised, uniformly punctuated replies are not how a group writes.
-- **short replies** — genuine answers range from "ok" to a paragraph. A corpus
+- **short replies** - genuine answers range from "ok" to a paragraph. A corpus
   with no reply under seven words is missing half the distribution.
-- **distinct voices** — different people write at different lengths.
+- **distinct voices** - different people write at different lengths.
   Near-identical per-contributor mean length across a panel is the strongest
   single signal that one hand wrote all of it.
 
@@ -144,7 +144,7 @@ Two annotators, 40 items, working independently from the codebook.
 | Disagreements | 3 |
 
 Per-class kappa was 1.000 on five of the seven intents used. The two that were
-not perfect — `payment_claim` (0.538) and `promise_to_pay` (0.727) — were the
+not perfect - `payment_claim` (0.538) and `promise_to_pay` (0.727) - were the
 *same three items* pulling both numbers down.
 
 All three were the partial-payment case: *"half payment kar diya tha, baki thoda
@@ -158,7 +158,7 @@ wrong.** The codebook now addresses the case explicitly, and the three items are
 marked `ambiguous` and kept as their own subset rather than dropped.
 
 A kappa of 0.911 is high enough that the audit's own verdict line reads
-"near-perfect — check the annotators worked independently". Worth taking
+"near-perfect - check the annotators worked independently". Worth taking
 seriously, and the pattern of disagreement is the answer: three errors, all the
 same case, one annotator consistently applying a different rule. A single person
 filling both sheets produces either zero disagreements or scattered ones, not a

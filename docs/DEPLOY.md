@@ -1,7 +1,7 @@
 # Deploying the dashboard
 
 The dashboard is a **long-lived process**, not a request-scoped function. It
-simulates a world once and holds it in memory for the life of the process —
+simulates a world once and holds it in memory for the life of the process -
 deliberately, so that two pages of the same dashboard cannot disagree with each
 other about what happened (`src/unblocked/ui/state.py`).
 
@@ -19,7 +19,7 @@ Measured on this repo, not estimated:
 
 A serverless function is a fresh container on every cold start, so it would
 re-run that 6-second simulation before it could answer, on a slower CPU than
-the one above, against a 10-second clock — and carry 143MB of scientific
+the one above, against a 10-second clock - and carry 143MB of scientific
 Python to do it. The app is not badly written for serverless; it is a
 different shape from serverless.
 
@@ -35,7 +35,7 @@ code change is required; everything below goes in the form.
 
 | Field | Value |
 |---|---|
-| Root Directory | *blank* — the app is at the repo root |
+| Root Directory | *blank* - the app is at the repo root |
 | Language | `Python 3` |
 | Build Command | `pip install -e .` |
 | Instance Type | Free is enough |
@@ -65,7 +65,7 @@ quoting to get wrong.
 It replaces the builder rather than pre-seeding `STATE`, so the port binds
 within two seconds and the world is built lazily on the first request, as it is
 locally. That ordering is deliberate: **Render fails a deploy it cannot detect
-an open port for**, and the free instance is 0.1 CPU — a tenth of a core — on
+an open port for**, and the free instance is 0.1 CPU - a tenth of a core - on
 which a build measured at 5.3s here can take the better part of a minute.
 Binding first puts that time inside a request, where it costs one visitor a
 slow page, instead of in front of the port scan, where it can cost the deploy.
@@ -78,7 +78,7 @@ has always said which of the two each page is reading.
 ### Cold starts
 
 A free instance sleeps after ~15 minutes idle. The first visitor after that
-waits for the container to wake **and** for the world to build — plan for
+waits for the container to wake **and** for the world to build - plan for
 roughly 40-60 seconds. Anyone demoing this should open it once beforehand. A
 paid instance does not sleep.
 
@@ -91,6 +91,6 @@ more**, and note the table above if you give it less.
 ## The model path on /understanding
 
 The rule extractor runs with no configuration. Setting `ANTHROPIC_API_KEY` in
-the host's own secret store — never in the repo — enables the model extractor
+the host's own secret store - never in the repo - enables the model extractor
 beside it. Without it the page degrades to rules alone rather than failing,
 which is the intended behaviour and is what `tests/test_ui.py` asserts.

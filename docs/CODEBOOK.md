@@ -14,33 +14,33 @@ correct label is the vague one. Do not reward the writer for an intention you
 inferred. If you find yourself reasoning "well, they probably mean...", mark it
 `ambiguous`.
 
-## Intents — pick exactly one
+## Intents - pick exactly one
 
-**`promise_to_pay`** — commits to paying, with a time reference of any precision.
+**`promise_to_pay`** - commits to paying, with a time reference of any precision.
 - Yes: "15 tarikh tak ho jayega", "month end tak", "next week clear kar denge"
 - No: "will check and revert" (no commitment) → `acknowledgement`
 - No: "payment cycle me hai, 10th ko run hoti hai" → `process_deflection`
 - The distinction from deflection: a promise is *they* undertaking to act. A
   deflection describes a process that will or won't produce payment on its own.
 
-**`payment_claim`** — asserts payment has already been made, fully or partly.
+**`payment_claim`** - asserts payment has already been made, fully or partly.
 - Yes: "kal hi transfer kiya, UTR 12345", "half paid last week"
 - Record the UTR/reference if present, and the amount if stated.
 
-**`dispute`** — withholds against a commercial or documentation problem with the
+**`dispute`** - withholds against a commercial or documentation problem with the
 goods, the rate, or the bill itself.
 - Yes: "2 boxes damaged the, credit note bhejo", "rate PO se zyada hai"
-- Yes: "GST number galat hai invoice pe" — a bill that cannot be processed as
+- Yes: "GST number galat hai invoice pe" - a bill that cannot be processed as
   issued is a dispute, not a document request.
 - No: "PO copy bhejiye" → `document_request` (nothing is wrong; something is
   missing)
 - Record the disputed amount if stated.
 
-**`document_request`** — asks for paperwork or an action from the supplier before
+**`document_request`** - asks for paperwork or an action from the supplier before
 payment can proceed. Nothing is *wrong*; something is *absent*.
 - Yes: "challan bhej dijiye", "portal pe upload karein", "GRN pending hai"
 
-**`process_deflection`** — points at an internal process, cycle, or approval as
+**`process_deflection`** - points at an internal process, cycle, or approval as
 the reason, without personally committing.
 - Yes: "payment cycle me hai", "approval management ke paas hai", "accounts dekh
   raha hai"
@@ -49,7 +49,7 @@ the reason, without personally committing.
   often cannot tell you which.** That is fine. Label the surface form. It is not
   your job to guess sincerity.
 
-**`hardship`** — states inability to pay.
+**`hardship`** - states inability to pay.
 - Yes: "cash nahi hai", "business bahut slow hai", "ek saath nahi de paunga"
 - **Distinguish carefully from `refusal`.** Hardship says *cannot*. Refusal says
   *will not*, or gives no reason. Getting this wrong is the error with the most
@@ -57,19 +57,19 @@ the reason, without personally committing.
   guessing.
 - A request to split into instalments is `hardship`.
 
-**`refusal`** — declines to pay, with no commercial reason and no stated
+**`refusal`** - declines to pay, with no commercial reason and no stated
 inability.
 - Yes: "abhi payment nahi hoga", "baad me dekhte hain"
 - If a reason involving the goods is given → `dispute`. If inability is stated →
   `hardship`.
 
-**`acknowledgement`** — received, no commitment, no information.
+**`acknowledgement`** - received, no commitment, no information.
 - Yes: "noted", "ok dekhta hoon", "will revert", "theek hai"
 - The test: strip politeness. If nothing remains that changes what the supplier
   should do next, it is an acknowledgement.
 
-**`unclear`** — you cannot assign one of the above. Use sparingly and only after
-genuinely trying. Not a synonym for `ambiguous` — use `unclear` when the intent
+**`unclear`** - you cannot assign one of the above. Use sparingly and only after
+genuinely trying. Not a synonym for `ambiguous` - use `unclear` when the intent
 cannot be determined, and the `ambiguous` flag when you chose a label but were
 not confident.
 
@@ -87,12 +87,12 @@ Priority order, highest first:
 8. `acknowledgement`
 
 A reply that disputes *and* promises ("credit note bhejo, phir 15 tak kar denge")
-is `dispute` — because the dispute is what blocks the money, and acting on the
+is `dispute` - because the dispute is what blocks the money, and acting on the
 promise while ignoring the dispute is the failure mode we are trying to prevent.
 
 ### The partial-payment case (added after the first annotation round)
 
-**"half payment kar diya tha, baki thoda time lagega"** — a payment already made
+**"half payment kar diya tha, baki thoda time lagega"** - a payment already made
 *and* a commitment for the balance, in one sentence. This is one of the commonest
 things a buyer actually writes, and the first version of this codebook did not
 address it: the priority list resolves it to `payment_claim`, but never says what
@@ -101,7 +101,7 @@ of three, which is a defect in this document rather than in either of them.
 
 **Rule: label it `payment_claim`, and record the promised date in the extra
 fields.** The reasoning is operational rather than linguistic. A claimed payment
-must be reconciled against the ledger before anything else happens — if the money
+must be reconciled against the ledger before anything else happens - if the money
 did arrive, the promise is about a smaller balance than the agent thinks, and if
 it did not, the whole message needs revisiting. Acting on the promise first means
 trusting a payment nobody has verified.
@@ -122,7 +122,7 @@ Eight of the fourteen round-two disagreements were one annotator marking
 - *"abhi kuch urgent payments hain pehle woh clear karne hain. iska thoda time lagega"*
 - *"customers se payments nahi aaye abhi tak, isliye supplier payments bhi delay ho gaye hain"*
 
-These are not contentless — each gives a **reason** — but none commits to
+These are not contentless - each gives a **reason** - but none commits to
 anything, none disputes the goods, and none quite says *cannot*. One annotator
 read "there is content here that I can't place" as `unclear`; the other read "no
 commitment, therefore nothing actionable" as `acknowledgement`. Both readings
@@ -130,17 +130,17 @@ follow this document as written, which means this document was underspecified.
 
 **Rule.** Judge on the reason given, not on the absence of a commitment:
 
-- Reason is an *inability* to pay — no cash, customers haven't paid, business
+- Reason is an *inability* to pay - no cash, customers haven't paid, business
   slow → **`hardship`**.
-- Reason is an *internal process* — a cycle, an approval, a document → **`process_deflection`**.
-- Reason is a *choice* — other payments come first, you are not a priority this
+- Reason is an *internal process* - a cycle, an approval, a document → **`process_deflection`**.
+- Reason is a *choice* - other payments come first, you are not a priority this
   month → **`refusal`**. This is the one the taxonomy handles worst; see below.
-- No reason at all, only receipt — "noted", "dekh raha hu" → **`acknowledgement`**.
+- No reason at all, only receipt - "noted", "dekh raha hu" → **`acknowledgement`**.
 - Reserve `unclear` for replies you cannot place *at all*, not for replies that
   are merely non-committal.
 
-**Known gap.** Deliberate deprioritisation — *"bade payments pehle, iska baad
-me"* — is a buyer who has the money and has chosen not to pay you yet. That is
+**Known gap.** Deliberate deprioritisation - *"bade payments pehle, iska baad
+me"* - is a buyer who has the money and has chosen not to pay you yet. That is
 neither hardship nor a process nor a bare refusal, and the taxonomy has no clean
 home for it. It is currently ruled `refusal`, which loses the distinction. This
 is recorded rather than resolved: adding a class mid-study would invalidate
@@ -148,14 +148,14 @@ labels already collected.
 
 ## Extra fields
 
-- **promised_date_raw** — the date expression verbatim: "month end tak", "15
+- **promised_date_raw** - the date expression verbatim: "month end tak", "15
   tarikh". Copy it exactly; do not convert it.
-- **promised_date_resolved** — your calendar reading of it, relative to the
+- **promised_date_resolved** - your calendar reading of it, relative to the
   supplied "message date". Leave blank if you genuinely cannot pin it.
-- **disputed_amount** — only if a figure is stated.
-- **claimed_utr** — any transaction reference, verbatim.
-- **requested_documents** — free text list.
-- **confidence** — `clear` or `ambiguous`. Be honest. The `ambiguous` items are
+- **disputed_amount** - only if a figure is stated.
+- **claimed_utr** - any transaction reference, verbatim.
+- **requested_documents** - free text list.
+- **confidence** - `clear` or `ambiguous`. Be honest. The `ambiguous` items are
   reported as their own subset and are among the most useful data we will have.
 
 ## What not to do
